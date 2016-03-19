@@ -32,7 +32,6 @@ header-img: "img/green.jpg"
 ###联系
 
 - [博客：www.lisentoday.com](www.lisentoday.com)
-
 - [微博@阿森能发电](http://http://weibo.com/asengogogo)
 
 
