@@ -5,8 +5,8 @@
     <description>李森|不仅仅是一个程序员</description>
     <link>http://lisentoday/</link>
     <atom:link href="http://lisentoday/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sun, 20 Mar 2016 04:34:49 +0800</pubDate>
-    <lastBuildDate>Sun, 20 Mar 2016 04:34:49 +0800</lastBuildDate>
+    <pubDate>Sun, 20 Mar 2016 04:49:46 +0800</pubDate>
+    <lastBuildDate>Sun, 20 Mar 2016 04:49:46 +0800</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
     
       <item>
@@ -249,47 +249,10 @@
 
 &lt;p&gt;中国则是韩愈=》辛弃疾=》钱钟书=》余光中或王鼎钧。&lt;/p&gt;
 
-&lt;p&gt;##文章推荐&lt;/p&gt;
-
-&lt;p&gt;阳志平&lt;a href=&quot;http://www.yangzhiping.com/psy/wenxin.html&quot;&gt;《文心书话》&lt;/a&gt;，&lt;a href=&quot;http://www.yangzhiping.com/files/pubs/wenxin_01.pdf&quot;&gt;PDF地址&lt;/a&gt;。&lt;/p&gt;
-
-&lt;p&gt;王烁：&lt;a href=&quot;http://wangshuo.blog.caixin.com/archives/821&quot;&gt;《有效写作十三篇》&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;##书单推荐：&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://www.douban.com/doulist/37792154/&quot;&gt;《文心书话》第一章推荐阅读书目：&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;http://www.douban.com/doulist/37792154/&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://www.douban.com/doulist/1269878/&quot;&gt;阳志平：开始写作吧&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;http://www.douban.com/doulist/1269878/&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://www.xiaoqiushui.com/archives/8900.html&quot;&gt;萧秋水：《作文三书》切实帮助提升写作水平的书 &lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;http://www.douban.com/doulist/37792472/&lt;/p&gt;
-
-&lt;p&gt;备注：早期叫《作文三书》，再版后增加一书，改为《作为四书》。&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;##&lt;strong&gt;【一期一会】&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;二十一世纪的五大元学科为：1）网络科学；2）认知&amp;amp;神经&amp;amp;心理科学；3）编程；4）数学；5）文艺创作。学习五大元学科，再进入任意一个新领域，容易事倍功倍；任意元学科的交集，容易创新。&lt;/p&gt;
-
-&lt;p&gt;————阳志平&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://cnfeat.qiniudn.com/signitrue-2015-03-05.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;（题图：write your page by awby）&lt;/p&gt;
-
-&lt;p&gt;回复关键词「开智」获得&lt;/p&gt;
-
-&lt;p&gt;##「开智微信群」入群指南&lt;/p&gt;
-
-&lt;p&gt;http://t.cn/RwYcbCP&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Car car = new Car();
+System.out.println(&quot;hello world!&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 </description>
         <pubDate>Sat, 19 Mar 2016 00:00:00 +0800</pubDate>

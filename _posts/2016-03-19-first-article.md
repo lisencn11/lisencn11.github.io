@@ -219,50 +219,9 @@ description: 通告一下，我已不再每天写千字文，准备采用以下�
 
 中国则是韩愈=》辛弃疾=》钱钟书=》余光中或王鼎钧。
 
-##文章推荐
-
-阳志平[《文心书话》](http://www.yangzhiping.com/psy/wenxin.html)，[PDF地址](http://www.yangzhiping.com/files/pubs/wenxin_01.pdf)。
-
-王烁：[《有效写作十三篇》](http://wangshuo.blog.caixin.com/archives/821)
-
-
-##书单推荐：
-
-[《文心书话》第一章推荐阅读书目：](http://www.douban.com/doulist/37792154/)
-
-http://www.douban.com/doulist/37792154/
-
-[阳志平：开始写作吧](http://www.douban.com/doulist/1269878/)
-
-http://www.douban.com/doulist/1269878/
-
-[萧秋水：《作文三书》切实帮助提升写作水平的书 ](http://www.xiaoqiushui.com/archives/8900.html)
-
-http://www.douban.com/doulist/37792472/
-
-备注：早期叫《作文三书》，再版后增加一书，改为《作为四书》。
-
----
-
-##**【一期一会】**
-
-二十一世纪的五大元学科为：1）网络科学；2）认知&神经&心理科学；3）编程；4）数学；5）文艺创作。学习五大元学科，再进入任意一个新领域，容易事倍功倍；任意元学科的交集，容易创新。
-
-————阳志平
-
-----
-
-![](http://cnfeat.qiniudn.com/signitrue-2015-03-05.png)
-
-
-（题图：write your page by awby）
-
-回复关键词「开智」获得
-
-##「开智微信群」入群指南
-
-http://t.cn/RwYcbCP
-
+	Car car = new Car();
+	System.out.println("hello world!");
+	
 
 
 
