@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "生活"
-description: "知之真切笃实处即是行，行之明觉精察处即是知 "
+description: "对自己好点，因为一辈子不长；对身边的人好点，因为下辈子不一定能够遇见！"
 header-img: "img/zhihu.jpg"
 ---
 

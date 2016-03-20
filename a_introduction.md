@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "我的简介"
-description: "记录进步的点点滴滴"
+description: "一个简单的程序员"
 header-img: "img/green.jpg"
 ---
 
