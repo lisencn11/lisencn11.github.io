@@ -13,15 +13,15 @@ tags: [study]
 
 #思路
 
-##动态规划
+###动态规划
 
 计算数组result[n+1]，result[i]是一个List，存储的是结点数为i的所有二叉搜索树结果，如：result[0]记录的是0个TreeNode时，树的不同情况，当然为null。
 
-##初始状态
+###初始状态
 
 result[0] = null list
 
-##状态转移方程
+###状态转移方程
 
 计算result[len]：从i=0遍历到i=len-1，i表示TreeNode数为i的左子树的结构，则i+1为根结点i+2到len为右子树。
 对于遍历的每个result，依次取出其中的TreeNode连接到根结点上，这里要注意，我们的右子树要取i+1之后的值，但是右子树的结构是result[len-i-1]，即剩下的长度的结构，所以需要一个clone函数利用result[len-i-1]来构造右子树。
