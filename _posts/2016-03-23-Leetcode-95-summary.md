@@ -28,6 +28,15 @@ result[0] = null list
 
 #Java代码
 
+    /**
+    * Definition for a binary tree node.
+    * public class TreeNode {
+    *     int val;
+    *     TreeNode left;
+    *     TreeNode right;
+    *     TreeNode(int x) { val = x; }
+    * }
+    */
     public class Solution {
         public static List<TreeNode> generateTrees(int n) {
             List<TreeNode>[] result = new List[n+1];
