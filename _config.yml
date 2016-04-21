@@ -28,6 +28,7 @@ zhihu_username:
 # document: http://jekyllrb.com/docs/configuration/#kramdown  
 markdown: kramdown
 kramdown: 
+  default_lang: java
   # input:GFM
 highlighter: rouge
 permalink: pretty
