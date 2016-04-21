@@ -26,10 +26,10 @@ zhihu_username:
 # Build settings  
 # use Github Flavored Markdown !important  
 # document: http://jekyllrb.com/docs/configuration/#kramdown  
-# markdown: kramdown
+markdown: kramdown
 kramdown: 
   input: GFM
-  default_lang: java
+  # default_lang: java
 highlighter: rouge
 permalink: pretty
 paginate: 8
