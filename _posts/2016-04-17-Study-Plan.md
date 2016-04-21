@@ -7,11 +7,11 @@ tags: [study]
 
 ---
 
-#Plan
+# Plan
 
 Carving out 20% of my time devote to my own skills development, one hour to two hour a day.
 
-#Things To Do
+# Things To Do
 
 * Reading and Implementing basic algorithm
 * learn how to efficiently using sublime text
