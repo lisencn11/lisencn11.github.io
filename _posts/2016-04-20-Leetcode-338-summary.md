@@ -26,7 +26,7 @@ i & (i - 1)是bit manipulation常用手段，得到的是i去掉最后一位1的
 
 #代码
 
-	```java
+```java
 
 	public class Solution {
     	public int[] countBits(int num) {
@@ -39,4 +39,4 @@ i & (i - 1)是bit manipulation常用手段，得到的是i去掉最后一位1的
     	}
 	}
 	
-	```
+```
