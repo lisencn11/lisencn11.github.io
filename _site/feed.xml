@@ -5,9 +5,58 @@
     <description>李森|不仅仅是一个程序员</description>
     <link>http://lisentoday/</link>
     <atom:link href="http://lisentoday/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 19 Apr 2016 23:44:02 -0400</pubDate>
-    <lastBuildDate>Tue, 19 Apr 2016 23:44:02 -0400</lastBuildDate>
+    <pubDate>Thu, 21 Apr 2016 00:54:36 -0400</pubDate>
+    <lastBuildDate>Thu, 21 Apr 2016 00:54:36 -0400</lastBuildDate>
     <generator>Jekyll v3.1.2</generator>
+    
+      <item>
+        <title>Leetcode Problem 338 Summary</title>
+        <description>&lt;p&gt;#题目&lt;/p&gt;
+
+&lt;p&gt;输入是一个非负整数num，输出从0到num的每个数的二进制表示有多少个1，输出一个长度为num+1的int数组，其中存放着每个二进制数的1的个数。要求算法复杂度O(n)&lt;/p&gt;
+
+&lt;p&gt;#算法&lt;/p&gt;
+
+&lt;p&gt;对每个数求1的个数然后求num+1次是最简单的方法，算法复杂度是O(n*sizeof(1+2+…+num+1))。要达到O(n)的算法复杂度，仔细思考有两种可能性：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;对每个数求二进制有多少个1存在O(1)的算法&lt;/li&gt;
+  &lt;li&gt;后面的二进制有多少个1能根据前面已经求出来的计算而得，也就是动态规划算法&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;第一种可能性基本排除，因为直觉感觉不可能，所以显然要用动态规划算法。得到递推公式：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;result[i] = result[i &amp;amp; (i - 1)] + 1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;i &amp;amp; (i - 1)是bit manipulation常用手段，得到的是i去掉最后一位1的结果，这个结果比i小，所以之前必然已经计算得出结果，而这两个数相差1的个数则是1，所以加1得到i的二进制表示中所含1的个数。&lt;/p&gt;
+
+&lt;p&gt;#代码&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;public class Solution {
+	public int[] countBits(int num) {
+    	int[] result = new int[num + 1];
+    	result[0] = 0;
+    	for (int i = 1; i &amp;lt;= num; i++) {
+        	result[i] = result[i&amp;amp;(i-1)] + 1;
+    	}
+    	return result;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Wed, 20 Apr 2016 00:00:00 -0400</pubDate>
+        <link>http://lisentoday/blog/2016/04/20/Leetcode-338-summary/</link>
+        <guid isPermaLink="true">http://lisentoday/blog/2016/04/20/Leetcode-338-summary/</guid>
+        
+        <category>study</category>
+        
+        
+        <category>blog</category>
+        
+      </item>
     
       <item>
         <title>Leetcode Problem 225 Summary</title>
@@ -53,6 +102,50 @@
         <pubDate>Tue, 19 Apr 2016 00:00:00 -0400</pubDate>
         <link>http://lisentoday/blog/2016/04/19/Leetcode-225-summary/</link>
         <guid isPermaLink="true">http://lisentoday/blog/2016/04/19/Leetcode-225-summary/</guid>
+        
+        <category>study</category>
+        
+        
+        <category>blog</category>
+        
+      </item>
+    
+      <item>
+        <title>Leetcode Problem 1 Summary</title>
+        <description>&lt;p&gt;#题目&lt;/p&gt;
+
+&lt;p&gt;给一个int array和一个target值，数组中有两个数加和为target，返回这两个数的下标。&lt;/p&gt;
+
+&lt;p&gt;#算法&lt;/p&gt;
+
+&lt;p&gt;最开始的想法是用另一个数组储存排序后的原数组，排序后的数组从两头找，比target大就high–，比target小就low++，找到后再在原数组中找这两个数的下标。这种方法可以，但之后还需处理边界条件，如target由两个相同的数组成，则需要处理边界条件。&lt;/p&gt;
+
+&lt;p&gt;相比较而言是用HashMap的方法更加简单，不用处理边界条件，key为nums[i]，value为index，只需要查看HashMap是否含有target-nums[i]，如果有，说明找到两个数。&lt;/p&gt;
+
+&lt;p&gt;#代码&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;public class Solution {
+	public int[] twoSum(int[] nums, int target) {
+	int[] result = new int[2];
+    	Map&amp;lt;Integer, Integer&amp;gt; map = new HashMap&amp;lt;Integer, Integer&amp;gt;();
+    	for (int i = 0; i &amp;lt; nums.length; i++) {
+    		if (map.containsKey(new Integer(target - nums[i]))) {
+           		result[1] = i;
+           		result[0] = map.get(new Integer(target - nums[i]));
+           		break;
+       		} else {
+            	map.put(new Integer(nums[i]), new Integer(i));
+        	}
+    	}
+    	return result;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Tue, 19 Apr 2016 00:00:00 -0400</pubDate>
+        <link>http://lisentoday/blog/2016/04/19/Leetcode-1-summary/</link>
+        <guid isPermaLink="true">http://lisentoday/blog/2016/04/19/Leetcode-1-summary/</guid>
         
         <category>study</category>
         
@@ -679,148 +772,6 @@ p_client.open(function(err, p_client) {
         <pubDate>Thu, 24 Mar 2016 00:00:00 -0400</pubDate>
         <link>http://lisentoday/blog/2016/03/24/Leetcode-330-summary/</link>
         <guid isPermaLink="true">http://lisentoday/blog/2016/03/24/Leetcode-330-summary/</guid>
-        
-        <category>study</category>
-        
-        
-        <category>blog</category>
-        
-      </item>
-    
-      <item>
-        <title>Leetcode Problem 16 Summary</title>
-        <description>&lt;p&gt;#题目描述&lt;/p&gt;
-
-&lt;p&gt;输入一个array，有n个integer，还有一个integer型target。需要找到array中的三个数，使这三个数的加和是最接近target。&lt;/p&gt;
-
-&lt;p&gt;#思路&lt;/p&gt;
-
-&lt;p&gt;对原array排序，第一个数为从0到n－2的遍历，每次遍历分别选择i+1为第二个元素，n为第三个元素，当当前加和大于target时我们需要将第三个元素左移，小于则反之。通过这种方法将时间复杂度从O(n^3)降到O(n^2)。&lt;/p&gt;
-
-&lt;p&gt;#Java代码&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;public class Solution {
-    public int threeSumClosest(int[] nums, int target) {
-        Arrays.sort(nums);
-        int ret = 0;
-    
-        if (nums.length &amp;lt; 3) {
-            for (int i = 0; i &amp;lt; nums.length; i++) {
-                ret += nums[i];
-            }
-            return ret;
-        }
-        
-
-        ret = nums[0] + nums[1] + nums[2];
-        for (int i = 0; i &amp;lt; nums.length - 2; i++) {
-            // first value iteration
-            int j = i + 1;
-            int k = nums.length - 1;
-            while (j &amp;lt; k) {
-                // second &amp;amp; third value iteration
-                int tmp1 = Math.abs(target - ret);
-                int tmpSum = nums[i] + nums[j] + nums[k];
-                int tmp2 = Math.abs(target - tmpSum);
-                if (tmp1 == 0) {
-                    return ret;
-                }
-                if (tmp1 &amp;gt; tmp2) {
-                    ret = tmpSum;
-                }
-                if (tmpSum &amp;gt; target) {
-                    k--;
-                } else {
-                    j++;
-                }
-            }
-        }
-        return ret;
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-</description>
-        <pubDate>Thu, 24 Mar 2016 00:00:00 -0400</pubDate>
-        <link>http://lisentoday/blog/2016/03/24/Leetcode-16-summary/</link>
-        <guid isPermaLink="true">http://lisentoday/blog/2016/03/24/Leetcode-16-summary/</guid>
-        
-        <category>study</category>
-        
-        
-        <category>blog</category>
-        
-      </item>
-    
-      <item>
-        <title>Leetcode Problem 95 Summary</title>
-        <description>&lt;p&gt;#题目描述&lt;/p&gt;
-
-&lt;p&gt;输入一个n，输出所有结构不同的二叉搜索树，树的结点value为1到n。&lt;/p&gt;
-
-&lt;p&gt;#思路&lt;/p&gt;
-
-&lt;p&gt;###动态规划&lt;/p&gt;
-
-&lt;p&gt;计算数组result[n+1]，result[i]是一个List，存储的是结点数为i的所有二叉搜索树结果，如：result[0]记录的是0个TreeNode时，树的不同情况，当然为null。&lt;/p&gt;
-
-&lt;p&gt;###初始状态&lt;/p&gt;
-
-&lt;p&gt;result[0] = null list&lt;/p&gt;
-
-&lt;p&gt;###状态转移方程&lt;/p&gt;
-
-&lt;p&gt;计算result[len]：从i=0遍历到i=len-1，i表示TreeNode数为i的左子树的结构，则i+1为根结点i+2到len为右子树。
-对于遍历的每个result，依次取出其中的TreeNode连接到根结点上，这里要注意，我们的右子树要取i+1之后的值，但是右子树的结构是result[len-i-1]，即剩下的长度的结构，所以需要一个clone函数利用result[len-i-1]来构造右子树。&lt;/p&gt;
-
-&lt;p&gt;#Java代码&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/**
-* Definition for a binary tree node.
-* public class TreeNode {
-*     int val;
-*     TreeNode left;
-*     TreeNode right;
-*     TreeNode(int x) { val = x; }
-* }
-*/
-public class Solution {
-    public static List&amp;lt;TreeNode&amp;gt; generateTrees(int n) {
-        List&amp;lt;TreeNode&amp;gt;[] result = new List[n+1];
-        result[0] = new ArrayList&amp;lt;TreeNode&amp;gt;();
-        result[0].add(null);
-
-        for(int len = 1; len &amp;lt;= n; len++){
-            result[len] = new ArrayList&amp;lt;TreeNode&amp;gt;();
-            for(int j=0; j&amp;lt;len; j++){
-                for(TreeNode nodeL : result[j]){
-                    for(TreeNode nodeR : result[len-j-1]){
-                        TreeNode node = new TreeNode(j+1);
-                        node.left = nodeL;
-                        node.right = clone(nodeR, j+1);
-                        result[len].add(node);
-                    }
-                }
-            }
-        }
-        return result[n];
-    }
-
-    private static TreeNode clone(TreeNode n, int offset){
-        if(n == null)
-            return null;
-        TreeNode node = new TreeNode(n.val + offset);
-        node.left = clone(n.left, offset);
-        node.right = clone(n.right, offset);
-        return node;
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-</description>
-        <pubDate>Wed, 23 Mar 2016 00:00:00 -0400</pubDate>
-        <link>http://lisentoday/blog/2016/03/23/Leetcode-95-summary/</link>
-        <guid isPermaLink="true">http://lisentoday/blog/2016/03/23/Leetcode-95-summary/</guid>
         
         <category>study</category>
         

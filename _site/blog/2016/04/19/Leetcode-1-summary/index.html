@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="李森|不仅仅是一个程序员">
 
-    <title>Leetcode Problem 225 Summary - 四木成森</title>
+    <title>Leetcode Problem 1 Summary - 四木成森</title>
 
-    <link rel="canonical" href="http://lisentoday/blog/2016/04/19/Leetcode-225-summary/">
+    <link rel="canonical" href="http://lisentoday/blog/2016/04/19/Leetcode-1-summary/">
 
     <!-- Icons -->
   <link rel="shortcut icon" href="img/favicon.ico">
@@ -106,7 +106,7 @@
                         <a class="tag" href="/Tags/#study" title="study">study</a>
                         
                     </div>
-                    <h1>Leetcode Problem 225 Summary</h1>
+                    <h1>Leetcode Problem 1 Summary</h1>
                     
                     <span class="meta">Posted by lisen on April 19, 2016</span>
                 </div>
@@ -126,38 +126,30 @@
 
                 <p>#题目</p>
 
-<p>使用Queue数据结构实现Stack数据结构</p>
+<p>给一个int array和一个target值，数组中有两个数加和为target，返回这两个数的下标。</p>
 
 <p>#算法</p>
 
-<p>使用一个Queue，每次push操作依次将首部的元素放到尾部，直到新添加的元素到首部。其它操作不变。</p>
+<p>最开始的想法是用另一个数组储存排序后的原数组，排序后的数组从两头找，比target大就high–，比target小就low++，找到后再在原数组中找这两个数的下标。这种方法可以，但之后还需处理边界条件，如target由两个相同的数组成，则需要处理边界条件。</p>
+
+<p>相比较而言是用HashMap的方法更加简单，不用处理边界条件，key为nums[i]，value为index，只需要查看HashMap是否含有target-nums[i]，如果有，说明找到两个数。</p>
 
 <p>#代码</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class MyStack {
-	private Queue&lt;Integer&gt; queue = new LinkedList&lt;Integer&gt;();
-
-	// Push element x onto stack.
-	public void push(int x) {
-    	queue.offer(new Integer(x));
-    	for (int i = 0; i &lt; queue.size() - 1; i++) {
-        	queue.offer(queue.poll());
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Solution {
+	public int[] twoSum(int[] nums, int target) {
+	int[] result = new int[2];
+    	Map&lt;Integer, Integer&gt; map = new HashMap&lt;Integer, Integer&gt;();
+    	for (int i = 0; i &lt; nums.length; i++) {
+    		if (map.containsKey(new Integer(target - nums[i]))) {
+           		result[1] = i;
+           		result[0] = map.get(new Integer(target - nums[i]));
+           		break;
+       		} else {
+            	map.put(new Integer(nums[i]), new Integer(i));
+        	}
     	}
-	}
-
-	// Removes the element on top of the stack.
-	public void pop() {
-    	queue.poll();
-	}
-
-	// Get the top element.
-	public int top() {
-    	return queue.peek().intValue();
-	}
-
-	// Return whether the stack is empty.
-	public boolean empty() {
-    	return queue.isEmpty();
+    	return result;
 	}
 }
 </code></pre>
@@ -169,12 +161,12 @@
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/blog/2016/04/19/Leetcode-1-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 1 Summary">&larr; Previous Post</a>
+                        <a href="/blog/2016/04/18/Leetcode-342-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 342 Summary">&larr; Previous Post</a>
                     </li>
                     
                     
                     <li class="next">
-                        <a href="/blog/2016/04/20/Leetcode-338-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 338 Summary">Next Post &rarr;</a>
+                        <a href="/blog/2016/04/19/Leetcode-225-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 225 Summary">Next Post &rarr;</a>
                     </li>
                     
                 </ul>
@@ -193,16 +185,16 @@
                 </style>
 
                 <div class="ds-share"
-                    data-thread-key="/blog/2016/04/19/Leetcode-225-summary" data-title="Leetcode Problem 225 Summary"
+                    data-thread-key="/blog/2016/04/19/Leetcode-1-summary" data-title="Leetcode Problem 1 Summary"
                     data-images="http://lisentoday/img/green.jpg"
                     data-content="#题目
 
-使用Queue数据结构实现Stack数据结构
+给一个int array和一个target值，数组中有两个数加和为target，返回这两个数的下标。
 
 #算法
 
-使用一个Queue，每次push操作依次将首部的元素放到尾部，直到新添加的元素到首部。... | Microdust:Azeril's blog"
-                    data-url="http://lisentoday/blog/2016/04/19/Leetcode-225-summary/">
+最开始的想法是用另一个数组储存... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/04/19/Leetcode-1-summary/">
                     <div class="ds-share-inline">
                       <ul  class="ds-share-icons-16">
 
@@ -221,7 +213,7 @@
 
                 <!-- 多说评论框 start -->
                 <div class="comment">
-                    <div class="ds-thread" data-thread-key="/blog/2016/04/19/Leetcode-225-summary" data-title="Leetcode Problem 225 Summary" data-url="http://lisentoday/blog/2016/04/19/Leetcode-225-summary/"></div>
+                    <div class="ds-thread" data-thread-key="/blog/2016/04/19/Leetcode-1-summary" data-title="Leetcode Problem 1 Summary" data-url="http://lisentoday/blog/2016/04/19/Leetcode-1-summary/"></div>
                 </div>
                 <!-- 多说评论框 end -->
             </div>

@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="李森|不仅仅是一个程序员">
 
-    <title>Leetcode Problem 225 Summary - 四木成森</title>
+    <title>Leetcode Problem 338 Summary - 四木成森</title>
 
-    <link rel="canonical" href="http://lisentoday/blog/2016/04/19/Leetcode-225-summary/">
+    <link rel="canonical" href="http://lisentoday/blog/2016/04/20/Leetcode-338-summary/">
 
     <!-- Icons -->
   <link rel="shortcut icon" href="img/favicon.ico">
@@ -106,9 +106,9 @@
                         <a class="tag" href="/Tags/#study" title="study">study</a>
                         
                     </div>
-                    <h1>Leetcode Problem 225 Summary</h1>
+                    <h1>Leetcode Problem 338 Summary</h1>
                     
-                    <span class="meta">Posted by lisen on April 19, 2016</span>
+                    <span class="meta">Posted by lisen on April 20, 2016</span>
                 </div>
             </div>
         </div>
@@ -126,38 +126,35 @@
 
                 <p>#题目</p>
 
-<p>使用Queue数据结构实现Stack数据结构</p>
+<p>输入是一个非负整数num，输出从0到num的每个数的二进制表示有多少个1，输出一个长度为num+1的int数组，其中存放着每个二进制数的1的个数。要求算法复杂度O(n)</p>
 
 <p>#算法</p>
 
-<p>使用一个Queue，每次push操作依次将首部的元素放到尾部，直到新添加的元素到首部。其它操作不变。</p>
+<p>对每个数求1的个数然后求num+1次是最简单的方法，算法复杂度是O(n*sizeof(1+2+…+num+1))。要达到O(n)的算法复杂度，仔细思考有两种可能性：</p>
+
+<ul>
+  <li>对每个数求二进制有多少个1存在O(1)的算法</li>
+  <li>后面的二进制有多少个1能根据前面已经求出来的计算而得，也就是动态规划算法</li>
+</ul>
+
+<p>第一种可能性基本排除，因为直觉感觉不可能，所以显然要用动态规划算法。得到递推公式：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>result[i] = result[i &amp; (i - 1)] + 1
+</code></pre>
+</div>
+
+<p>i &amp; (i - 1)是bit manipulation常用手段，得到的是i去掉最后一位1的结果，这个结果比i小，所以之前必然已经计算得出结果，而这两个数相差1的个数则是1，所以加1得到i的二进制表示中所含1的个数。</p>
 
 <p>#代码</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class MyStack {
-	private Queue&lt;Integer&gt; queue = new LinkedList&lt;Integer&gt;();
-
-	// Push element x onto stack.
-	public void push(int x) {
-    	queue.offer(new Integer(x));
-    	for (int i = 0; i &lt; queue.size() - 1; i++) {
-        	queue.offer(queue.poll());
+<div class="highlighter-rouge"><pre class="highlight"><code>public class Solution {
+	public int[] countBits(int num) {
+    	int[] result = new int[num + 1];
+    	result[0] = 0;
+    	for (int i = 1; i &lt;= num; i++) {
+        	result[i] = result[i&amp;(i-1)] + 1;
     	}
-	}
-
-	// Removes the element on top of the stack.
-	public void pop() {
-    	queue.poll();
-	}
-
-	// Get the top element.
-	public int top() {
-    	return queue.peek().intValue();
-	}
-
-	// Return whether the stack is empty.
-	public boolean empty() {
-    	return queue.isEmpty();
+    	return result;
 	}
 }
 </code></pre>
@@ -169,13 +166,9 @@
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/blog/2016/04/19/Leetcode-1-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 1 Summary">&larr; Previous Post</a>
+                        <a href="/blog/2016/04/19/Leetcode-225-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 225 Summary">&larr; Previous Post</a>
                     </li>
                     
-                    
-                    <li class="next">
-                        <a href="/blog/2016/04/20/Leetcode-338-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 338 Summary">Next Post &rarr;</a>
-                    </li>
                     
                 </ul>
 
@@ -193,16 +186,12 @@
                 </style>
 
                 <div class="ds-share"
-                    data-thread-key="/blog/2016/04/19/Leetcode-225-summary" data-title="Leetcode Problem 225 Summary"
+                    data-thread-key="/blog/2016/04/20/Leetcode-338-summary" data-title="Leetcode Problem 338 Summary"
                     data-images="http://lisentoday/img/green.jpg"
                     data-content="#题目
 
-使用Queue数据结构实现Stack数据结构
-
-#算法
-
-使用一个Queue，每次push操作依次将首部的元素放到尾部，直到新添加的元素到首部。... | Microdust:Azeril's blog"
-                    data-url="http://lisentoday/blog/2016/04/19/Leetcode-225-summary/">
+输入是一个非负整数num，输出从0到num的每个数的二进制表示有多少个1，输出一个长度为num+1的int数组，其中存放着每个二进制数的1的个数... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/04/20/Leetcode-338-summary/">
                     <div class="ds-share-inline">
                       <ul  class="ds-share-icons-16">
 
@@ -221,7 +210,7 @@
 
                 <!-- 多说评论框 start -->
                 <div class="comment">
-                    <div class="ds-thread" data-thread-key="/blog/2016/04/19/Leetcode-225-summary" data-title="Leetcode Problem 225 Summary" data-url="http://lisentoday/blog/2016/04/19/Leetcode-225-summary/"></div>
+                    <div class="ds-thread" data-thread-key="/blog/2016/04/20/Leetcode-338-summary" data-title="Leetcode Problem 338 Summary" data-url="http://lisentoday/blog/2016/04/20/Leetcode-338-summary/"></div>
                 </div>
                 <!-- 多说评论框 end -->
             </div>
