@@ -64,7 +64,7 @@ function getInput(options, callback) {
 
 getInput({name:"Rich",speciality:"JavaScript"}, logStuff);
 
-```javascript
+```
 
 ### 可以传递参数到回调函数中
 
