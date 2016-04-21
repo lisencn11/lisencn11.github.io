@@ -29,7 +29,7 @@ zhihu_username:
 markdown: kramdown
 kramdown: 
   default_lang: java
-  # input:GFM
+  input:GFM
 highlighter: rouge
 permalink: pretty
 paginate: 8

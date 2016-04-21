@@ -33,6 +33,6 @@ i & (i - 1)是bit manipulation常用手段，得到的是i去掉最后一位1的
         	for (int i = 1; i <= num; i++) {
             	result[i] = result[i&(i-1)] + 1;
         	}
-        	return resulth1;
+        	return result;
     	}
 	}
