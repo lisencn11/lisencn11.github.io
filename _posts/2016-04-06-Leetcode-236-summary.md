@@ -22,7 +22,7 @@ recursion方法十分简单，我们只需找到根结点左子树中p和q的公
 
 # Java代码
 
-```javascript
+```javas
 
 /**
 	* Definition for a binary tree node.
