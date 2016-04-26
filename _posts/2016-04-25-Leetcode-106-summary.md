@@ -80,7 +80,7 @@ public class Solution {
 
 # 更进一步
 
-我的程序运行结果很慢，Discussion中得票最高的答案使用相同的算法，但是使用HashMap在inorder中查找根节点，结果很快，于是改用HashMap后的代码如下，这里注意，因为HashMap存储的是inorder全局的index，而之前循环查找的是子树array的index，所以要对穿参进行修改。
+我的程序运行结果很慢，Discussion中得票最高的答案使用相同的算法，但是使用HashMap在inorder中查找根节点，结果很快，于是改用HashMap后的代码如下，这里注意，因为HashMap存储的是inorder全局的index，而之前循环查找的是子树array的index，所以要对传参进行修改。
 
 ```java
 
