@@ -13,60 +13,26 @@ tags: [study]
 
 ### 类图
 
-![template0](http://www.dofactory.com/images/diagrams/net/template.gif)
+![template0](http://pic002.cnblogs.com/images/2012/358984/2012042721423687.png)
 
 ### 定义
 
-**模版方法模式**在一个方法中定义一个算法的骨架，而将一些步骤延迟到子类中。模版方法使得子类可以在不改变算法结构的情况下，重新定义算法中的某些步骤。
+**迭代器模式**提供一种方法顺序访问一个聚合对象中的各个元素，而又不暴露其内部的表示。
 
-# 好莱坞原则
+# 单一责任原则
 
-**别调用我们，我们会调用你。**
+**一个类应该只有一个引起变化的原因**
 
-在好莱坞原则之下，我们允许低层组件将自己挂钩到系统上，但是高层组件会决定什么时候喝怎样使用这些低层组件。换句话说，高层组件对待低层组件的方式是“别调用我们，我们会调用你”。
+这个原则告诉我们将一个责任只指派给一个类。例如如果不使用迭代器，那么一个类不但要完成自己的事情（管理某种聚合），孩童时要承担遍历的责任。如果有一个类具有两个改变的原因，那么会使得该类的变化几率上升。
 
-# 钩子
+# 组合模式
 
-钩子是一种被声明在抽象类中的方法，但只有空的或者默认的实现。
+### 定义
 
-钩子的存在，可以让子类有能力对算法的不同点进行挂钩。要不要挂钩，由子类自行决定。
+**组合模式**允许你将对象组合成树形结构来表现“整体/部分”层次结构。组合能让客户以一致的方式处理个别对象以及对象组合。
 
-```java
+![composite](http://blog.lukaszewski.it/wp-content/uploads/2013/11/coposite_diagram.png)
 
-public abstract class CaffeineBeverageWithHook {
-    void prepareRecipe() {
-        boilWater();
-        brew();
-        pourInCup();
+### 利用组合设计菜单
 
-        if (customerWantsCondiments()) { // hook
-            addCondiments();
-        }
-    }
-
-    abstract void brew();
-
-    abstract void addCondiments();
-
-    void boilWater() {
-        System.out.println("Boiling water");
-    }
-
-    void portInCup() {
-        System.out.println("Pouring into cup");
-    }
-
-    boolean customerWantsCondiments() { // hook
-        return true;
-    }
-}
-
-```
-
-加上一个条件语句，**customerWantsCondiments()**是一个钩子，有一个缺省实现，子类可以覆盖这个方法。
-
-### 使用钩子的时间
-
-当子类“必须”提供算法中某个方法或步骤的实现时，就使用抽象方法。
-
-如果算法的这个部分是可选的，就用钩子。
+![composite](http://pic002.cnblogs.com/images/2012/358984/2012050320423780.png)
