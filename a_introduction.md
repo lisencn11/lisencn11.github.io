@@ -10,7 +10,7 @@ header-img: "img/green.jpg"
 
 现在对 **Machine Learning** 很感兴趣。
 
-###坚信
+### 坚信
 
 
 - 努力都将得到回报
@@ -19,7 +19,7 @@ header-img: "img/green.jpg"
 - 美好与进步需要记录
 
 
-###关注：
+### 关注：
 
 
 - Machine Learning
@@ -29,7 +29,7 @@ header-img: "img/green.jpg"
 - [北邮人论坛](http://bbs.byr.cn/)
 
 
-###联系
+### 联系
 
 - [博客：www.lisentoday.com](www.lisentoday.com)
 - [Email: lisencn11@gmail.com](mailto:lisencn11@gmail.com)
