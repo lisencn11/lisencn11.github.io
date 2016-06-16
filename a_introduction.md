@@ -6,7 +6,7 @@ header-img: "img/green.jpg"
 ---
 
 
-我叫李森，本科毕业于北京邮电大学-计算机科学与技术专业，硕士就读于Stony Brook University Computer Science Department，拖延症晚期患者，目前正在进行康复性训练。一个不会修电脑的程序员。
+李森，先后就读于，北京市第八中学，北京邮电大学本科-计算机科学与技术专业，美国纽约州立大学石溪分校硕士-计算机科学专业(Stony Brook University Computer Science Department)。曾经的拖延症晚期患者，目前基本康复，一个爱写代码的程序员。
 
 现在对 **Machine Learning** 很感兴趣。
 
@@ -33,10 +33,10 @@ header-img: "img/green.jpg"
 
 - [博客：www.lisentoday.com](www.lisentoday.com)
 - [Email: lisencn11@gmail.com](mailto:lisencn11@gmail.com)
-- <u><font color="blue">[微博@阿森能发电](http://weibo.com/1636359473)</font></u>
+- [微博@阿森能发电](http://weibo.com/1636359473)
 - [facebook@Sen Li](https://www.facebook.com/sen.li.7374)
 
-
+### 简历
 
 
 
