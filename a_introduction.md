@@ -33,7 +33,7 @@ header-img: "img/green.jpg"
 
 - [博客：www.lisentoday.com](www.lisentoday.com)
 - [Email: lisencn11@gmail.com](mailto:lisencn11@gmail.com)
-- [微博@阿森能发电](http://weibo.com/1636359473)
+- <u><font color="blue">[微博@阿森能发电](http://weibo.com/1636359473)</font></u>
 - [facebook@Sen Li](https://www.facebook.com/sen.li.7374)
 
 
