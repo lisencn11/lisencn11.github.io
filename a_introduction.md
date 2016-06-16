@@ -38,4 +38,4 @@ header-img: "img/green.jpg"
 
 ### 简历
 
-![resume](lisencn11.github.io/img/2016 Summer Software Development Engineering Intern-Sen Li-Stony Brook University.png)
+![resume](https://lisencn11.github.io/img/2016 Summer Software Development Engineering Intern-Sen Li-Stony Brook University.png)
