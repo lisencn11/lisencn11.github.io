@@ -16,6 +16,4 @@ header-img: "img/orange.jpg"
     {% endfor %}
   {% endif %}
 {% endfor %}
-
-
 </ul>
