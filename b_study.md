@@ -13,6 +13,7 @@ header-img: "img/orange.jpg"
       <li class="listing-item">
         <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
         <a href="{{ post.url }}" title="{{ post.tile }}">{{ post.title }}</a>
+      </li>
     {% endfor %}
   {% endif %}
 {% endfor %}
