@@ -1,7 +1,7 @@
 ---
 layout: post  
 title: CC150 Chapter 11---Sorting Questions  
-date: 2016-06-24  
+date: 2016-06-27 
 categories: blog  
 tags: [study]
 
