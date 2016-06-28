@@ -1,8 +1,8 @@
 ---
-layout: post
-title: CC150 Chapter 11---Sorting Questions
-date: 2016-06-24
-categories: blog
+layout: post  
+title: CC150 Chapter 11---Sorting Questions  
+date: 2016-06-24  
+categories: blog  
 tags: [study]
 
 ---
