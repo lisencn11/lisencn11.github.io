@@ -23,7 +23,7 @@ tags: [study]
 
 # 代码
 
-```java
+{% highlight java %}
 public class Solution {
     public int countNumbersWithUniqueDigits(int n) {
         if (n == 0) {
@@ -52,4 +52,4 @@ public class Solution {
         return -1;
     }
 }
-```
+{% endhighlight %}
