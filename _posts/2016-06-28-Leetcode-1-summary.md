@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Leetcode Problem 49 Summary
-date: 2016-06-22
+title: Leetcode Problem 1 Summary
+date: 2016-06-28
 categories: blog
 tags: [study]
 
