@@ -58,6 +58,8 @@ public class Solution {
         }
         return result;
     }
+}
+public class Solution {
     public int countNumbersWithUniqueDigits(int n) {
         if (n == 0) {
             return 1;
