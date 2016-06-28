@@ -25,8 +25,31 @@ tags: [study]
 
 ```java
 public class Solution {
-    public static void main(String[] args) {
-        int i = 1;
+    public int countNumbersWithUniqueDigits(int n) {
+        if (n == 0) {
+            return 1;
+        }
+        int[] totalCount = new int[10];
+        int[] nthCount = new int[10];
+        totalCount[0] = 10;
+        nthCount[0] = 9;
+        
+        if (1 == n) {
+            return totalCount[0];
+        }
+        
+        for (int i = 1, j = 9; i < 10; i++, j--) {
+            nthCount[i] = nthCount[i - 1] * j;
+            totalCount[i] = totalCount[i - 1] + nthCount[i];
+            if ((i + 1) == n) {
+                return totalCount[i];
+            }
+        }
+        
+        if (n > 10) {
+            return totalCount[9];
+        }
+        return -1;
     }
 }
 ```
