@@ -53,3 +53,39 @@ public class Solution {
     }
 }
 ```
+
+```java
+public class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        if (strs == null || strs.length == 0) {
+            return new ArrayList<List<String>>();
+        }
+        
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        List<String> list = null;
+        List<List<String>> result = new ArrayList<List<String>>();
+        
+        for (String s : strs) {
+            char[] c = s.toCharArray();
+            Arrays.sort(c);
+            String stringKey = s.valueOf(c);
+            if (!map.containsKey(stringKey)) {
+                list = new ArrayList<String>();
+                list.add(s);
+                map.put(stringKey, list);
+            } else {
+                list = map.get(stringKey);
+                list.add(s);
+                map.put(stringKey, list);
+            }
+        }
+        
+        Set<String> set = map.keySet();
+        for (String s : set) {
+            list = map.get(s);
+            result.add(list);
+        }
+        return result;
+    }
+}
+```
