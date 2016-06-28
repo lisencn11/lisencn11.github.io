@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="李森|不仅仅是一个程序员">
+
+    <title>CC150 Chapter 12---Testing - 四木成森</title>
+
+    <link rel="canonical" href="http://lisentoday/blog/2016/06/21/CC150-Ch12-summary/">
+
+    <!-- Icons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+
+
+
+
+
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">四木成森</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">主页</a>
+                </li>
+                
+                <li>
+                    <a href="/a_introduction/">我的简介</a>
+                </li>
+                
+                <li>
+                    <a href="/b_study/">学习</a>
+                </li>
+                
+                <li>
+                    <a href="/c_life/">生活</a>
+                </li>
+                
+                <li>
+                    <a href="/d_collection/">我的收藏</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/green.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="Tags">
+                        
+                        <a class="tag" href="/Tags/#study" title="study">study</a>
+                        
+                    </div>
+                    <h1>CC150 Chapter 12---Testing</h1>
+                    
+                    <span class="meta">Posted by lisen on June 21, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
+
+                <h1 id="section">测试问题分类</h1>
+
+<ol>
+  <li>测试现实世界对象（如钢笔）</li>
+  <li>测试一个软件</li>
+  <li>为一个函数写测试代码</li>
+  <li>定位问题所在</li>
+</ol>
+
+<h1 id="section-1">面试官考察点</h1>
+
+<ul>
+  <li>产品理解：比如测试电子商务系统（亚马逊），比起图片是否在正确位置而言，支付是否可靠，产品是否加入购物车，顾客从不被多收钱 更重要。</li>
+  <li>清楚各组件如何协作：是否理解一个软件在一个更大的软件生态系统中如何协作。比如对于测试Google Spreadsheet，测试打开，存储，编辑功能很重要，但测试与Gmail，插件和其它部件的整合效果也很重要</li>
+  <li>组织逻辑能力：解决问题时，你是否能由组织有逻辑，还是想到什么说什么。比如测试相机，可以分成照相功能，照片管理，系统设定等等。</li>
+  <li>现实可行性：测试是否可行，比如用户反馈打开照片时程序崩溃，你却告诉他们重装软件，这不现实。你的测试计划应该切实可行。</li>
+</ul>
+
+<h1 id="section-2">测试现实世界对象</h1>
+
+<h3 id="section-3">如何测试一个曲别针</h3>
+
+<h3 id="section-4">谁会使用它？使用的用途？</h3>
+
+<p>你需要和面试官沟通曲别针的使用者，用途。可能是老师用来把纸夹在一起，也可能是艺术家弯曲成动物的形状，根据使用者和用途的不同，你的处理方式也会相应改变。</p>
+
+<h3 id="section-5">用例</h3>
+
+<blockquote>
+  <p>用例(use case): A use case is a series of related interactions between a user (or more generally, an “actor”) and a system that enables the user to achieve a goal.</p>
+</blockquote>
+
+<p>你需要列出用例，在本例中，用例只是简单的把纸无损地固定在一起，在其它问题中，可能会有多个用例。</p>
+
+<h3 id="bounds-of-use">使用边界(bounds of use)</h3>
+
+<p>使用边界意思是，曲别针对于30页以下可以做到无损，30到50页可以做到微小损坏。</p>
+
+<p>使用边界也可以扩展到环境因素。比如曲别针是否需要在极热或极寒条件下使用。</p>
+
+<h3 id="section-6">压力/失败条件</h3>
+
+<p>任何产品都肯定有失败条件，分析失败条件也是测试的一部分。和你的面试官讨论何时失败是可以接受的，失败的方式是什么。</p>
+
+<p>比如测试洗衣机：最多可以洗30件衣服；30-45件会有小失败，比如没洗干净；45件以上是严重失败，这是可以接受的。但严重失败应该是洗衣机不转动，而不是让家里发洪水或者电路故障。</p>
+
+<h3 id="section-7">如何测试</h3>
+
+<p>比如你想测试一个椅子在普通使用下能用5年。显然放在屋里用5年不可行，你可以定义普通使用是每年坐多少次，然后交给机器进行测试。</p>
+
+<h1 id="section-8">测试一个软件</h1>
+
+<ul>
+  <li>手动vs自动：我们自然喜欢自动测试，但有些特性机器无法检测，比如内容是否违规。此外，机器只能按照我们定义的规则测试，但人类可能发现一些没想到的新问题。</li>
+  <li>黑盒vs白盒：黑盒测试我们不了解软件内部，白盒测试我们了解软件内部。</li>
+</ul>
+
+<h3 id="section-9">1. 黑盒测试还是白盒测试？</h3>
+
+<p>和你的面试官沟通是黑盒还是白盒。</p>
+
+<h3 id="section-10">2. 使用者？用途？</h3>
+
+<p>比如测试一个年龄管制浏览器：使用者有家长，儿童和游客；用途是实施屏蔽，接受屏蔽，什么都不做。</p>
+
+<h3 id="section-11">3. 用例？</h3>
+
+<p>以年龄管制浏览器为例。家长用例包括：安装，更新管制，移除管制，家长自己的网络使用。儿童用例包括：浏览合法内容。</p>
+
+<p>谨记用例不由你决定，而是你和面试官沟通决定。</p>
+
+<h3 id="section-12">4. 使用边界</h3>
+
+<p>明确用例。比如是屏蔽当前网页还是整个网站？软件是否有自我学习能力还是根据黑白名单？如果有自我学习能力，误检率多少可以接受？</p>
+
+<h3 id="section-13">5. 压力/失败条件</h3>
+
+<p>显然，当软件失败，不能使电脑崩溃。可能失败时是放过了一个应该屏蔽的网页，或者屏蔽了一个安全的网页，当后者发生，家长应该可以通过密码对网页进行访问。</p>
+
+<h3 id="section-14">6. 测例？如何测试？</h3>
+
+<p>手动测试还是自动测试？黑盒测试还是白盒测试？分成哪几个主要部件，分别讨论。</p>
+
+<h1 id="section-15">为一个函数写测试代码</h1>
+
+<p>需要注意特殊情况的处理，比如写一段代码测试<strong>sort(int[] array)</strong>。</p>
+
+<h3 id="section-16">1. 定义测试用例</h3>
+
+<ul>
+  <li>正常测试：对于一般输入是否输出正确结果？思考所有的可能性，比如排序通常需要划分，那么奇数个数和偶数个数都要测试。</li>
+  <li>极端测试：空数组？一个元素的数组？非常大的数组？</li>
+  <li>空输入和非法输入：比如测试斐波纳切数，当n为负数？</li>
+  <li>奇怪输入：输入是一个排好序的数组，或反序排列的数组？</li>
+</ul>
+
+<h3 id="section-17">2. 定义期待输出</h3>
+
+<p>是输出新数组还是远数组？输出新数组的话原数组是否被改变？</p>
+
+<h3 id="section-18">3. 写测试代码</h3>
+
+<h1 id="section-19">定位问题所在</h1>
+
+<p>简单来说就是考察debug。</p>
+
+<p>假设你在Google Chrome组，收到一个bug，“打开时崩溃”，你应该怎么做？</p>
+
+<h3 id="section-20">1. 理解问题</h3>
+
+<ul>
+  <li>问题出现多久了？</li>
+  <li>浏览器版本？操作系统？</li>
+  <li>问题是否持续出现？出现频率？什么时候开始出现？</li>
+  <li>是否有错误报告显示出来？</li>
+</ul>
+
+<h3 id="section-21">2. 分解问题</h3>
+
+<ol>
+  <li>前往Windows开始菜单</li>
+  <li>点击Chrome按钮</li>
+  <li>浏览器启动</li>
+  <li>浏览器加载设定</li>
+  <li>浏览器发起HTTP请求</li>
+  <li>浏览器的到HTTP回复</li>
+  <li>浏览器分析网页</li>
+  <li>浏览器现实内容</li>
+</ol>
+
+<p>上面某步存在问题，依次检查分析问题。</p>
+
+<h3 id="section-22">3. 进行测试</h3>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blog/2016/06/20/Proxy-Pattern/" data-toggle="tooltip" data-placement="top" title="Proxy Pattern Summary">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/blog/2016/06/22/CC150-Ch12-Questions/" data-toggle="tooltip" data-placement="top" title="CC150 Chapter 22---Testing Questions">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- Duoshuo Share start -->
+                <style>
+                    .ds-share{
+                        text-align: right;
+                    }
+                    
+                    @media only screen and (max-width: 700px) {
+                        .ds-share {
+
+                        }
+                    }
+                </style>
+
+                <div class="ds-share"
+                    data-thread-key="/blog/2016/06/21/CC150-Ch12-summary" data-title="CC150 Chapter 12---Testing"
+                    data-images="http://lisentoday/img/green.jpg"
+                    data-content="测试问题分类
+
+
+  测试现实世界对象（如钢笔）
+  测试一个软件
+  为一个函数写测试代码
+  定位问题所在
+
+
+面试官考察点
+
+
+  产品理解：比如测... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/06/21/CC150-Ch12-summary/">
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- Duoshuo Share end-->
+
+
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread" data-thread-key="/blog/2016/06/21/CC150-Ch12-summary" data-title="CC150 Chapter 12---Testing" data-url="http://lisentoday/blog/2016/06/21/CC150-Ch12-summary/"></div>
+                </div>
+                <!-- 多说评论框 end -->
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"cnfeat"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <!-- kill the Facebook and Weibo -->
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    
+                    <!--
+                    
+                    -->
+
+                    <!--
+                    
+                    -->
+
+                    
+                    <!--
+                    
+                    -->
+
+                </ul>
+                <p class="copyright text-muted">
+                &copy; 2016 lisen ❖ Powered by Jekyll.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+
+
+<!-- Highlight.js -->
+<script>
+    async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js",function(){
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+<link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

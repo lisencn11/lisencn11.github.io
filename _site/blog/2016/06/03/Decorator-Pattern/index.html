@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="李森|不仅仅是一个程序员">
+
+    <title>Decorator Pattern Summary - 四木成森</title>
+
+    <link rel="canonical" href="http://lisentoday/blog/2016/06/03/Decorator-Pattern/">
+
+    <!-- Icons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+
+
+
+
+
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">四木成森</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">主页</a>
+                </li>
+                
+                <li>
+                    <a href="/a_introduction/">我的简介</a>
+                </li>
+                
+                <li>
+                    <a href="/b_study/">学习</a>
+                </li>
+                
+                <li>
+                    <a href="/c_life/">生活</a>
+                </li>
+                
+                <li>
+                    <a href="/d_collection/">我的收藏</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/green.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="Tags">
+                        
+                        <a class="tag" href="/Tags/#study" title="study">study</a>
+                        
+                    </div>
+                    <h1>Decorator Pattern Summary</h1>
+                    
+                    <span class="meta">Posted by lisen on June 3, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
+
+                <h1 id="section">设计模式-装饰者模式</h1>
+
+<p>用对象组合的方式，做到在运行时装饰类。能够在不修改任何底层代码的情况下，给对象赋予新的职责。</p>
+
+<h1 id="section-1">设计原则</h1>
+
+<p>开放-关闭原则</p>
+
+<blockquote>
+  <p>类应该对扩展开放，对修改关闭。</p>
+</blockquote>
+
+<h1 id="section-2">定义</h1>
+
+<p>装饰者模式动态地将责任附加到对象上。若要扩展功能，装饰者提供了比继承更有弹性的替代方案。</p>
+
+<h1 id="section-3">缺点</h1>
+
+<ul>
+  <li>大量的小类</li>
+  <li>有些代码会依赖特定的类型，这样的代码导入装饰者会出问题</li>
+  <li>实例化组件时增加代码复杂度</li>
+</ul>
+
+<h1 id="section-4">代码</h1>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Beverage</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">description</span> <span class="o">=</span> <span class="s">"Unknown Beverage"</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">getDescription</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">description</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">abstract</span> <span class="kt">double</span> <span class="n">cost</span><span class="o">();</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Espresso</span> <span class="kd">extends</span> <span class="n">Beverage</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Espresso</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="s">"Espresso"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">double</span> <span class="n">cost</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="mf">1.99</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HouseBlend</span> <span class="kd">extends</span> <span class="n">Beverage</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">HouseBlend</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="s">"House Blend Coffee"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">double</span> <span class="n">cost</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="mf">0.89</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">CondimentDecorator</span> <span class="kd">extends</span> <span class="n">Beverage</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">String</span> <span class="n">getDescription</span><span class="o">();</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Mocha</span> <span class="kd">extends</span> <span class="n">CondimentDecorator</span> <span class="o">{</span>
+    <span class="n">Beverage</span> <span class="n">beverage</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">Mocha</span><span class="o">(</span><span class="n">Beverage</span> <span class="n">beverage</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">beverage</span> <span class="o">=</span> <span class="n">beverage</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">getDescription</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">beverage</span><span class="o">.</span><span class="na">getDescription</span><span class="o">()</span> <span class="o">+</span> <span class="s">", Mocha"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">double</span> <span class="n">cost</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="mf">0.2</span> <span class="o">+</span> <span class="n">beverage</span><span class="o">.</span><span class="na">cost</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Soy</span> <span class="kd">extends</span> <span class="n">CondimentDecorator</span> <span class="o">{</span>
+    <span class="n">Beverage</span> <span class="n">beverage</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">Soy</span><span class="o">(</span><span class="n">Beverage</span> <span class="n">beverage</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">beverage</span> <span class="o">=</span> <span class="n">beverage</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">getDescription</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">beverage</span><span class="o">.</span><span class="na">getDescription</span><span class="o">()</span> <span class="o">+</span> <span class="s">", Soy"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">double</span> <span class="n">cost</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="mf">0.15</span> <span class="o">+</span> <span class="n">beverage</span><span class="o">.</span><span class="na">cost</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Whip</span> <span class="kd">extends</span> <span class="n">CondimentDecorator</span> <span class="o">{</span>
+    <span class="n">Beverage</span> <span class="n">beverage</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">Whip</span><span class="o">(</span><span class="n">Beverage</span> <span class="n">beverage</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">beverage</span> <span class="o">=</span> <span class="n">beverage</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">getDescription</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">beverage</span><span class="o">.</span><span class="na">getDescription</span><span class="o">()</span> <span class="o">+</span> <span class="s">", Whip"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">double</span> <span class="n">cost</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="n">beverage</span><span class="o">.</span><span class="na">cost</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kn">import</span> <span class="nn">java.io.BufferedInputStream</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.FileInputStream</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.InputStream</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Beverage beverage = new Espresso();</span>
+        <span class="c1">// System.out.println(beverage.getDescription() + " $" + beverage.cost());</span>
+
+        <span class="c1">// Beverage beverage2 = new HouseBlend();</span>
+        <span class="c1">// beverage2 = new Mocha(beverage2);</span>
+        <span class="c1">// beverage2 = new Mocha(beverage2);</span>
+        <span class="c1">// beverage2 = new Whip(beverage2);</span>
+        <span class="c1">// System.out.println(beverage2.getDescription() + " $" + beverage2.cost());</span>
+
+        <span class="c1">// Beverage beverage3 = new Espresso();</span>
+        <span class="c1">// beverage3 = new Soy(beverage3);</span>
+        <span class="c1">// beverage3 = new Mocha(beverage3);</span>
+        <span class="c1">// beverage3 = new Whip(beverage3);</span>
+        <span class="c1">// System.out.println(beverage3.getDescription() + " $" + beverage3.cost());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blog/2016/04/28/Leetcode-113-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 113 Summary">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/blog/2016/06/03/Factory-Pattern/" data-toggle="tooltip" data-placement="top" title="Factory Pattern Summary">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- Duoshuo Share start -->
+                <style>
+                    .ds-share{
+                        text-align: right;
+                    }
+                    
+                    @media only screen and (max-width: 700px) {
+                        .ds-share {
+
+                        }
+                    }
+                </style>
+
+                <div class="ds-share"
+                    data-thread-key="/blog/2016/06/03/Decorator-Pattern" data-title="Decorator Pattern Summary"
+                    data-images="http://lisentoday/img/green.jpg"
+                    data-content="设计模式-装饰者模式
+
+用对象组合的方式，做到在运行时装饰类。能够在不修改任何底层代码的情况下，给对象赋予新的职责。
+
+设计原则
+
+开放-关闭原则
+
+
+ ... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/06/03/Decorator-Pattern/">
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- Duoshuo Share end-->
+
+
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread" data-thread-key="/blog/2016/06/03/Decorator-Pattern" data-title="Decorator Pattern Summary" data-url="http://lisentoday/blog/2016/06/03/Decorator-Pattern/"></div>
+                </div>
+                <!-- 多说评论框 end -->
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"cnfeat"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <!-- kill the Facebook and Weibo -->
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    
+                    <!--
+                    
+                    -->
+
+                    <!--
+                    
+                    -->
+
+                    
+                    <!--
+                    
+                    -->
+
+                </ul>
+                <p class="copyright text-muted">
+                &copy; 2016 lisen ❖ Powered by Jekyll.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+
+
+<!-- Highlight.js -->
+<script>
+    async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js",function(){
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+<link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

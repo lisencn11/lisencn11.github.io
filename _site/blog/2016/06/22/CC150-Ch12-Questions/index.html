@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="李森|不仅仅是一个程序员">
+
+    <title>CC150 Chapter 22---Testing Questions - 四木成森</title>
+
+    <link rel="canonical" href="http://lisentoday/blog/2016/06/22/CC150-Ch12-Questions/">
+
+    <!-- Icons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+
+
+
+
+
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">四木成森</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">主页</a>
+                </li>
+                
+                <li>
+                    <a href="/a_introduction/">我的简介</a>
+                </li>
+                
+                <li>
+                    <a href="/b_study/">学习</a>
+                </li>
+                
+                <li>
+                    <a href="/c_life/">生活</a>
+                </li>
+                
+                <li>
+                    <a href="/d_collection/">我的收藏</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/green.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="Tags">
+                        
+                        <a class="tag" href="/Tags/#study" title="study">study</a>
+                        
+                    </div>
+                    <h1>CC150 Chapter 22---Testing Questions</h1>
+                    
+                    <span class="meta">Posted by lisen on June 22, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
+
+                <h3 id="bug">找bug</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<ol>
+  <li>变量i是unsigned int，所以永远会大于等于0，循环不会结束</li>
+  <li>变量i是unsigned int，所以打印时要用%u</li>
+</ol>
+
+<h3 id="debuggerc">你被告知程序在运行时崩溃，但你在debugger里运行了多次却从没在那里崩溃，程序是单线程，只用c标准库的。有可能是什么错误？你会怎么进行测试？</h3>
+
+<p>我们可以看出这是个随机错误：</p>
+
+<ol>
+  <li>随机变量。程序中的随机变量可能有问题，包括用户输入，程序随机数或者时间。</li>
+  <li>未初始化变量。未初始化变量的初始值在不同环境可能不同。</li>
+  <li>内存泄漏。这取决于同时运行的其它进程。</li>
+  <li>外部依赖。程序可能依赖其它程序。</li>
+</ol>
+
+<p>此外，操作的不同可能导致看似随机错误，如只有在进行I/O操作时才会出错。</p>
+
+<h3 id="canmovetoint-x-in-y">象棋游戏中有这样一个方法canMoveTo(int x, in y)，返回当前棋子是否能移动到指定地点，对这个方法进行测试</h3>
+
+<p>我们进行两类测试极端测试(extreme case validation)和普通测试(general case testing)。</p>
+
+<h5 id="section">1. 极端测试</h5>
+
+<ul>
+  <li>x和y取负值</li>
+  <li>x比宽大</li>
+  <li>y比高大</li>
+  <li>用一个满了的棋盘测试</li>
+  <li>用一个空的棋盘测试</li>
+  <li>用一个白棋远多于黑棋的棋盘</li>
+  <li>用一个黑棋远多于白棋的棋盘</li>
+</ul>
+
+<h5 id="section-1">2. 普通测试</h5>
+
+<p>关键点在于说明我们不能测试所有的可能情况</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">foreach</span> <span class="n">piece</span> <span class="nl">a:</span>
+    <span class="n">foreach</span> <span class="n">other</span> <span class="n">type</span> <span class="n">of</span> <span class="n">piece</span> <span class="n">b</span> <span class="o">(</span><span class="mi">6</span> <span class="n">types</span> <span class="o">+</span> <span class="n">empty</span> <span class="n">space</span><span class="o">)</span>
+        <span class="n">foreach</span> <span class="n">direction</span> <span class="n">d</span>
+            <span class="n">create</span> <span class="n">a</span> <span class="n">board</span> <span class="n">with</span> <span class="n">piece</span> <span class="n">a</span><span class="o">.</span>
+            <span class="n">place</span> <span class="n">piece</span> <span class="n">b</span> <span class="n">in</span> <span class="n">direction</span> <span class="n">d</span><span class="o">.</span>
+            <span class="k">try</span> <span class="n">to</span> <span class="n">move</span> <span class="o">-</span> <span class="n">check</span> <span class="k">return</span> <span class="n">value</span><span class="o">.</span>
+</code></pre>
+</div>
+
+<h3 id="load-test">如何不使用任何测试工具，对一个网页进行负载测试(load test)</h3>
+
+<p>负载测试目的：</p>
+
+<ul>
+  <li>测试网站最大运营能力</li>
+  <li>网站瓶颈</li>
+  <li>对于不同负载的响应速度</li>
+</ul>
+
+<p>评价标准：</p>
+
+<ul>
+  <li>Response time（响应时间）</li>
+  <li>Throughput（吞吐量）</li>
+  <li>Resource utilization（资源利用率）</li>
+  <li>Maximum load that the system can bear（最大负载量）</li>
+</ul>
+
+<p>缺乏测试工具的情况下，我们可以自己创造情景，比如测试并发：用多线程创造成千的虚拟用户，对于每一个用户测试响应时间，数据量。</p>
+
+<h3 id="section-2">如何测试一支钢笔</h3>
+
+<p>检测的事<strong>理解限制条件与有条理地解决问题</strong>的能力</p>
+
+<h5 id="section-3">理解限制条件</h5>
+
+<p>问面试官问题以理解”who what where when how why”。时刻谨记好的测试人员在测试前要完全了解他要测试的东西。</p>
+
+<p>可能的问题：<br />
+1. 谁会使用？
+2. 用途？写字，画画？
+3. 在哪里写？纸？衣服？墙？
+4. 顶端类型？felt(毛毡)？还是ball point(圆珠)？</p>
+
+<p>测试：<br />
+* 特征检测：确定是毛毡顶端等等
+* 用途：衣服画画。是否正常在衣服上画画？
+* 用途：可洗。是否可以从衣服上洗掉（即是很长时间后）？在热水，温水，冷水中洗掉？
+* 安全：是否无毒？
+* 非目的用途：儿童还可能如何使用？踩，扔？确保钢笔经受住考验。</p>
+
+<h3 id="atm">如何测试一个分布式银行系统的ATM机</h3>
+
+<p>首先，搞清楚问题的前提条件：</p>
+
+<ul>
+  <li>谁会使用这台ATM机？是任何人，还是盲人，还是其他什么人？</li>
+  <li>用途是什么？取钱，转账，查询余额，还是有其他什么用途？</li>
+  <li>我们有什么测试工具？我们能接触到代码还是只能接触ATM机</li>
+</ul>
+
+<p>然后，分解问题：</p>
+
+<ul>
+  <li>登陆</li>
+  <li>取钱</li>
+  <li>存钱</li>
+  <li>查询余额</li>
+  <li>转账</li>
+</ul>
+
+<p>最后，手动测试与自动化测试：</p>
+
+<ul>
+  <li>手动测试遍历上面的步骤，保证检查到所有情形（余额不足，新账户，不存在的账户等等）</li>
+  <li>自动化测试包括自动化所有标准情景，以及竞争等特殊情境。即即是同一用户同一时间在不同地点存取钱，他也不会获得或者失去意料之外的钱。</li>
+</ul>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blog/2016/06/21/CC150-Ch12-summary/" data-toggle="tooltip" data-placement="top" title="CC150 Chapter 12---Testing">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/blog/2016/06/22/Leetcode-200-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 200 Summary">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- Duoshuo Share start -->
+                <style>
+                    .ds-share{
+                        text-align: right;
+                    }
+                    
+                    @media only screen and (max-width: 700px) {
+                        .ds-share {
+
+                        }
+                    }
+                </style>
+
+                <div class="ds-share"
+                    data-thread-key="/blog/2016/06/22/CC150-Ch12-Questions" data-title="CC150 Chapter 22---Testing Questions"
+                    data-images="http://lisentoday/img/green.jpg"
+                    data-content="找bug
+
+unsigned int i;
+for (int i = 100; i &gt;= 0; --i) {
+    printf("%d\n", ... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/06/22/CC150-Ch12-Questions/">
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- Duoshuo Share end-->
+
+
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread" data-thread-key="/blog/2016/06/22/CC150-Ch12-Questions" data-title="CC150 Chapter 22---Testing Questions" data-url="http://lisentoday/blog/2016/06/22/CC150-Ch12-Questions/"></div>
+                </div>
+                <!-- 多说评论框 end -->
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"cnfeat"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <!-- kill the Facebook and Weibo -->
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    
+                    <!--
+                    
+                    -->
+
+                    <!--
+                    
+                    -->
+
+                    
+                    <!--
+                    
+                    -->
+
+                </ul>
+                <p class="copyright text-muted">
+                &copy; 2016 lisen ❖ Powered by Jekyll.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+
+
+<!-- Highlight.js -->
+<script>
+    async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js",function(){
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+<link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="李森|不仅仅是一个程序员">
+
+    <title>Javascript Callback Understanding - 四木成森</title>
+
+    <link rel="canonical" href="http://lisentoday/blog/2016/04/01/Javascript-Callback/">
+
+    <!-- Icons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+
+
+
+
+
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">四木成森</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">主页</a>
+                </li>
+                
+                <li>
+                    <a href="/a_introduction/">我的简介</a>
+                </li>
+                
+                <li>
+                    <a href="/b_study/">学习</a>
+                </li>
+                
+                <li>
+                    <a href="/c_life/">生活</a>
+                </li>
+                
+                <li>
+                    <a href="/d_collection/">我的收藏</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/green.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="Tags">
+                        
+                        <a class="tag" href="/Tags/#study" title="study">study</a>
+                        
+                    </div>
+                    <h1>Javascript Callback Understanding</h1>
+                    
+                    <span class="meta">Posted by lisen on April 1, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
+
+                <h1 id="section">回调函数定义</h1>
+
+<p>回调函数是指一个函数作为参数传入另一个函数中，并在其中执行。常见的JQuery中的回调函数：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="nx">$</span><span class="p">(</span><span class="s2">"#button"</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span><span class="p">({</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="s2">"Button Clicked"</span><span class="p">);</span>
+<span class="p">}))</span>
+
+</code></pre>
+</div>
+
+<p>如上面代码所展示的，我们把一个函数作为参数传入click函数中，click函数会调用这个传入的函数。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">var</span> <span class="nx">friends</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Mike"</span><span class="p">,</span> <span class="s2">"Stacy"</span><span class="p">,</span> <span class="s2">"Andy"</span><span class="p">,</span> <span class="s2">"Rick"</span><span class="p">];</span>
+
+<span class="nx">friends</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">eachName</span><span class="p">,</span> <span class="nx">index</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">index</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="s2">"."</span> <span class="o">+</span> <span class="nx">eachName</span><span class="p">);</span>
+<span class="p">})</span>
+
+</code></pre>
+</div>
+
+<p>同样，上面代码中，我们传递了一个匿名函数作为forEach的参数</p>
+
+<h1 id="section-1">回调函数运行原理</h1>
+
+<p>我们可以把函数作为参数传递，可以作为返回值，可以在其他函数中调用。当我们把函数作为参数传递的时候，我们并没有执行这个函数，而是把函数的定义作为参数进行了传递，因此这个函数可以在之后的任何时间点执行。</p>
+
+<h1 id="section-2">使用回调函数的基本原则</h1>
+
+<h3 id="section-3">可以使用命名或匿名函数作为回调函数</h3>
+
+<p>最开始的代码是匿名函数的例子，这里给一个命名函数的例子</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">var</span> <span class="nx">allUserData</span> <span class="o">=</span> <span class="p">[];</span>
+
+<span class="kd">function</span> <span class="nx">logStuff</span><span class="p">(</span><span class="nx">userData</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">userData</span> <span class="o">===</span> <span class="s2">"string"</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">userData</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">userData</span> <span class="o">===</span> <span class="s2">"object"</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">item</span> <span class="k">in</span> <span class="nx">userData</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">item</span> <span class="o">+</span> <span class="s2">"."</span> <span class="o">+</span> <span class="nx">userData</span><span class="p">[</span><span class="nx">item</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">getInput</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">allUserData</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+    <span class="nx">callback</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">getInput</span><span class="p">({</span><span class="na">name</span><span class="p">:</span><span class="s2">"Rich"</span><span class="p">,</span><span class="na">speciality</span><span class="p">:</span><span class="s2">"JavaScript"</span><span class="p">},</span> <span class="nx">logStuff</span><span class="p">);</span>
+
+</code></pre>
+</div>
+
+<h3 id="section-4">可以传递参数到回调函数中</h3>
+
+<p>如上面的例子，我们把options传到callback中</p>
+
+<h3 id="section-5">在回调函数执行前确保参数的确是个函数</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">function</span> <span class="nx">getInput</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">allUserData</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">callback</span> <span class="o">===</span> <span class="s2">"function"</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">callback</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre>
+</div>
+
+<h3 id="this">在回调函数中使用this的问题</h3>
+
+<p>当回调函数中使用this的时候，我们需要修改callback以保持this中的内容不变。否则this可能指向全局window对象，也可能指向包含它的那个函数。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">var</span> <span class="nx">clientData</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">id</span><span class="p">:</span> <span class="mi">094545</span><span class="p">,</span>
+    <span class="na">fullName</span><span class="p">:</span> <span class="s2">"Not Set"</span><span class="p">,</span>
+
+    <span class="na">setUserName</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">firstName</span><span class="p">,</span> <span class="nx">lastName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fullName</span> <span class="o">=</span> <span class="nx">firstName</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="nx">lastName</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">fuction</span> <span class="nx">getUserInput</span><span class="p">(</span><span class="nx">firstName</span><span class="p">,</span> <span class="nx">lastName</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">callback</span><span class="p">(</span><span class="nx">firstName</span><span class="p">,</span> <span class="nx">lastName</span><span class="p">);</span>
+<span class="p">}</span>
+
+</code></pre>
+</div>
+
+<p>在接下来的代码中，当setUserName被执行的时候，this指向的并不是clientData对象，而是window对象，因为getUserInput是一个全局函数。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="nx">getUserInput</span><span class="p">(</span><span class="s2">"Barack"</span><span class="p">,</span> <span class="s2">"Obama"</span><span class="p">,</span> <span class="nx">clientData</span><span class="p">.</span><span class="nx">setUserName</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">clientData</span><span class="p">.</span><span class="nx">fullName</span><span class="p">);</span> <span class="c1">//Not Set</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">fullName</span><span class="p">);</span><span class="c1">// Barack Obama</span>
+
+</code></pre>
+</div>
+
+<p>我们可以使用<em>Call</em>或者<em>Apply</em>函数：用于设置this对象以及向函数传递参数。Call和Apply的第一个参数都是this对象：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">function</span> <span class="nx">getUserInput</span><span class="p">(</span><span class="nx">firstName</span><span class="p">,</span> <span class="nx">lastName</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">callbackObj</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">callbackObj</span><span class="p">,</span> <span class="p">[</span><span class="nx">firstName</span><span class="p">,</span> <span class="nx">lastName</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="nx">getUserInput</span><span class="p">(</span><span class="s2">"Barack"</span><span class="p">,</span> <span class="s2">"Obama"</span><span class="p">,</span> <span class="nx">clientData</span><span class="p">.</span><span class="nx">setUserName</span><span class="p">,</span> <span class="nx">clientData</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">clientData</span><span class="p">.</span><span class="nx">fullName</span><span class="p">);</span>
+
+</code></pre>
+</div>
+
+<p>上面的代码即可改正之前的this指向错误。</p>
+
+<h3 id="section-6">允许多个回调函数参数</h3>
+
+<p>我们可以在参数中使用多个回调函数</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">function</span> <span class="nx">successCallback</span><span class="p">()</span> <span class="p">{</span>
+
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">completeCallback</span><span class="p">()</span> <span class="p">{</span>
+
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">errorCallback</span><span class="p">()</span> <span class="p">{</span>
+
+<span class="p">}</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+    <span class="na">url</span><span class="p">:</span><span class="s2">"http://fiddle.jshell.net/favicon.png"</span><span class="p">,</span>
+    <span class="na">success</span><span class="p">:</span><span class="nx">successCallback</span><span class="p">,</span>
+    <span class="na">complete</span><span class="p">:</span><span class="nx">completeCallback</span><span class="p">,</span>
+    <span class="na">error</span><span class="p">:</span><span class="nx">errorCallback</span>
+<span class="p">});</span>
+
+</code></pre>
+</div>
+
+<p>#回调地狱</p>
+
+<p>即多层回调导致难以追踪代码，代码以任意顺序运行，下面是MongoDB的一个驱动示例：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">var</span> <span class="nx">p_client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Db</span><span class="p">(</span><span class="s1">'integration_tests_20'</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Server</span><span class="p">(</span><span class="s2">"127.0.0.1"</span><span class="p">,</span> <span class="mi">27017</span><span class="p">,</span> <span class="p">{}),</span> <span class="p">{</span><span class="s1">'pk'</span><span class="p">:</span><span class="nx">CustomPKFactory</span><span class="p">});</span>
+<span class="nx">p_client</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">p_client</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">p_client</span><span class="p">.</span><span class="nx">dropDatabase</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">p_client</span><span class="p">.</span><span class="nx">createCollection</span><span class="p">(</span><span class="s1">'test_custom_key'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">collection</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">collection</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span><span class="s1">'a'</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">docs</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">collection</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span><span class="s1">'_id'</span><span class="p">:</span><span class="k">new</span> <span class="nx">ObjectID</span><span class="p">(</span><span class="s2">"aaaaaaaaaaaa"</span><span class="p">)},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">cursor</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">cursor</span><span class="p">.</span><span class="nx">toArray</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">test</span><span class="p">.</span><span class="nx">assertEquals</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">items</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+                        <span class="nx">p_client</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+                    <span class="p">});</span>
+                <span class="p">});</span>
+            <span class="p">});</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+
+</code></pre>
+</div>
+
+<p>解决方法：</p>
+
+<ol>
+  <li>不用匿名函数，而是用函数名作为参数</li>
+  <li>模块化</li>
+</ol>
+
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blog/2016/03/24/Leetcode-34-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 34 Summary">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/blog/2016/04/06/Leetcode-236-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 236 Summary">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- Duoshuo Share start -->
+                <style>
+                    .ds-share{
+                        text-align: right;
+                    }
+                    
+                    @media only screen and (max-width: 700px) {
+                        .ds-share {
+
+                        }
+                    }
+                </style>
+
+                <div class="ds-share"
+                    data-thread-key="/blog/2016/04/01/Javascript-Callback" data-title="Javascript Callback Understanding"
+                    data-images="http://lisentoday/img/green.jpg"
+                    data-content="回调函数定义
+
+回调函数是指一个函数作为参数传入另一个函数中，并在其中执行。常见的JQuery中的回调函数：
+
+
+$("#button").click(f... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/04/01/Javascript-Callback/">
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- Duoshuo Share end-->
+
+
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread" data-thread-key="/blog/2016/04/01/Javascript-Callback" data-title="Javascript Callback Understanding" data-url="http://lisentoday/blog/2016/04/01/Javascript-Callback/"></div>
+                </div>
+                <!-- 多说评论框 end -->
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"cnfeat"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <!-- kill the Facebook and Weibo -->
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    
+                    <!--
+                    
+                    -->
+
+                    <!--
+                    
+                    -->
+
+                    
+                    <!--
+                    
+                    -->
+
+                </ul>
+                <p class="copyright text-muted">
+                &copy; 2016 lisen ❖ Powered by Jekyll.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+
+
+<!-- Highlight.js -->
+<script>
+    async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js",function(){
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+<link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

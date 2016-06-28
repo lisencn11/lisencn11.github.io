@@ -280,7 +280,7 @@ public class Solution4 {
     }
 
     public static void main(String[] args) {
-        int[][] matrix = {{15, 20, 40, 85}, {20, 35, 80, 95}, {30, 55, 95, 105}, {40, 80, 100, 120}};
+        int[][] matrix = \{\{15, 20, 40, 85\}, \{20, 35, 80, 95\}, \{30, 55, 95, 105\}, \{40, 80, 100, 120\}\};
         Solution4 solution = new Solution4();
         int target = 55;
         Point point = solution.find(matrix, target);

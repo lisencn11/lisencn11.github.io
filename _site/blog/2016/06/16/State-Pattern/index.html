@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="李森|不仅仅是一个程序员">
+
+    <title>State Pattern Summary - 四木成森</title>
+
+    <link rel="canonical" href="http://lisentoday/blog/2016/06/16/State-Pattern/">
+
+    <!-- Icons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+
+
+
+
+
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">四木成森</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">主页</a>
+                </li>
+                
+                <li>
+                    <a href="/a_introduction/">我的简介</a>
+                </li>
+                
+                <li>
+                    <a href="/b_study/">学习</a>
+                </li>
+                
+                <li>
+                    <a href="/c_life/">生活</a>
+                </li>
+                
+                <li>
+                    <a href="/d_collection/">我的收藏</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/green.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="Tags">
+                        
+                        <a class="tag" href="/Tags/#study" title="study">study</a>
+                        
+                    </div>
+                    <h1>State Pattern Summary</h1>
+                    
+                    <span class="meta">Posted by lisen on June 16, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
+
+                <h1 id="state-pattern">设计模式-状态模式(State Pattern)</h1>
+
+<h3 id="section">通用的技巧</h3>
+
+<p>如何对对象内的状态建模—-通过创建一个实例变量来持有状态值，并在方法内书写条件代码来处理不同状态。</p>
+
+<h3 id="section-1">状态机类图</h3>
+
+<p><img src="https://www.safaribooksonline.com/library/view/head-first-design/0596007124/httpatomoreillycomsourceoreillyimages1420580.png.jpg" alt="state_machine_0" /></p>
+
+<h3 id="section-2">状态机代码</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">GumballMachine</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">SOLD_OUT</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">NO_QUARTER</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+    <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">HAS_QUARTER</span> <span class="o">=</span> <span class="mi">2</span><span class="o">;</span>
+    <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">SOLD</span> <span class="o">=</span> <span class="mi">3</span><span class="o">;</span>
+
+    <span class="kt">int</span> <span class="n">state</span> <span class="o">=</span> <span class="n">SOLD_OUT</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">GumballMachine</span><span class="o">(</span><span class="kt">int</span> <span class="n">count</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">count</span> <span class="o">=</span> <span class="n">count</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">NO_QUARTER</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">insertQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">HAS_QUARTER</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You can't insert another quarter."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">SOLD_OUT</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You can't insert a quarter, the machine is sold out."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">SOLD</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Please wait, we're already gicing you a gumball."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">NO_QUARTER</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">HAS_QUARTER</span><span class="o">;</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You inserted a quarter."</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">ejectQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">HAS_QUARTER</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Quarter returned."</span><span class="o">);</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">NO_QUARTER</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">NO_QUARTER</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You haven't inserted a quarter."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">SOLD</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Sorry, you already turned the crank."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">SOLD_OUT</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You can't eject, you haven't inserted a quarter yet."</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">turnCrank</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">SOLD</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Turning twice doesn't get you another gumball."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">NO_QUARTER</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You turned but there's no quarter."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">SOLD_OUT</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You turned, but there are no quarter."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">HAS_QUARTER</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You turned..."</span><span class="o">);</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">SOLD</span><span class="o">;</span>
+            <span class="n">dispense</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">dispense</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">SOLD</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"A gumball comes rolling out the slot."</span><span class="o">);</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">count</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Oops, out of gumball."</span><span class="o">);</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">SOLD_OUT</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">NO_QUARTER</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">NO_QUARTER</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You need to pay first."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">SOLD_OUT</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"No gumball dispensed."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">HAS_QUARTER</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"No gumball dispensed."</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">StringBuffer</span> <span class="n">sb</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuffer</span><span class="o">();</span>
+        <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"Machine state: "</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">SOLD_OUT</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"SOLD OUT."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">NO_QUARTER</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"NO QUARTER."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">HAS_QUARTER</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"HAS QUARTER."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">SOLD</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"SOLD."</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">" Gumball left: "</span> <span class="o">+</span> <span class="n">count</span> <span class="o">+</span> <span class="s">"."</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">sb</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">refill</span><span class="o">(</span><span class="kt">int</span> <span class="n">count</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">SOLD_OUT</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">NO_QUARTER</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">NO_QUARTER</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">NO_QUARTER</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">HAS_QUARTER</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">HAS_QUARTER</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">SOLD</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">SOLD</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">count</span> <span class="o">+=</span> <span class="n">count</span><span class="o">;</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Gumball refilled by "</span> <span class="o">+</span> <span class="n">count</span> <span class="o">+</span> <span class="s">"."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">GumballMachine</span> <span class="n">gumballMachine</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GumballMachine</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">);</span>
+
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">insertQuarter</span><span class="o">();</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">turnCrank</span><span class="o">();</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">);</span>
+
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">insertQuarter</span><span class="o">();</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">ejectQuarter</span><span class="o">();</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">turnCrank</span><span class="o">();</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">);</span>
+
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">insertQuarter</span><span class="o">();</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">turnCrank</span><span class="o">();</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">insertQuarter</span><span class="o">();</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">turnCrank</span><span class="o">();</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">ejectQuarter</span><span class="o">();</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">);</span>
+
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">insertQuarter</span><span class="o">();</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">insertQuarter</span><span class="o">();</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">turnCrank</span><span class="o">();</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">insertQuarter</span><span class="o">();</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">turnCrank</span><span class="o">();</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">insertQuarter</span><span class="o">();</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">turnCrank</span><span class="o">();</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">);</span>
+
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">refill</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h1 id="section-3">新的设计</h1>
+
+<p>重写代码，以便于将<strong>状态对象</strong>封装在各自的类中，然后在动作发生时委托给当前状态。</p>
+
+<ol>
+  <li>定义一个State接口，在这个接口内，糖果机的每个动作都有一个对应的方法。</li>
+  <li>然后为机器中的每个状态实现状态类，这些类负责在对应状态下进行机器的行为。</li>
+  <li>摆脱旧的条件代码，取而代之，将动作委托到状态类。</li>
+</ol>
+
+<h3 id="section-4">状态模式代码</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">State</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">insertQuarter</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">ejectQuarter</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">turnCrank</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">dispense</span><span class="o">();</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">NoQuarterState</span> <span class="kd">implements</span> <span class="n">State</span> <span class="o">{</span>
+    <span class="n">NewGumballMachine</span> <span class="n">gumballMachine</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">NoQuarterState</span><span class="o">(</span><span class="n">NewGumballMachine</span> <span class="n">gumballMachine</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">gumballMachine</span> <span class="o">=</span> <span class="n">gumballMachine</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">insertQuarter</span><span class="o">()</span> <span class="o">{</span>
+         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You inserted a quarter."</span><span class="o">);</span>
+         <span class="n">gumballMachine</span><span class="o">.</span><span class="na">setState</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">.</span><span class="na">getHasQuarterState</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">ejectQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You haven't inserted a quarter."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">turnCrank</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You turned but there's no quarter."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">dispense</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You need to pay first."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HasQuarterState</span> <span class="kd">implements</span> <span class="n">State</span> <span class="o">{</span>
+    <span class="n">NewGumballMachine</span> <span class="n">gumballMachine</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">HasQuarterState</span><span class="o">(</span><span class="n">NewGumballMachine</span> <span class="n">gumballMachine</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">gumballMachine</span> <span class="o">=</span> <span class="n">gumballMachine</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">insertQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You can't insert another quarter."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">ejectQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Quarter returned."</span><span class="o">);</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">setState</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">.</span><span class="na">getNoQuarterState</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">turnCrank</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You turned..."</span><span class="o">);</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">setState</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">.</span><span class="na">getSoldState</span><span class="o">());</span>
+        <span class="n">dispense</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">dispense</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"No gumball dispensed."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SoldState</span> <span class="kd">implements</span> <span class="n">State</span> <span class="o">{</span>
+    <span class="n">NewGumballMachine</span> <span class="n">gumballMachine</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">SoldState</span><span class="o">(</span><span class="n">NewGumballMachine</span> <span class="n">gumballMachine</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">gumballMachine</span> <span class="o">=</span> <span class="n">gumballMachine</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">insertQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Please wait, we're already gicing you a gumball."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">ejectQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Sorry, you already turned the crank."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">turnCrank</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Turning twice doesn't get you another gumball."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">dispense</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">releaseBall</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">gumballMachine</span><span class="o">.</span><span class="na">getCount</span><span class="o">()</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Oops, out of gumball."</span><span class="o">);</span>
+           <span class="n">gumballMachine</span><span class="o">.</span><span class="na">setState</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">.</span><span class="na">getSoldOutState</span><span class="o">());</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">gumballMachine</span><span class="o">.</span><span class="na">setState</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">.</span><span class="na">getNoQuarterState</span><span class="o">());</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SoldOutState</span> <span class="kd">implements</span> <span class="n">State</span> <span class="o">{</span>
+    <span class="n">NewGumballMachine</span> <span class="n">gumballMachine</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">SoldOutState</span><span class="o">(</span><span class="n">NewGumballMachine</span> <span class="n">gumballMachine</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">gumballMachine</span> <span class="o">=</span> <span class="n">gumballMachine</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">insertQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You can't insert a quarter, the machine is sold out."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">ejectQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You can't eject, you haven't inserted a quarter yet."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">turnCrank</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"You turned, but there are no quarter."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">dispense</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"No gumball dispensed."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">NewGumballMachine</span> <span class="o">{</span>
+    <span class="n">State</span> <span class="n">soldOutState</span><span class="o">;</span>
+    <span class="n">State</span> <span class="n">noQuarterState</span><span class="o">;</span>
+    <span class="n">State</span> <span class="n">hasQuarterState</span><span class="o">;</span>
+    <span class="n">State</span> <span class="n">soldState</span><span class="o">;</span>
+
+    <span class="n">State</span> <span class="n">state</span> <span class="o">=</span> <span class="n">soldOutState</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">NewGumballMachine</span><span class="o">(</span><span class="kt">int</span> <span class="n">numberGumballs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">soldOutState</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SoldOutState</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="n">noQuarterState</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NoQuarterState</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="n">hasQuarterState</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HasQuarterState</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="n">soldState</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SoldState</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">count</span> <span class="o">=</span> <span class="n">numberGumballs</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">numberGumballs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">noQuarterState</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">insertQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">state</span><span class="o">.</span><span class="na">insertQuarter</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">ejectQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">state</span><span class="o">.</span><span class="na">ejectQuarter</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">turnCrank</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">state</span><span class="o">.</span><span class="na">turnCrank</span><span class="o">();</span>
+        <span class="n">state</span><span class="o">.</span><span class="na">dispense</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kt">void</span> <span class="n">setState</span><span class="o">(</span><span class="n">State</span> <span class="n">state</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">state</span> <span class="o">=</span> <span class="n">state</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kt">void</span> <span class="n">releaseBall</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"A gumball comes rolling out the slot..."</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">count</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="n">State</span> <span class="n">getHasQuarterState</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">hasQuarterState</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="n">State</span> <span class="n">getNoQuarterState</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">noQuarterState</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="n">State</span> <span class="n">getSoldState</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">soldState</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="n">State</span> <span class="n">getSoldOutState</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">soldOutState</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">getCount</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">count</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="section-5">状态模式定义</h3>
+
+<p><strong>状态模式</strong>允许对象在内部状态改变时改变它的行为，对象看起来好像修改了它的类。</p>
+
+<p>因为模式将状态封装成独立的类，并将动作委托到代表当前状态的对象，所以行为会随着内部状态而改变。</p>
+
+<h3 id="section-6">状态模式类图</h3>
+
+<p><img src="http://pic002.cnblogs.com/images/2012/358984/2012050411054690.png" alt="State_Pattern_0" /></p>
+
+<h3 id="section-7">和策略模式类图一样</h3>
+
+<p>两个模式差别在于“意图”。</p>
+
+<p><strong>策略模式</strong>是除了继承之外的一种弹性替代方案。如果使用继承定义一个类的行为，你会被这个行为困住，有了策略模式，可以通过组合不同的对象来改变行为。</p>
+
+<p><strong>状态模式</strong>是不用在Context中放置许多条件判断的替代方案。通过将行为封装进状态对象中，你可以通过在Context内简单改变状态来改变Context的行为。</p>
+
+<h3 id="winnerstate">加入WinnerState</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">WinnerState</span> <span class="kd">implements</span> <span class="n">State</span> <span class="o">{</span>
+    <span class="n">NewGumballMachine</span> <span class="n">gumballMachine</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">WinnerState</span><span class="o">(</span><span class="n">NewGumballMachine</span> <span class="n">gumballMachine</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">gumballMachine</span> <span class="o">=</span> <span class="n">gumballMachine</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">insertQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Please wait, we're already giving you a gumball."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">ejectQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Sorry, you already turned the crank."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">turnCrank</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Turning twice doesn't get you another gumball."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">dispense</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"YOU'RE A WINNER! You get two gumballs for your quarter"</span><span class="o">);</span>
+        <span class="n">gumballMachine</span><span class="o">.</span><span class="na">releaseBall</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">gumballMachine</span><span class="o">.</span><span class="na">getCount</span><span class="o">()</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">gumballMachine</span><span class="o">.</span><span class="na">setState</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">.</span><span class="na">getSoldOutState</span><span class="o">());</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">gumballMachine</span><span class="o">.</span><span class="na">releaseBall</span><span class="o">();</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">gumballMachine</span><span class="o">.</span><span class="na">getCount</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">gumballMachine</span><span class="o">.</span><span class="na">setState</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">.</span><span class="na">getNoQuarterState</span><span class="o">());</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Oops, out of gumballs"</span><span class="o">);</span>
+                <span class="n">gumballMachine</span><span class="o">.</span><span class="na">setState</span><span class="o">(</span><span class="n">gumballMachine</span><span class="o">.</span><span class="na">getSoldOutState</span><span class="o">());</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blog/2016/06/15/CC150-Ch16-Questions/" data-toggle="tooltip" data-placement="top" title="CC150 Chapter 16---Threads and Locks Question">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/blog/2016/06/17/CC150-Ch14-Questions/" data-toggle="tooltip" data-placement="top" title="CC150 Chapter 14---Java Questions">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- Duoshuo Share start -->
+                <style>
+                    .ds-share{
+                        text-align: right;
+                    }
+                    
+                    @media only screen and (max-width: 700px) {
+                        .ds-share {
+
+                        }
+                    }
+                </style>
+
+                <div class="ds-share"
+                    data-thread-key="/blog/2016/06/16/State-Pattern" data-title="State Pattern Summary"
+                    data-images="http://lisentoday/img/green.jpg"
+                    data-content="设计模式-状态模式(State Pattern)
+
+通用的技巧
+
+如何对对象内的状态建模—-通过创建一个实例变量来持有状态值，并在方法内书写条件代码来处理... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/06/16/State-Pattern/">
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- Duoshuo Share end-->
+
+
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread" data-thread-key="/blog/2016/06/16/State-Pattern" data-title="State Pattern Summary" data-url="http://lisentoday/blog/2016/06/16/State-Pattern/"></div>
+                </div>
+                <!-- 多说评论框 end -->
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"cnfeat"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <!-- kill the Facebook and Weibo -->
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    
+                    <!--
+                    
+                    -->
+
+                    <!--
+                    
+                    -->
+
+                    
+                    <!--
+                    
+                    -->
+
+                </ul>
+                <p class="copyright text-muted">
+                &copy; 2016 lisen ❖ Powered by Jekyll.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+
+
+<!-- Highlight.js -->
+<script>
+    async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js",function(){
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+<link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

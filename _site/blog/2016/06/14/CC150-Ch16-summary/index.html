@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="李森|不仅仅是一个程序员">
+
+    <title>CC150 Chapter 16---Threads and Locks - 四木成森</title>
+
+    <link rel="canonical" href="http://lisentoday/blog/2016/06/14/CC150-Ch16-summary/">
+
+    <!-- Icons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+
+
+
+
+
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">四木成森</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">主页</a>
+                </li>
+                
+                <li>
+                    <a href="/a_introduction/">我的简介</a>
+                </li>
+                
+                <li>
+                    <a href="/b_study/">学习</a>
+                </li>
+                
+                <li>
+                    <a href="/c_life/">生活</a>
+                </li>
+                
+                <li>
+                    <a href="/d_collection/">我的收藏</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/green.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="Tags">
+                        
+                        <a class="tag" href="/Tags/#study" title="study">study</a>
+                        
+                    </div>
+                    <h1>CC150 Chapter 16---Threads and Locks</h1>
+                    
+                    <span class="meta">Posted by lisen on June 14, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
+
+                <h1 id="java">Java中的线程</h1>
+
+<p>在Java中，我们有两种方法实现线程</p>
+
+<ol>
+  <li>实现Runnable接口</li>
+  <li>继承Thread类</li>
+</ol>
+
+<h3 id="runnable">实现Runnable接口</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Runnable</span> <span class="o">{</span>
+    <span class="kt">void</span> <span class="n">run</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+<ol>
+  <li>写一个类实现Runnable接口，这个类的对象是Runnable对象。</li>
+  <li>创建一个Thread对象，将我们写的Runnable对象作为参数传入Thread的构造函数中，这样Thread对象 has a 实现了run()方法的Runnable对象。</li>
+  <li>调用Thread对象的start()方法运行线程。</li>
+</ol>
+
+<h3 id="runnable-1">Runnable方法代码</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RunnableThreadExample</span> <span class="kd">implements</span> <span class="n">Runnable</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">run</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"RunnableThread starting."</span><span class="o">);</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">while</span> <span class="o">(</span><span class="n">count</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">500</span><span class="o">);</span>
+                <span class="n">count</span><span class="o">++;</span>
+                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"RunnableThread plus."</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"RunnableThread interrupted."</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"RunnableThread terminating."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">getCount</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">count</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"MainThread starting."</span><span class="o">);</span>
+        <span class="n">RunnableThreadExample</span> <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RunnableThreadExample</span><span class="o">();</span>
+        <span class="n">Thread</span> <span class="n">thread</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Thread</span><span class="o">(</span><span class="n">instance</span><span class="o">);</span>
+        <span class="n">thread</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+
+        <span class="k">while</span> <span class="o">(</span><span class="n">instance</span><span class="o">.</span><span class="na">getCount</span><span class="o">()</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">250</span><span class="o">);</span>
+                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"MainThread check."</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"MainThread interrupted."</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"MainThread terminating."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="thread">继承Thread类</h3>
+
+<p>另一个创建线程的方法是创建一个继承Thread的类，这意味着我们需要覆盖run()方法。</p>
+
+<h3 id="thread-1">Thread方法代码</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ThreadExample</span> <span class="kd">extends</span> <span class="n">Thread</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">getCount</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">count</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">run</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"ThreadExample starting."</span><span class="o">);</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">while</span> <span class="o">(</span><span class="n">count</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">500</span><span class="o">);</span>
+                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"ThreadExample plus count."</span><span class="o">);</span>
+                <span class="n">count</span><span class="o">++;</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"ThreadExample interrupted."</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"ThreadExample terminating."</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ThreadExample</span> <span class="n">threadExample</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ThreadExample</span><span class="o">();</span>
+        <span class="n">threadExample</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+
+        <span class="k">while</span> <span class="o">(</span><span class="n">threadExample</span><span class="o">.</span><span class="na">getCount</span><span class="o">()</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">200</span><span class="o">);</span>
+                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"MainThread check count."</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"MainThread interrupted."</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"MainThread terminating."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="thread-vs-runnable">继承Thread类 vs. 实现Runnable接口</h3>
+
+<p>实现Runnable接口能够带来的优点：</p>
+
+<ul>
+  <li>Java不支持多继承。继承Thread类后子类不能继承其他类，但是实现Runnable接口后仍然可以继承其他类。</li>
+  <li>当使用继承的时候，主要是为了不必重新开发。但一个类只需要多线程而不需要Thread其他方法时，实现Runnable接口可以避免额外的开销。</li>
+</ul>
+
+<h1 id="section">同步与锁</h1>
+
+<p>同一进程的线程共享内存。<strong>好处</strong>是可以共享数据，<strong>缺点</strong>是两个线程同时修改共享资源时会有问题，需要同步。使用关键字<strong>synchronized</strong>和<strong>锁</strong>可以实现基本的同步。</p>
+
+<h3 id="synchronized">synchronized方法</h3>
+
+<p>这是最常见的方法，通过给<strong>方法</strong>和<strong>代码块</strong>加synchronized关键字，限制多线程同时执行一个对象的的这部分代码。</p>
+
+<h3 id="synchronized-1">synchronized方法代码</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SynchronizedExample</span> <span class="kd">extends</span> <span class="n">Thread</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">MyObject</span> <span class="n">myObj</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">SynchronizedExample</span><span class="o">(</span><span class="n">MyObject</span> <span class="n">myObj</span><span class="o">,</span> <span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">myObj</span> <span class="o">=</span> <span class="n">myObj</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">run</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">myObj</span><span class="o">.</span><span class="na">foo</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyObject</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="n">foo</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Thread "</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">".foo(): starting"</span><span class="o">);</span>
+            <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">3000</span><span class="o">);</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Thread "</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">".foo(): ending"</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Thread "</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">".foo(): interrupting"</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">MyObject</span> <span class="n">obj1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyObject</span><span class="o">();</span>
+        <span class="n">MyObject</span> <span class="n">obj2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyObject</span><span class="o">();</span>
+        <span class="n">SynchronizedExample</span> <span class="n">thread1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SynchronizedExample</span><span class="o">(</span><span class="n">obj1</span><span class="o">,</span> <span class="s">"thread1_obj1"</span><span class="o">);</span>
+        <span class="n">SynchronizedExample</span> <span class="n">thread2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SynchronizedExample</span><span class="o">(</span><span class="n">obj2</span><span class="o">,</span> <span class="s">"thread2_obj2"</span><span class="o">);</span>
+        <span class="n">SynchronizedExample</span> <span class="n">thread3</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SynchronizedExample</span><span class="o">(</span><span class="n">obj1</span><span class="o">,</span> <span class="s">"thread3_obj1"</span><span class="o">);</span>
+
+        <span class="n">thread1</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="n">thread2</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="n">thread3</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+<p>上面代码中有三个线程，线程1和线程2持有不同对象的引用，所以可以同时运行。线程1和线程3持有相同对象的引用，所以不能同时运行。同一个对象内的不同synchronized方法也是同步的。</p>
+
+<p>如果synchronized的是static方法，则锁是类锁，即不能同时执行同一个类的不同synchronized static方法</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SynchronizedStaticThread</span> <span class="kd">extends</span> <span class="n">Thread</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">SynchronizedStaticThread</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">run</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">name</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"1"</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">MyObjectStatic</span><span class="o">.</span><span class="na">foo</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">MyObjectStatic</span><span class="o">.</span><span class="na">bar</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyObjectStatic</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="n">foo</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Thread "</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">".foo(): starting"</span><span class="o">);</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">3000</span><span class="o">);</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Thread "</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">".foo(): terminating"</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Thread "</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">".foo(): interrupting"</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="n">bar</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Thread "</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">".bar(): starting"</span><span class="o">);</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">3000</span><span class="o">);</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Thread "</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">".bar(): terminating"</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Thread "</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">".bar(): interrupting"</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">SynchronizedStaticThread</span> <span class="n">thread1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SynchronizedStaticThread</span><span class="o">(</span><span class="s">"1"</span><span class="o">);</span>
+        <span class="n">SynchronizedStaticThread</span> <span class="n">thread2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SynchronizedStaticThread</span><span class="o">(</span><span class="s">"2"</span><span class="o">);</span>
+
+        <span class="n">thread1</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="n">thread2</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="synchronized-2">synchronized代码块</h3>
+
+<p>与synchronized方法基本相同，语法不同而已。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">{</span>
+        <span class="o">...</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="locks">锁(Locks)</h3>
+
+<p>对于更细粒度的同步控制，我们用锁。锁可以通过将共享资源与锁绑定达到同步的作用。一个线程想要访问共享资源，需要先请求锁。在任何时刻最多只有一个线程可以拥有锁，即共享资源的访问权。</p>
+
+<p>一个常见的锁的使用场景是资源在多处被访问，但任何时刻只能被一个线程访问。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LockedATM</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">Lock</span> <span class="n">lock</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">balance</span> <span class="o">=</span> <span class="mi">100</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">LockedATM</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">lock</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReentrantLock</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">withdraw</span><span class="o">(</span><span class="kt">int</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">lock</span><span class="o">.</span><span class="na">lock</span><span class="o">();</span>
+        <span class="kt">int</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">balance</span><span class="o">;</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">-</span> <span class="n">value</span><span class="o">;</span>
+            <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
+            <span class="n">balance</span> <span class="o">=</span> <span class="n">temp</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"withdraw interrupted"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">lock</span><span class="o">.</span><span class="na">unlock</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">temp</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">deposit</span><span class="o">(</span><span class="kt">int</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">lovk</span><span class="o">.</span><span class="na">lock</span><span class="o">();</span>
+        <span class="kt">int</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">balance</span><span class="o">;</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">+</span> <span class="n">value</span><span class="o">;</span>
+            <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
+            <span class="n">balance</span> <span class="o">=</span> <span class="n">temp</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"deposit interrupted"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">lock</span><span class="o">.</span><span class="na">unlock</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">temp</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+<p>注意：unlock()必须放到finally中，finally中放无论有无异常都要执行的代码。</p>
+
+<h1 id="deadlocks">死锁和死锁避免(Deadlocks)</h1>
+
+<p><strong>死锁</strong>是一个线程A等待线程B持有的锁a，而线程B也在等待线程A持有的锁b，他们将会一直等下去。</p>
+
+<p>以下四种情形存在的情况下，死锁可能会发生：</p>
+
+<ol>
+  <li>互斥(Mutual Exclusion)：在同一时间只有有限个进程可以访问一个资源。</li>
+  <li>持有等待(Hold and Wait)：已经拥有资源的进程，不释放当前资源就可以请求新的资源。</li>
+  <li>无抢夺(No Preemption)：一个进程不能抢夺别的进程的资源。</li>
+  <li>循环等待(Circular Wait)：两个以上进程组成循环链，每个进程都等待链中其他资源。</li>
+</ol>
+
+<p>死锁可以通过去除以上情形之一可以避免。常见的是通过消除#4循环等待避免死锁。</p>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blog/2016/06/13/Leetcode-92-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 92 Summary">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/blog/2016/06/15/CC150-Ch16-Questions/" data-toggle="tooltip" data-placement="top" title="CC150 Chapter 16---Threads and Locks Question">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- Duoshuo Share start -->
+                <style>
+                    .ds-share{
+                        text-align: right;
+                    }
+                    
+                    @media only screen and (max-width: 700px) {
+                        .ds-share {
+
+                        }
+                    }
+                </style>
+
+                <div class="ds-share"
+                    data-thread-key="/blog/2016/06/14/CC150-Ch16-summary" data-title="CC150 Chapter 16---Threads and Locks"
+                    data-images="http://lisentoday/img/green.jpg"
+                    data-content="Java中的线程
+
+在Java中，我们有两种方法实现线程
+
+
+  实现Runnable接口
+  继承Thread类
+
+
+实现Runnable接口
+
+pub... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/06/14/CC150-Ch16-summary/">
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- Duoshuo Share end-->
+
+
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread" data-thread-key="/blog/2016/06/14/CC150-Ch16-summary" data-title="CC150 Chapter 16---Threads and Locks" data-url="http://lisentoday/blog/2016/06/14/CC150-Ch16-summary/"></div>
+                </div>
+                <!-- 多说评论框 end -->
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"cnfeat"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <!-- kill the Facebook and Weibo -->
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    
+                    <!--
+                    
+                    -->
+
+                    <!--
+                    
+                    -->
+
+                    
+                    <!--
+                    
+                    -->
+
+                </ul>
+                <p class="copyright text-muted">
+                &copy; 2016 lisen ❖ Powered by Jekyll.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+
+
+<!-- Highlight.js -->
+<script>
+    async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js",function(){
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+<link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

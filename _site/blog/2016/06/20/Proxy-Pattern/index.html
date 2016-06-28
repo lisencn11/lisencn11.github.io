@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="李森|不仅仅是一个程序员">
+
+    <title>Proxy Pattern Summary - 四木成森</title>
+
+    <link rel="canonical" href="http://lisentoday/blog/2016/06/20/Proxy-Pattern/">
+
+    <!-- Icons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+
+
+
+
+
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">四木成森</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">主页</a>
+                </li>
+                
+                <li>
+                    <a href="/a_introduction/">我的简介</a>
+                </li>
+                
+                <li>
+                    <a href="/b_study/">学习</a>
+                </li>
+                
+                <li>
+                    <a href="/c_life/">生活</a>
+                </li>
+                
+                <li>
+                    <a href="/d_collection/">我的收藏</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/green.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="Tags">
+                        
+                        <a class="tag" href="/Tags/#study" title="study">study</a>
+                        
+                    </div>
+                    <h1>Proxy Pattern Summary</h1>
+                    
+                    <span class="meta">Posted by lisen on June 20, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
+
+                <h1 id="proxy-pattern">设计模式-代理模式(Proxy Pattern)</h1>
+
+<h3 id="section">代理</h3>
+
+<p>控制和管理访问</p>
+
+<ul>
+  <li><strong>远程代理</strong>好比“远程对象的本地代表”。</li>
+  <li><strong>远程对象</strong>是一种对象，活在不同的JVM堆中，无法取得另一个堆的对象的引用。</li>
+  <li><strong>本地代表</strong>可以由本地方法调用的对象，行为会转发到远程对象中。</li>
+</ul>
+
+<p><img src="http://66.media.tumblr.com/93312fa1aaa10ef5000a4c4125f86138/tumblr_inline_o17ulxFAVW1tb3m1d_500.png" alt="proxy_0" /></p>
+
+<p><strong>RMI</strong>可以让我们找到远程JVM内的对象，并允许我们调用它们的方法。</p>
+
+<h1 id="rmi">RMI</h1>
+
+<p><img src="https://www.safaribooksonline.com/library/view/head-first-servlets/9780596516680/httpatomoreillycomsourceoreillyimages1382676.png.jpg" alt="proxy_1" /></p>
+
+<p>RMI提供了客户辅助对象(RMI stub)和服务辅助对象(RMI skeleton)，为客户辅助对象创建和服务对象相同的方法。RMI的好处在于你不必亲自写任何网络或I/O代码。客户程序调用远程方法就和在运行在客户自己的本地JVM上对对象进行正常方法调用一样。</p>
+
+<h1 id="section-1">制作远程服务</h1>
+
+<ol>
+  <li><strong>制作远程接口</strong>：远程接口定义出可以让客户远程调用的方法。客户用它作为服务的类类型。Stub和实际的服务都实现此接口。</li>
+  <li><strong>制作远程的实现</strong>：这是实际工作的类，为远程接口中定义的远程方法提供了真正的实现。</li>
+  <li><strong>利用rmic产生的stub和skeleton</strong>：这是客户和服务的辅助类，不需要创建，自动处理。</li>
+  <li><strong>启动RMI registry</strong>：rmiregistry好比电话薄，客户可以从中查到代理的位置。</li>
+  <li><strong>开始远程服务</strong>：让服务对象开始运行。</li>
+</ol>
+
+<h3 id="section-2">步骤一：制作远程接口</h3>
+
+<h5 id="extendsjavarmiremote">1. 扩展(extends)java.rmi.Remote</h5>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MyRemote</span> <span class="kd">extends</span> <span class="n">Remote</span>
+</code></pre>
+</div>
+
+<h5 id="remoteexception">2. 声明所有的方法都会抛出RemoteException</h5>
+
+<p>客户使用远程接口调用服务。因为用到了网络和I/O，需要处理或声明远程异常来解决。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.rmi.*</span>
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MyRemote</span> <span class="kd">extends</span> <span class="n">Remote</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">sayHello</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">RemoteException</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h5 id="primitiveserializable">3. 确定变量和返回值是属于原语(primitive)类型或者可序列化(Serializable)类型</h5>
+
+<p>远程方法的变量和返回值，必须属于原语类型或Serializable类型。原因是打包通过网络运送，自己定义的类必须实现Serializable。(String类实现了Serializable)</p>
+
+<h3 id="section-3">步骤二：制作远程实现</h3>
+
+<h5 id="section-4">1. 实现远程接口</h5>
+
+<p>服务必须实现远程接口</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyRemoteImpl</span> <span class="kd">extends</span> <span class="n">UnicastRemoteObject</span> <span class="kd">implements</span> <span class="n">MyRemote</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">sayHello</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"Server says, 'Hey'"</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h5 id="unicastremoteobject">2. 扩展UnicastRemoteObject</h5>
+
+<p>为了成为远程服务对象，需要某些“远程的”功能，最简单的方式是扩展java.rmi.server.UnicastRemoteObject，让超类做这些工作。</p>
+
+<h5 id="remoteexception-1">3. 设计一个不带变量的构造器，并声明RemoteException</h5>
+
+<p>因为UnicastRemoteObject的构造器刨出这样一个异常，我们的远程实现也需要声明一个构造器。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="nf">MyRemoteImpl</span><span class="p">(</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">RemoteException</span> <span class="o">{</span> <span class="o">}</span>
+</code></pre>
+</div>
+
+<h5 id="rmi-registry">4. 用RMI registry注册此服务</h5>
+
+<p>实例化服务，在RMI registry中注册远程服务，让它可以被远程客户调用。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">try</span> <span class="o">{</span>
+    <span class="n">MyRemote</span> <span class="n">service</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyRemoteImpl</span><span class="o">();</span>
+    <span class="n">Naming</span><span class="o">.</span><span class="na">rebind</span><span class="o">(</span><span class="s">"RemoteHello"</span><span class="o">,</span> <span class="n">service</span><span class="o">);</span>
+<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{...}</span>
+</code></pre>
+</div>
+
+<h3 id="stubskeleton">步骤三：产生Stub和Skeleton</h3>
+
+<h5 id="rmic">在远程实现类上执行rmic</h5>
+
+<p><strong>rmic</strong>是JDK内的一个工具，用来为一个服务类产生stub和skeleton。</p>
+
+<h3 id="remiregistry">步骤四：执行remiregistry</h3>
+
+<h5 id="rmiregistry">执行rmiregistry</h5>
+
+<p>先确定启动目录必须可以访问你的类。最简单的做法是从你的“classes”目录启动。</p>
+
+<h3 id="section-5">步骤五：启动服务</h3>
+
+<h5 id="section-6">开启另一个终端，启动服务</h5>
+
+<p>从main方法或独立的启动类启动服务。</p>
+
+<h1 id="section-7">服务器端代码</h1>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.rmi.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MyRemote</span> <span class="kd">extends</span> <span class="n">Remote</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">sayHello</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">RemoteException</span><span class="o">;</span>
+<span class="o">}</span>
+
+
+<span class="kn">import</span> <span class="nn">java.rmi.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.rmi.server.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyRemoteImpl</span> <span class="kd">extends</span> <span class="n">UnicastRemoteObject</span> <span class="kd">implements</span> <span class="n">MyRemote</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">sayHello</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"Server says, 'hey'"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">MyRemoteImpl</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">RemoteException</span> <span class="o">{</span> <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">MyRemote</span> <span class="n">service</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyRemoteImpl</span><span class="o">();</span>
+            <span class="n">Naming</span><span class="o">.</span><span class="na">rebind</span><span class="o">(</span><span class="s">"RemoteHello"</span><span class="o">,</span> <span class="n">service</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">ex</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h1 id="stub">如何取得stub对象</h1>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">MyRemote</span> <span class="n">service</span> <span class="o">=</span> <span class="o">(</span><span class="n">MyRemote</span><span class="o">)</span><span class="n">Naming</span><span class="o">.</span><span class="na">lookup</span><span class="o">(</span><span class="s">"rmi://127.0.0.1/RemoteHello"</span><span class="o">);</span>
+</code></pre>
+</div>
+
+<h3 id="section-8">工作方式</h3>
+
+<ol>
+  <li>客户到RMI registry中寻找</li>
+  <li>RMI registry返回Stub对象</li>
+  <li>客户调用stub的方法，就像stub就是真正的服务对象一样</li>
+</ol>
+
+<h1 id="section-9">客户端代码</h1>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.rmi.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyRemoteClient</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">new</span> <span class="n">MyRemoteClient</span><span class="o">().</span><span class="na">go</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">go</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">MyRemote</span> <span class="n">service</span> <span class="o">=</span> <span class="o">(</span><span class="n">MyRemote</span><span class="o">)</span><span class="n">Naming</span><span class="o">.</span><span class="na">lookup</span><span class="o">(</span><span class="s">"rmi://127.0.0.1/RemoteHello"</span><span class="o">);</span>
+            <span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="na">sayHello</span><span class="o">();</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">ex</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="section-10">常犯错误</h3>
+
+<ol>
+  <li>忘记启动远程服务前先启动rmiregistry</li>
+  <li>忘记变量和返回值类型为可序列化类型</li>
+  <li>忘记给客户提供stub类</li>
+</ol>
+
+<h1 id="gumballmachine">改造GumballMachine成远程服务</h1>
+
+<ol>
+  <li>为GumballMachine创建一个远程接口。提供一组可以远程调用的方法。</li>
+  <li>确定接口所有返回类型都是可序列化的。</li>
+  <li>在一个具体类中实现此接口。</li>
+</ol>
+
+<h3 id="section-11">远程接口</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.rmi.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">GumballMachineRemote</span> <span class="kd">extends</span> <span class="n">Remote</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">getCount</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">RemoteException</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">getLocation</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">RemoteException</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="n">State</span> <span class="n">getState</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">RemoteException</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="state">返回类型State不是可序列化的</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">State</span> <span class="kd">extends</span> <span class="n">Serializable</span> <span class="o">{</span> <span class="c1">// 只要扩展Serializable接口，所有子类中的State就可以在网络上传送了</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">insertQuarter</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">ejectQuarter</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">turnCrank</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">dispense</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">getState</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>如果把State中糖果机的引用也传过去，会导致可以调用糖果机的方法，改变糖果机状态，加上<strong>transient</strong>关键字告诉JVM不要序列化这个字段。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">transient</span> <span class="n">GumballMachine</span> <span class="n">gumballMachine</span><span class="o">;</span>
+</code></pre>
+</div>
+
+<h3 id="gumballmachine-1">GumballMachine实现接口</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.rmi.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.rmi.server.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">NewGumballMachine</span> <span class="kd">extends</span> <span class="n">UnicastRemoteObject</span> <span class="kd">implements</span> <span class="n">GumballMachineRemote</span> <span class="o">{</span>
+    <span class="n">State</span> <span class="n">soldOutState</span><span class="o">;</span>
+    <span class="n">State</span> <span class="n">noQuarterState</span><span class="o">;</span>
+    <span class="n">State</span> <span class="n">hasQuarterState</span><span class="o">;</span>
+    <span class="n">State</span> <span class="n">soldState</span><span class="o">;</span>
+    <span class="n">State</span> <span class="n">winnerState</span><span class="o">;</span>
+
+    <span class="n">State</span> <span class="n">state</span> <span class="o">=</span> <span class="n">soldOutState</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+    <span class="n">String</span> <span class="n">location</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">NewGumballMachine</span><span class="o">(</span><span class="n">String</span> <span class="n">location</span><span class="o">,</span> <span class="kt">int</span> <span class="n">numberGumballs</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">RemoteException</span> <span class="o">{</span>
+        <span class="n">soldOutState</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SoldOutState</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="n">noQuarterState</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NoQuarterState</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="n">hasQuarterState</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HasQuarterState</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="n">soldState</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SoldState</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="n">winnerState</span> <span class="o">=</span> <span class="k">new</span> <span class="n">WinnerState</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">count</span> <span class="o">=</span> <span class="n">numberGumballs</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">numberGumballs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">noQuarterState</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="na">location</span> <span class="o">=</span> <span class="n">location</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">getLocation</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">location</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">insertQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">state</span><span class="o">.</span><span class="na">insertQuarter</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">ejectQuarter</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">state</span><span class="o">.</span><span class="na">ejectQuarter</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">turnCrank</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">state</span><span class="o">.</span><span class="na">turnCrank</span><span class="o">();</span>
+        <span class="n">state</span><span class="o">.</span><span class="na">dispense</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kt">void</span> <span class="n">setState</span><span class="o">(</span><span class="n">State</span> <span class="n">state</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">state</span> <span class="o">=</span> <span class="n">state</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kt">void</span> <span class="n">releaseBall</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"A gumball comes rolling out the slot..."</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">count</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="n">State</span> <span class="n">getHasQuarterState</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">hasQuarterState</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="n">State</span> <span class="n">getNoQuarterState</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">noQuarterState</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="n">State</span> <span class="n">getSoldState</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">soldState</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="n">State</span> <span class="n">getSoldOutState</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">soldOutState</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="n">State</span> <span class="n">getWinnerState</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">winnerState</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">getCount</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">count</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">StringBuffer</span> <span class="n">sb</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuffer</span><span class="o">();</span>
+        <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"Machine state: "</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">soldOutState</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"SOLD OUT."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">noQuarterState</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"NO QUARTER."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">hasQuarterState</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"HAS QUARTER."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">soldState</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"SOLD."</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">winnerState</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"WINNER."</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">" Gumball left: "</span> <span class="o">+</span> <span class="n">count</span> <span class="o">+</span> <span class="s">"."</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">sb</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">State</span> <span class="n">getState</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">state</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">GumballMachineRemote</span> <span class="n">gumballMachine</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">count</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">args</span><span class="o">.</span><span class="na">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"GumballMachine &lt;name&gt; &lt;inventory&gt;"</span><span class="o">);</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">exit</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="na">parseInt</span><span class="o">(</span><span class="n">args</span><span class="o">[</span><span class="mi">1</span><span class="o">]);</span>
+            <span class="n">gumballMachine</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NewGumballMachine</span><span class="o">(</span><span class="n">args</span><span class="o">[</span><span class="mi">0</span><span class="o">],</span> <span class="n">count</span><span class="o">);</span>
+            <span class="n">Naming</span><span class="o">.</span><span class="na">rebind</span><span class="o">(</span><span class="s">"//"</span> <span class="o">+</span> <span class="n">args</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">+</span> <span class="s">"/gumballmachine"</span><span class="o">,</span> <span class="n">gumballMachine</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="gumballmonitor">GumballMonitor客户端</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.rmi.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">GumballMonitor</span> <span class="o">{</span>
+    <span class="n">GumballMachineRemote</span> <span class="n">gumballMachine</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">GumballMonitor</span><span class="o">(</span><span class="n">GumballMachineRemote</span> <span class="n">gumballMachine</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">gumballMachine</span> <span class="o">=</span> <span class="n">gumballMachine</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">report</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Gumball Machine: "</span> <span class="o">+</span> <span class="n">gumballMachine</span><span class="o">.</span><span class="na">getLocation</span><span class="o">());</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Current inventory: "</span> <span class="o">+</span> <span class="n">gumballMachine</span><span class="o">.</span><span class="na">getCount</span><span class="o">()</span> <span class="o">+</span> <span class="s">" gumballs"</span><span class="o">);</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Current state: "</span> <span class="o">+</span> <span class="n">gumballMachine</span><span class="o">.</span><span class="na">getState</span><span class="o">().</span><span class="na">getState</span><span class="o">());</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">location</span> <span class="o">=</span> <span class="s">"rmi://localhost/gumballmachine"</span><span class="o">;</span>
+        <span class="n">GumballMonitor</span> <span class="n">monitor</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">GumballMachineRemote</span> <span class="n">machine</span> <span class="o">=</span> <span class="o">(</span><span class="n">GumballMachineRemote</span><span class="o">)</span><span class="n">Naming</span><span class="o">.</span><span class="na">lookup</span><span class="o">(</span><span class="n">location</span><span class="o">);</span>
+            <span class="n">monitor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GumballMonitor</span><span class="o">(</span><span class="n">machine</span><span class="o">);</span>
+            <span class="n">monitor</span><span class="o">.</span><span class="na">report</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h1 id="section-12">定义代理模式</h1>
+
+<p><strong>代理模式</strong>为另一个对象提供一个替身或占位符以控制对这个对象的访问。</p>
+
+<h3 id="section-13">代理控制访问的方式</h3>
+
+<ul>
+  <li>远程代理控制访问远程对象</li>
+  <li>虚拟代理控制访问创建开销大的资源</li>
+  <li>保护代理基于权限控制对资源的访问</li>
+</ul>
+
+<h3 id="section-14">类图</h3>
+
+<p><img src="http://www.dofactory.com/images/diagrams/net/proxy.gif" alt="proxy_2" /></p>
+
+<p><strong>Subject</strong>为RealSubject和Proxy提供接口。通过实现同一接口，Proxy在RealSubject出现的地方取代它。</p>
+
+<p><strong>RealSubject</strong>是真正做事的对象，它是被proxy代理和控制访问的对象。</p>
+
+<p><strong>Proxy</strong>持有RealSubject的引用。客户和RealSubject的交互都必须通过Proxy。</p>
+
+<h1 id="virtual-proxy">虚拟代理(Virtual Proxy)</h1>
+
+<h3 id="section-15">与远程代理对比</h3>
+
+<h5 id="section-16">远程代理</h5>
+
+<p>远程代理可以作为另一个JVM上对象的本地代表。</p>
+
+<h5 id="section-17">虚拟代理</h5>
+
+<p>虚拟代理作为创建开销大的对象的代表。虚拟代理经常直到我们真正需要一个对象的时候才创建它。</p>
+
+<h3 id="cd">显示CD封面</h3>
+
+<p>用一个Icon接口从网络上加在图像，虚拟代理代理Icon，管理背景的加载，并在加载未完成时显示“加载中”，一旦加载完成，代理就把显示的职责委托给Icon。</p>
+
+<h3 id="cd-1">设计CD封面虚拟代理</h3>
+
+<h5 id="icon">Icon接口</h5>
+
+<ul>
+  <li>getIconWidth()</li>
+  <li>getIconHeight()</li>
+  <li>paintIcon()</li>
+</ul>
+
+<h5 id="imageiconicon">ImageIcon类实现Icon接口</h5>
+
+<p>显示图像的类</p>
+
+<h5 id="imageproxyicon">ImageProxy实现Icon接口</h5>
+
+<p>代理，首先显示消息，图像加载完成后委托ImageIcon显示图像</p>
+
+<h5 id="imageproxy">ImageProxy如何工作</h5>
+
+<ol>
+  <li>创建ImageIcon，从网络URL上加载图像。</li>
+  <li>加载过程中，ImageProxy显示“加载中”</li>
+  <li>加载完毕后，把所有方法调用委托给真正的ImageIcon。</li>
+  <li>如果用户请求新的图像，我们就创建新的代理。</li>
+</ol>
+
+<h3 id="imageproxy-1">编写ImageProxy</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ImageProxy</span> <span class="kd">implements</span> <span class="n">Icon</span> <span class="o">{</span>
+    <span class="n">ImageIcon</span> <span class="n">imageIcon</span><span class="o">;</span>
+    <span class="n">URL</span> <span class="n">imageURL</span><span class="o">;</span>
+    <span class="n">Thread</span> <span class="n">retrievalThread</span><span class="o">;</span>
+    <span class="kt">boolean</span> <span class="n">retrieving</span> <span class="o">=</span><span class="kc">false</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">ImageProxy</span><span class="o">(</span><span class="n">URL</span> <span class="n">url</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">imageURL</span> <span class="o">=</span> <span class="n">url</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">getIconWidth</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">imageIcon</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">imageIcon</span><span class="o">.</span><span class="na">getIconWidth</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="mi">800</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">getIconHeight</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">imageIcon</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">imageIcon</span><span class="o">.</span><span class="na">getIconHeight</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="mi">600</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">paintIcon</span><span class="o">(</span><span class="kd">final</span> <span class="n">Component</span> <span class="n">c</span><span class="o">,</span> <span class="n">Graphics</span> <span class="n">g</span><span class="o">,</span> <span class="kt">int</span> <span class="n">x</span><span class="o">,</span> <span class="kt">int</span> <span class="n">y</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">imageIcon</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">imageIcon</span><span class="o">.</span><span class="na">paintIcon</span><span class="o">(</span><span class="n">c</span><span class="o">,</span> <span class="n">g</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">g</span><span class="o">.</span><span class="na">drawString</span><span class="o">(</span><span class="s">"Loading CD cover, please waiting..."</span><span class="o">,</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">300</span><span class="o">,</span> <span class="n">y</span> <span class="o">+</span> <span class="mi">190</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">retrieving</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">retrieving</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="n">retrievalThread</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Thread</span><span class="o">(</span><span class="k">new</span> <span class="n">Runnable</span><span class="o">()</span> <span class="o">{</span>
+                    <span class="kd">public</span> <span class="kt">void</span> <span class="n">run</span><span class="o">()</span> <span class="o">{</span>
+                        <span class="k">try</span> <span class="o">{</span>
+                            <span class="n">imageIcon</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ImageIcon</span><span class="o">(</span><span class="n">imageURL</span><span class="o">,</span> <span class="s">"CD Cover"</span><span class="o">);</span>
+                            <span class="n">c</span><span class="o">.</span><span class="na">repaint</span><span class="o">();</span>
+                        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+                <span class="o">})</span>
+                <span class="n">retrievalThread</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">ImageComponent</span> <span class="n">imageComponent</span><span class="o">;</span>
+
+        <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">Test</span> <span class="n">test</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Test</span><span class="o">();</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="n">Test</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+            <span class="n">Icon</span> <span class="n">icon</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ImageProxy</span><span class="o">(</span><span class="n">initialURL</span><span class="o">);</span>
+            <span class="n">imageComponent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ImageComponent</span><span class="o">(</span><span class="n">icon</span><span class="o">);</span>
+            <span class="n">frame</span><span class="o">.</span><span class="na">getContentPane</span><span class="o">().</span><span class="na">add</span><span class="o">(</span><span class="n">imageComponent</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h1 id="section-18">保护代理</h1>
+
+<p>例如：比人不能调用setter方法改变你的个人信息，但是setter是public的，这就是一个保护代理。</p>
+
+<h3 id="section-19">步骤</h3>
+
+<h5 id="invocationhandler">1. 创建两个InvocationHandler</h5>
+
+<p>实现代理功能，负责代理个人信息（别人不能修改），他人评价（你不能修改）。一个负责拥有者，一个负责非拥有者。</p>
+
+<h5 id="section-20">2. 写代码创建动态代理</h5>
+
+<p>我们需要写一些代码产生代理类，并实例化它。</p>
+
+<h5 id="personbean">3. 利用适当的代理包装任何PersonBean对象</h5>
+
+<p>根据情况创建合适的代理。</p>
+
+<h3 id="invocationhandle">创建InvocationHandle</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.lang.reflect.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">OwnerInvocationHandler</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="o">{</span>
+    <span class="n">PersonBean</span> <span class="n">person</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">OwnerInvocationHandler</span><span class="o">(</span><span class="n">PersonBean</span> <span class="n">person</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">person</span> <span class="o">=</span> <span class="n">person</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">Object</span> <span class="n">invoke</span><span class="o">(</span><span class="n">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IllegalAccessException</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">startWith</span><span class="o">(</span><span class="s">"get"</span><span class="o">))</span> <span class="o">{</span> <span class="c1">// 如果方法是一个getter，我们就调用person内的方法</span>
+                <span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="s">"setHotOrNotRating"</span><span class="o">))</span> <span class="o">{</span> <span class="c1">// 如果是setHotOrNotRating，我们抛出异常表示不允许</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalAccessException</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">startWith</span><span class="o">(</span><span class="s">"set"</span><span class="o">))</span> <span class="o">{</span> <span class="c1">// 如果set，调用person内的方法</span>
+                <span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">person</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InvocationTargetException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="proxyproxy">创建Proxy类并实例化Proxy对象</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">PersonBean</span> <span class="nf">getOwnerProxy</span><span class="p">(</span><span class="n">PersonBean</span> <span class="n">person</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="o">(</span><span class="n">PersonBean</span><span class="o">)</span><span class="n">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span>
+        <span class="n">person</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getClassLoader</span><span class="o">(),</span> 
+        <span class="n">person</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getInterfaces</span><span class="o">(),</span>
+        <span class="n">newOwnerInvocationHandler</span><span class="o">(</span><span class="n">person</span><span class="o">));</span>
+</code></pre>
+</div>
+
+<h3 id="section-21">测试配对服务</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.rmi.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.rmi.server.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Test</span> <span class="n">test</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Test</span><span class="o">();</span>
+        <span class="n">test</span><span class="o">.</span><span class="na">drive</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">Test</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">initializeDatabase</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">drive</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">PersonBean</span> <span class="n">joe</span> <span class="o">=</span> <span class="n">getPersonFromDatabase</span><span class="o">(</span><span class="s">"Joe Javabean"</span><span class="o">);</span>
+        <span class="n">PersonBean</span> <span class="n">ownerProxy</span> <span class="o">=</span> <span class="n">getOwnerProxy</span><span class="o">(</span><span class="n">joe</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Name is "</span> <span class="o">+</span> <span class="n">ownerProxy</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+        <span class="n">ownerProxy</span><span class="o">.</span><span class="na">setInterests</span><span class="o">(</span><span class="s">"bowling, Go"</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Interests set from owner proxy"</span><span class="o">);</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">ownerProxy</span><span class="o">.</span><span class="na">setHotOrNotRating</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"can't set rating from owner proxy"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Rating is "</span> <span class="o">+</span> <span class="n">ownerProxy</span><span class="o">.</span><span class="na">getHotOrNotRating</span><span class="o">());</span>
+
+        <span class="n">PersonBean</span> <span class="n">nonOwnerProxy</span> <span class="o">=</span> <span class="n">getNonOwnerProxy</span><span class="o">(</span><span class="n">joe</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Name is "</span> <span class="o">+</span> <span class="n">nonOwnerProxy</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">nonOwnerProxy</span><span class="o">.</span><span class="na">setInterests</span><span class="o">(</span><span class="s">"bowling, Go"</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"can't set interests from non owner proxy"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">nonOwnerProxy</span><span class="o">.</span><span class="na">setHotOrNotRating</span><span class="o">(</span><span class="mi">3</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Rating set from non owner proxy"</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Rating is "</span> <span class="o">+</span> <span class="n">nonOwnerProxy</span><span class="o">.</span><span class="na">getHotOrNotRating</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blog/2016/06/17/CC150-Ch14-summary/" data-toggle="tooltip" data-placement="top" title="CC150 Chapter 14---Java">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/blog/2016/06/21/CC150-Ch12-summary/" data-toggle="tooltip" data-placement="top" title="CC150 Chapter 12---Testing">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- Duoshuo Share start -->
+                <style>
+                    .ds-share{
+                        text-align: right;
+                    }
+                    
+                    @media only screen and (max-width: 700px) {
+                        .ds-share {
+
+                        }
+                    }
+                </style>
+
+                <div class="ds-share"
+                    data-thread-key="/blog/2016/06/20/Proxy-Pattern" data-title="Proxy Pattern Summary"
+                    data-images="http://lisentoday/img/green.jpg"
+                    data-content="设计模式-代理模式(Proxy Pattern)
+
+代理
+
+控制和管理访问
+
+
+  远程代理好比“远程对象的本地代表”。
+  远程对象是一种对象，活在不同... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/06/20/Proxy-Pattern/">
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- Duoshuo Share end-->
+
+
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread" data-thread-key="/blog/2016/06/20/Proxy-Pattern" data-title="Proxy Pattern Summary" data-url="http://lisentoday/blog/2016/06/20/Proxy-Pattern/"></div>
+                </div>
+                <!-- 多说评论框 end -->
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"cnfeat"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <!-- kill the Facebook and Weibo -->
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    
+                    <!--
+                    
+                    -->
+
+                    <!--
+                    
+                    -->
+
+                    
+                    <!--
+                    
+                    -->
+
+                </ul>
+                <p class="copyright text-muted">
+                &copy; 2016 lisen ❖ Powered by Jekyll.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+
+
+<!-- Highlight.js -->
+<script>
+    async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js",function(){
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+<link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

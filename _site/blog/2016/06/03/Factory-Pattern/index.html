@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="李森|不仅仅是一个程序员">
+
+    <title>Factory Pattern Summary - 四木成森</title>
+
+    <link rel="canonical" href="http://lisentoday/blog/2016/06/03/Factory-Pattern/">
+
+    <!-- Icons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+
+
+
+
+
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">四木成森</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">主页</a>
+                </li>
+                
+                <li>
+                    <a href="/a_introduction/">我的简介</a>
+                </li>
+                
+                <li>
+                    <a href="/b_study/">学习</a>
+                </li>
+                
+                <li>
+                    <a href="/c_life/">生活</a>
+                </li>
+                
+                <li>
+                    <a href="/d_collection/">我的收藏</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/green.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="Tags">
+                        
+                        <a class="tag" href="/Tags/#study" title="study">study</a>
+                        
+                    </div>
+                    <h1>Factory Pattern Summary</h1>
+                    
+                    <span class="meta">Posted by lisen on June 3, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
+
+                <h1 id="section">设计模式-工厂模式</h1>
+
+<h2 id="section-1">存在的问题</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="n">Duck</span> <span class="n">duck</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MallardDuck</span><span class="o">();</span>
+
+</code></pre>
+</div>
+
+<p>Duck接口让代码具有弹性，但是还是得建立具体类的实例。</p>
+
+<p>如：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="n">Duck</span> <span class="n">duck</span><span class="o">;</span>
+
+<span class="k">if</span> <span class="o">(</span><span class="n">picnic</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">duck</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MallardDuck</span><span class="o">();</span>
+<span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">hunting</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">duck</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DecoyDuck</span><span class="o">();</span>
+<span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">inBathTub</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">duck</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RubberDuck</span><span class="o">();</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<p>需要在运行时根据条件来决定要实例化的类，一旦有变化或者扩展，就必须重新对代码进行检查和修改。</p>
+
+<h3 id="section-2">引入工厂模式</h3>
+
+<p>将创建对象的代码移到一个另一个对象，这个对象只负责如何创建Pizza，我们称这个新对象为”工厂”。</p>
+
+<p>如：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SimplePizzaFactory</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Pizza</span> <span class="n">createPizza</span><span class="o">(</span><span class="n">String</span> <span class="n">type</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Pizza</span> <span class="n">pizza</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">type</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"cheese"</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">pizza</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CheesePizza</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">type</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"pepperoni"</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">pizza</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PepperoniPizza</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">type</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"clam"</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">pizza</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ClamPizza</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">type</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"veggie"</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">pizza</span> <span class="o">=</span> <span class="k">new</span> <span class="n">VeggiePizza</span><span class="o">();</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="n">pizza</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<p>所有工厂模式都用来封装对象的创建。工厂方法模式通过让子类决定该创建的对象是什么，来达到将对象创建的过程封装的目的</p>
+
+<h3 id="section-3">组成元素</h3>
+
+<h5 id="section-4">创建者类</h5>
+
+<p><em>抽象创建者类</em>—定义了一个抽象的工厂方法，让子类实现此方法制造产品。创建者通常会包含依赖于抽象产品的代码，而这些抽象产品由子类制造。创建者不需要真的知道在制造哪种具体产品。如下:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">PizzaStore</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Pizza</span> <span class="n">orderPizza</span><span class="o">(</span><span class="n">String</span> <span class="n">type</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Pizza</span> <span class="n">pizza</span><span class="o">;</span>
+
+        <span class="n">pizza</span> <span class="o">=</span> <span class="n">createPizza</span><span class="o">(</span><span class="n">type</span><span class="o">);</span>
+
+        <span class="n">pizza</span><span class="o">.</span><span class="na">prepare</span><span class="o">();</span>
+        <span class="n">pizza</span><span class="o">.</span><span class="na">bake</span><span class="o">();</span>
+        <span class="n">pizza</span><span class="o">.</span><span class="na">cut</span><span class="o">();</span>
+        <span class="n">pizza</span><span class="o">.</span><span class="na">box</span><span class="o">();</span>
+
+        <span class="k">return</span> <span class="n">pizza</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">protected</span> <span class="kd">abstract</span> <span class="n">Pizza</span> <span class="n">createPizza</span><span class="o">(</span><span class="n">String</span> <span class="n">type</span><span class="o">);</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+<p><em>具体创建者</em>—能够产生产品的类称为具体创建者。如下，每个加盟店有自己的PizzaStore子类，可以利用实现createPizza()创建自己风味的比萨:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">NYPizzaStore</span> <span class="kd">extends</span> <span class="n">PizzaStore</span> <span class="o">{</span>
+    <span class="kd">protected</span> <span class="n">Pizza</span> <span class="n">createPizza</span><span class="o">(</span><span class="n">String</span> <span class="n">item</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"cheese"</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="n">NYStyleCheesePizza</span><span class="o">();</span>
+        <span class="o">}</span> <span class="c1">//else if (item.equals("veggie")) {</span>
+        <span class="c1">//     return new NYStyleVeggiePizza();</span>
+        <span class="c1">// } else if (item.equals("clam")) {</span>
+        <span class="c1">//     return new NYStyleClamPizza();</span>
+        <span class="c1">// } else if (item.equals("pepperoni")) {</span>
+        <span class="c1">//     return new NYStylePepperoniPizza();</span>
+        <span class="c1">// } else return null;</span>
+        <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<h5 id="section-5">产品类</h5>
+
+<p><em>抽象产品</em>—抽象工厂生产产品，对PizzaStore来说，产品就是Pizza。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Pizza</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="n">String</span> <span class="n">dough</span><span class="o">;</span>
+    <span class="n">String</span> <span class="n">sauce</span><span class="o">;</span>
+    <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">toppings</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
+
+    <span class="kt">void</span> <span class="n">prepare</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Preparing "</span> <span class="o">+</span> <span class="n">name</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Tossing dough..."</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Adding sauce..."</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Adding toppings"</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">toppings</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"    "</span> <span class="o">+</span> <span class="n">toppings</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">));</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kt">void</span> <span class="n">cut</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Cutting the pizza into diagonal slices"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kt">void</span> <span class="n">box</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Place pizza in official PizzaStore box"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kt">void</span> <span class="n">bake</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Bake for 25 minutes at 350"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<p><em>具体产品</em>—所有店里能实际制造的比萨。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">NYStyleCheesePizza</span> <span class="kd">extends</span> <span class="n">Pizza</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">NYStyleCheesePizza</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s">"NY style Sauce and Cheese Pizza"</span><span class="o">;</span>
+        <span class="n">dough</span> <span class="o">=</span> <span class="s">"Thin Crust Dough"</span><span class="o">;</span>
+        <span class="n">sauce</span> <span class="o">=</span> <span class="s">"Marinara Sauce"</span><span class="o">;</span>
+
+        <span class="n">toppings</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">"Grated Reggiano Cheese"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<h3 id="section-6">工厂模式定义</h3>
+
+<p><em>工厂方法模式</em>—定义了一个创建对象的接口，但由子类决定要实例化的类是哪一个。工厂方法让类把实例化推迟到子类。</p>
+
+<p>编写创建者类时，不需要知道实际创建的产品是哪一个，选择了使用哪个子类，自然就决定了实际创建的产品是什么。</p>
+
+<h3 id="section-7">工厂模式好处</h3>
+
+<p>将创建对象的代码集中在一个对象或方法中，可以避免代码中的重复，并且更方便以后的维护。</p>
+
+<p>可以帮助针对接口编程，而不针对实现变成。</p>
+
+<h1 id="section-8">对象依赖</h1>
+
+<p>当你<em>直接实例化</em>一个对象时，就是在依赖它的具体类。如果不使用工厂模式，PizzaStore代码如下:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DependentPizzaStore</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Pizza</span> <span class="n">createPizza</span><span class="o">(</span><span class="n">String</span> <span class="n">style</span><span class="o">,</span> <span class="n">String</span> <span class="n">type</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Pizza</span> <span class="n">pizza</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">style</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"NY"</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">type</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"cheese"</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">pizza</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NYStyleCheesePizza</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">type</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"veggie"</span><span class="o">))</span> <span class="o">{</span>
+
+            <span class="o">}</span>
+            <span class="c1">// ...</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">style</span><span class="o">.</span><span class="na">euqals</span><span class="o">(</span><span class="s">"Chicago"</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">type</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"cheese"</span><span class="o">))</span> <span class="o">{</span>
+
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">type</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"veggie"</span><span class="o">))</span> <span class="o">{</span>
+
+            <span class="o">}</span>
+            <span class="c1">// ...</span>
+        <span class="o">}</span>
+        <span class="c1">// ...</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<p>这个PizzaStore依赖于所有的比萨对象，这些比萨具体实现的任何改变都会影响到PizzaStore。每新增一个比萨种类，就等于让PizzaStore多了一个依赖。</p>
+
+<h1 id="section-9">依赖倒置原则</h1>
+
+<p>要依赖抽象，不要依赖具体类。</p>
+
+<p>解释：PizzaStore是“高层组件”，比萨实现是“低层组件”，而PizzaStore依赖这些具体比萨类。这个原则告诉我们，应该重写代码以便于我们依赖抽象类，而不依赖具体类。</p>
+
+<h1 id="section-10">原则的应用</h1>
+
+<p>应用工厂方法，PizzaStore依赖Pizza这个抽象类，具体比萨类，也依赖Pizza抽象。由于具体比萨类也依赖Pizza抽象，与一般OO设计思考方式相反，所以称为“倒置”。</p>
+
+<h5 id="section-11">指导方针</h5>
+
+<ul>
+  <li>变量不可以持有具体类的引用</li>
+  <li>不要让类派生自具体类</li>
+  <li>不要覆盖基类中已实现的方法</li>
+</ul>
+
+<h1 id="section-12">抽象工厂模式</h1>
+
+<p><em>抽象工厂模式</em>—提供一个接口，用于创建相关或依赖对象的家族，而不需要明确指定具体类。</p>
+
+<h1 id="vs">工厂方法vs抽象工厂</h1>
+
+<ul>
+  <li>工厂方法和抽象工厂都是负责创建对象</li>
+  <li>工厂方法使用继承，而抽象工厂使用对象的组合</li>
+  <li>工厂方法: 通过子类来创建对象</li>
+  <li>抽象工厂: 提供一个用来创建一个产品家族的抽象类型，这个类型的子类定义了产品被产生的方法</li>
+  <li></li>
+</ul>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blog/2016/06/03/Decorator-Pattern/" data-toggle="tooltip" data-placement="top" title="Decorator Pattern Summary">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/blog/2016/06/03/Leetcode-349-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 349 Summary">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- Duoshuo Share start -->
+                <style>
+                    .ds-share{
+                        text-align: right;
+                    }
+                    
+                    @media only screen and (max-width: 700px) {
+                        .ds-share {
+
+                        }
+                    }
+                </style>
+
+                <div class="ds-share"
+                    data-thread-key="/blog/2016/06/03/Factory-Pattern" data-title="Factory Pattern Summary"
+                    data-images="http://lisentoday/img/green.jpg"
+                    data-content="设计模式-工厂模式
+
+存在的问题
+
+
+Duck duck = new MallardDuck();
+
+
+
+
+Duck接口让代码具有弹性，但是还是得建立具体... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/06/03/Factory-Pattern/">
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- Duoshuo Share end-->
+
+
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread" data-thread-key="/blog/2016/06/03/Factory-Pattern" data-title="Factory Pattern Summary" data-url="http://lisentoday/blog/2016/06/03/Factory-Pattern/"></div>
+                </div>
+                <!-- 多说评论框 end -->
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"cnfeat"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <!-- kill the Facebook and Weibo -->
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    
+                    <!--
+                    
+                    -->
+
+                    <!--
+                    
+                    -->
+
+                    
+                    <!--
+                    
+                    -->
+
+                </ul>
+                <p class="copyright text-muted">
+                &copy; 2016 lisen ❖ Powered by Jekyll.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+
+
+<!-- Highlight.js -->
+<script>
+    async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js",function(){
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+<link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="李森|不仅仅是一个程序员">
+
+    <title>Method Invocation Summary - 四木成森</title>
+
+    <link rel="canonical" href="http://lisentoday/blog/2016/06/07/Method-Invocation/">
+
+    <!-- Icons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+
+
+
+
+
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">四木成森</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">主页</a>
+                </li>
+                
+                <li>
+                    <a href="/a_introduction/">我的简介</a>
+                </li>
+                
+                <li>
+                    <a href="/b_study/">学习</a>
+                </li>
+                
+                <li>
+                    <a href="/c_life/">生活</a>
+                </li>
+                
+                <li>
+                    <a href="/d_collection/">我的收藏</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/green.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="Tags">
+                        
+                        <a class="tag" href="/Tags/#study" title="study">study</a>
+                        
+                    </div>
+                    <h1>Method Invocation Summary</h1>
+                    
+                    <span class="meta">Posted by lisen on June 7, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
+
+                <h1 id="section">设计模式-命令模式</h1>
+
+<h3 id="section-1">定义</h3>
+
+<p><strong>命令模式</strong>将“请求”封装成对象，以便使用不同的请求、队列或者日志来参数化其他对象。命令模式也支持可撤销的操作。</p>
+
+<h3 id="section-2">类图</h3>
+
+<p><img src="http://www.myexception.cn/img/2012/09/14/1713344815.jpg" alt="Command Pattern" /></p>
+
+<h3 id="section-3">代码示例</h3>
+
+<p><strong>Client</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">RemoteControl</span> <span class="n">remoteControl</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RemoteControl</span><span class="o">();</span>
+
+        <span class="n">Light</span> <span class="n">livingRoomLight</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Light</span><span class="o">(</span><span class="s">"Living Room"</span><span class="o">);</span>
+        <span class="n">Light</span> <span class="n">kitchenLight</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Light</span><span class="o">(</span><span class="s">"Kitchen"</span><span class="o">);</span>
+        <span class="n">CeilingFan</span> <span class="n">ceilingFan</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CeilingFan</span><span class="o">(</span><span class="s">"Living Room"</span><span class="o">);</span>
+        <span class="n">GarageDoor</span> <span class="n">garageDoor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GarageDoor</span><span class="o">();</span>
+        <span class="n">Stereo</span> <span class="n">stereo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Stereo</span><span class="o">(</span><span class="s">"Living Room"</span><span class="o">);</span>
+
+        <span class="n">LightOnCommand</span> <span class="n">livingRoomLightOn</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LightOnCommand</span><span class="o">(</span><span class="n">livingRoomLight</span><span class="o">);</span>
+        <span class="n">LightOffCommand</span> <span class="n">livingRoomLightOff</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LightOffCommand</span><span class="o">(</span><span class="n">livingRoomLight</span><span class="o">);</span>
+        <span class="n">LightOnCommand</span> <span class="n">kitchenRoomLightOn</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LightOnCommand</span><span class="o">(</span><span class="n">kitchenLight</span><span class="o">);</span>
+        <span class="n">LightOffCommand</span> <span class="n">kitchenRoomLightOff</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LightOffCommand</span><span class="o">(</span><span class="n">kitchenLight</span><span class="o">);</span>
+
+        <span class="n">CeilingFanOnCommand</span> <span class="n">ceilingFanOn</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CeilingFanOnCommand</span><span class="o">(</span><span class="n">ceilingFan</span><span class="o">);</span>
+        <span class="n">CeilingFanOffCommand</span> <span class="n">ceilingFanOff</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CeilingFanOffCommand</span><span class="o">(</span><span class="n">ceilingFan</span><span class="o">);</span>
+
+        <span class="n">StereoOnWithCDCommand</span> <span class="n">stereoOnWithCD</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StereoOnWithCDCommand</span><span class="o">(</span><span class="n">stereo</span><span class="o">);</span>
+        <span class="n">StereoOffCommand</span> <span class="n">stereoOff</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StereoOffCommand</span><span class="o">(</span><span class="n">stereo</span><span class="o">);</span>
+
+        <span class="n">remoteControl</span><span class="o">.</span><span class="na">setCommand</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">livingRoomLightOn</span><span class="o">,</span> <span class="n">livingRoomLightOff</span><span class="o">);</span>
+        <span class="n">remoteControl</span><span class="o">.</span><span class="na">setCommand</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="n">kitchenRoomLightOn</span><span class="o">,</span> <span class="n">kitchenRoomLightOff</span><span class="o">);</span>
+        <span class="n">remoteControl</span><span class="o">.</span><span class="na">setCommand</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="n">ceilingFanOn</span><span class="o">,</span> <span class="n">ceilingFanOff</span><span class="o">);</span>
+        <span class="n">remoteControl</span><span class="o">.</span><span class="na">setCommand</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="n">stereoOnWithCD</span><span class="o">,</span> <span class="n">stereoOff</span><span class="o">);</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">remoteControl</span><span class="o">);</span>
+
+        <span class="n">remoteControl</span><span class="o">.</span><span class="na">onButtonWasPushed</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+        <span class="n">remoteControl</span><span class="o">.</span><span class="na">offButtonWasPushed</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+        <span class="n">remoteControl</span><span class="o">.</span><span class="na">onButtonWasPushed</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+        <span class="n">remoteControl</span><span class="o">.</span><span class="na">offButtonWasPushed</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+        <span class="n">remoteControl</span><span class="o">.</span><span class="na">onButtonWasPushed</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
+        <span class="n">remoteControl</span><span class="o">.</span><span class="na">offButtonWasPushed</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
+        <span class="n">remoteControl</span><span class="o">.</span><span class="na">onButtonWasPushed</span><span class="o">(</span><span class="mi">3</span><span class="o">);</span>
+        <span class="n">remoteControl</span><span class="o">.</span><span class="na">offButtonWasPushed</span><span class="o">(</span><span class="mi">3</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<p><strong>Invoker</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RemoteControl</span> <span class="o">{</span>
+    <span class="n">Command</span><span class="o">[]</span> <span class="n">onCommand</span><span class="o">;</span>
+    <span class="n">Command</span><span class="o">[]</span> <span class="n">offCommand</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">COMMAND_NUMBER</span> <span class="o">=</span> <span class="mi">7</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">RemoteControl</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">onCommand</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Command</span><span class="o">[</span><span class="n">COMMAND_NUMBER</span><span class="o">];</span>
+        <span class="n">offCommand</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Command</span><span class="o">[</span><span class="n">COMMAND_NUMBER</span><span class="o">];</span>
+
+        <span class="n">Command</span> <span class="n">noCommand</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NoCommand</span><span class="o">();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">COMMAND_NUMBER</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">onCommand</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">noCommand</span><span class="o">;</span>
+            <span class="n">offCommand</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">noCommand</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">setCommand</span><span class="o">(</span><span class="kt">int</span> <span class="n">slot</span><span class="o">,</span> <span class="n">Command</span> <span class="n">onCommand</span><span class="o">,</span> <span class="n">Command</span> <span class="n">offCommand</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">onCommand</span><span class="o">[</span><span class="n">slot</span><span class="o">]</span> <span class="o">=</span> <span class="n">onCommand</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">offCommand</span><span class="o">[</span><span class="n">slot</span><span class="o">]</span> <span class="o">=</span> <span class="n">offCommand</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">onButtonWasPushed</span><span class="o">(</span><span class="kt">int</span> <span class="n">slot</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">onCommand</span><span class="o">[</span><span class="n">slot</span><span class="o">].</span><span class="na">execute</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">offButtonWasPushed</span><span class="o">(</span><span class="kt">int</span> <span class="n">slot</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">offCommand</span><span class="o">[</span><span class="n">slot</span><span class="o">].</span><span class="na">execute</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">StringBuffer</span> <span class="n">stringBuff</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuffer</span><span class="o">();</span>
+        <span class="n">stringBuff</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"\n------ Remote Control ------\n"</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">onCommand</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">stringBuff</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"[slot "</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="s">"] "</span> <span class="o">+</span> <span class="n">onCommand</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">getClass</span><span class="o">().</span><span class="na">getName</span><span class="o">()</span> <span class="o">+</span> <span class="s">"    "</span> <span class="o">+</span> <span class="n">offCommand</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">getClass</span><span class="o">().</span><span class="na">getName</span><span class="o">()</span> <span class="o">+</span> <span class="s">"\n"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">stringBuff</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<p><strong>Receiver</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Stereo</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">volume</span><span class="o">;</span>
+    <span class="n">String</span> <span class="n">position</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">Stereo</span><span class="o">(</span><span class="n">String</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">position</span> <span class="o">=</span> <span class="n">position</span><span class="o">;</span>
+        <span class="n">volume</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">on</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">position</span> <span class="o">+</span> <span class="s">" stereo is on"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">off</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">position</span> <span class="o">+</span> <span class="s">" stereo is off"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">setCD</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">position</span> <span class="o">+</span> <span class="s">" stereo is set for CD input"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">setVolume</span><span class="o">(</span><span class="kt">int</span> <span class="n">volume</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">volume</span> <span class="o">=</span> <span class="n">volume</span><span class="o">;</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">position</span> <span class="o">+</span> <span class="s">" stereo volume is set to "</span> <span class="o">+</span> <span class="n">volume</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CeilingFan</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">position</span><span class="o">;</span>
+    <span class="n">String</span> <span class="n">speed</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">CeilingFan</span><span class="o">(</span><span class="n">String</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">position</span> <span class="o">=</span> <span class="n">position</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">speed</span> <span class="o">=</span> <span class="s">"off"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">off</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">speed</span> <span class="o">=</span> <span class="s">"off"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">high</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">speed</span> <span class="o">=</span> <span class="s">"high"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">medium</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">speed</span> <span class="o">=</span> <span class="s">"medium"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">low</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">speed</span> <span class="o">=</span> <span class="s">"low"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">getSpeed</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">position</span> <span class="o">+</span> <span class="s">" ceiling fan is on "</span> <span class="o">+</span> <span class="n">speed</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Light</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">position</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">Light</span><span class="o">(</span><span class="n">String</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">position</span> <span class="o">=</span> <span class="n">position</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">on</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">position</span> <span class="o">+</span> <span class="s">" light is on"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">off</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">position</span> <span class="o">+</span> <span class="s">" light is off"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<p><strong>Command</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Command</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">execute</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">undo</span><span class="o">();</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<p><strong>ConcreteCommand</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">LightOnCommand</span> <span class="kd">implements</span> <span class="n">Command</span> <span class="o">{</span>
+    <span class="n">Light</span> <span class="n">light</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">LightOnCommand</span><span class="o">(</span><span class="n">Light</span> <span class="n">light</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">light</span> <span class="o">=</span> <span class="n">light</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">execute</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">light</span><span class="o">.</span><span class="na">on</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">undo</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">light</span><span class="o">.</span><span class="na">off</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">LightOffCommand</span> <span class="kd">implements</span> <span class="n">Command</span> <span class="o">{</span>
+    <span class="n">Light</span> <span class="n">light</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">LightOffCommand</span><span class="o">(</span><span class="n">Light</span> <span class="n">light</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">light</span> <span class="o">=</span> <span class="n">light</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">execute</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">light</span><span class="o">.</span><span class="na">off</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">undo</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">light</span><span class="o">.</span><span class="na">on</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CeilingFanOnCommand</span> <span class="kd">implements</span> <span class="n">Command</span> <span class="o">{</span>
+    <span class="n">CeilingFan</span> <span class="n">ceilingFan</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">CeilingFanOnCommand</span><span class="o">(</span><span class="n">CeilingFan</span> <span class="n">ceilingFan</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">ceilingFan</span> <span class="o">=</span> <span class="n">ceilingFan</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">execute</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">ceilingFan</span><span class="o">.</span><span class="na">high</span><span class="o">();</span>
+        <span class="n">ceilingFan</span><span class="o">.</span><span class="na">getSpeed</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">undo</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">ceiling</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CeilingFanOffCommand</span> <span class="kd">implements</span> <span class="n">Command</span> <span class="o">{</span>
+    <span class="n">CeilingFan</span> <span class="n">ceilingFan</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">CeilingFanOffCommand</span><span class="o">(</span><span class="n">CeilingFan</span> <span class="n">ceilingFan</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">ceilingFan</span> <span class="o">=</span> <span class="n">ceilingFan</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">execute</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">ceilingFan</span><span class="o">.</span><span class="na">off</span><span class="o">();</span>
+        <span class="n">ceilingFan</span><span class="o">.</span><span class="na">getSpeed</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">StereoOnWithCDCommand</span> <span class="kd">implements</span> <span class="n">Command</span> <span class="o">{</span>
+    <span class="n">Stereo</span> <span class="n">stereo</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">StereoOnWithCDCommand</span><span class="o">(</span><span class="n">Stereo</span> <span class="n">stereo</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">stereo</span> <span class="o">=</span> <span class="n">stereo</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">execute</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">stereo</span><span class="o">.</span><span class="na">on</span><span class="o">();</span>
+        <span class="n">stereo</span><span class="o">.</span><span class="na">setCD</span><span class="o">();</span>
+        <span class="n">stereo</span><span class="o">.</span><span class="na">setVolume</span><span class="o">(</span><span class="mi">11</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">StereoOffCommand</span> <span class="kd">implements</span> <span class="n">Command</span> <span class="o">{</span>
+    <span class="n">Stereo</span> <span class="n">stereo</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">StereoOffCommand</span><span class="o">(</span><span class="n">Stereo</span> <span class="n">stereo</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">stereo</span> <span class="o">=</span> <span class="n">stereo</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">execute</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">stereo</span><span class="o">.</span><span class="na">off</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blog/2016/06/07/Leetcode-347-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 347 Summary">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/blog/2016/06/08/Adapter-Pattern/" data-toggle="tooltip" data-placement="top" title="Adapter Pattern Summary">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- Duoshuo Share start -->
+                <style>
+                    .ds-share{
+                        text-align: right;
+                    }
+                    
+                    @media only screen and (max-width: 700px) {
+                        .ds-share {
+
+                        }
+                    }
+                </style>
+
+                <div class="ds-share"
+                    data-thread-key="/blog/2016/06/07/Method Invocation" data-title="Method Invocation Summary"
+                    data-images="http://lisentoday/img/green.jpg"
+                    data-content="设计模式-命令模式
+
+定义
+
+命令模式将“请求”封装成对象，以便使用不同的请求、队列或者日志来参数化其他对象。命令模式也支持可撤销的操作。
+
+类图
+
+
+
+... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/06/07/Method-Invocation/">
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- Duoshuo Share end-->
+
+
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread" data-thread-key="/blog/2016/06/07/Method Invocation" data-title="Method Invocation Summary" data-url="http://lisentoday/blog/2016/06/07/Method-Invocation/"></div>
+                </div>
+                <!-- 多说评论框 end -->
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"cnfeat"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <!-- kill the Facebook and Weibo -->
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    
+                    <!--
+                    
+                    -->
+
+                    <!--
+                    
+                    -->
+
+                    
+                    <!--
+                    
+                    -->
+
+                </ul>
+                <p class="copyright text-muted">
+                &copy; 2016 lisen ❖ Powered by Jekyll.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+
+
+<!-- Highlight.js -->
+<script>
+    async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js",function(){
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+<link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

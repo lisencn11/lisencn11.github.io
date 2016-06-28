@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="李森|不仅仅是一个程序员">
+
+    <title>CC150 Chapter 16---Threads and Locks Question - 四木成森</title>
+
+    <link rel="canonical" href="http://lisentoday/blog/2016/06/15/CC150-Ch16-Questions/">
+
+    <!-- Icons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+
+
+
+
+
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">四木成森</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">主页</a>
+                </li>
+                
+                <li>
+                    <a href="/a_introduction/">我的简介</a>
+                </li>
+                
+                <li>
+                    <a href="/b_study/">学习</a>
+                </li>
+                
+                <li>
+                    <a href="/c_life/">生活</a>
+                </li>
+                
+                <li>
+                    <a href="/d_collection/">我的收藏</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/green.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="Tags">
+                        
+                        <a class="tag" href="/Tags/#study" title="study">study</a>
+                        
+                    </div>
+                    <h1>CC150 Chapter 16---Threads and Locks Question</h1>
+                    
+                    <span class="meta">Posted by lisen on June 15, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
+
+                <h2 id="threadprocess">线程(thread)与进程(process)的区别</h2>
+
+<ul>
+  <li>进程：程序运行的实例。进程拥有独立的资源(CPU和内存)，每个进程不能访问其他进程的变量，想要获得其他进程的资源，需要使用IPC，包括管道，文件，socket等。</li>
+  <li>线程：存在于进程中，共享进程资源。线程间可以互相访问资源。</li>
+</ul>
+
+<h2 id="context-switch">如何测量上下文转换(context switch)的时间</h2>
+
+<p>上下文转换是两个进程切换的过程，用来实现单核多进程。操作系统需要存储当前进程状态信息(state information)，恢复另一个就绪态进程状态信息，以完成切换。</p>
+
+<p>直观的想法是我们需要记录当前进程的最后一条指令的时间戳(timestamp)，和恢复进程的第一条指令的时间戳，他们的差值就是上下文转换所需时间。</p>
+
+<p>假设有两个进程P<sub>1</sub>(正在运行)和P<sub>2</sub>(就绪态)，切换时P<sub>1</sub>进程运行到第N条指令，设t<sub>x,k</sub>表示进程x在第k条指令的时间戳，这上下文切换时间为<strong>t<sub>2,1</sub>-t<sub>1,n</sub></strong>。</p>
+
+<h4 id="section">存在的问题</h4>
+
+<ul>
+  <li>显然，记录每条指令的时间戳并不现实，那么我们如何知道何时发生上下文切换呢？</li>
+  <li>上下文转换由操作系统调度算法控制，在P<sub>1,n</sub>后，内核可能去处理一些内核中断，以及一些内核级别线程的上下文切换，这些都无法追踪，导致进程的上下文切换预估的较大。</li>
+</ul>
+
+<h4 id="section-1">解决方法</h4>
+
+<p>首先，我们需要建立一个环境，确保P<sub>1</sub>执行后，系统调度P<sub>2</sub>立即执行。我们可以通过建立P<sub>1</sub>和P<sub>2</sub>之间的数据通道（如管道）实现。</p>
+
+<p>即：P<sub>1</sub>作为sender，P<sub>2</sub>作为receiver；初始时P<sub>2</sub>阻塞，P<sub>1</sub>执行，发送后立即read response，由于P<sub>2</sub>还没运行，P<sub>1</sub>进入阻塞态，放弃CPU。CPU调度需要选择一个进程，而P<sub>2</sub>此时是就绪态，于是被选择执行，P<sub>1</sub>和P<sub>2</sub>角色对调。</p>
+
+<p>详细步骤如下：</p>
+
+<ol>
+  <li>P<sub>2</sub>阻塞等待P<sub>1</sub>发送数据</li>
+  <li>P<sub>1</sub>记录起始时间</li>
+  <li>P<sub>1</sub>发送数据给P<sub>2</sub></li>
+  <li>P<sub>1</sub>尝试从P<sub>2</sub>读数据</li>
+  <li>P<sub>2</sub>被调度执行并读数据</li>
+  <li>P<sub>2</sub>给P<sub>1</sub>回复数据</li>
+  <li>P<sub>2</sub>尝试从P<sub>2</sub>读数据</li>
+  <li>P<sub>1</sub>被调度执行并读数据</li>
+  <li>P<sub>1</sub>记录终止时间</li>
+</ol>
+
+<p>设：T<sub>d</sub>为发送数据时间，T<sub>r</sub>为接收数据的时间，T<sub>c</sub>为上下文转换时间，T为我们测量的总时间，则T=2*(T<sub>d</sub> + T<sub>r</sub> + T<sub>c</sub>)。</p>
+
+<p>我们已知T，需要测量T<sub>d</sub> + T<sub>r</sub>以便计算T<sub>c</sub>。可以通过P<sub>1</sub>自己发送并接收数据来测量，因为这里面不包含上下文转换。</p>
+
+<p>如此，我们进行多次以便排除可能出现的干扰条件，取最短的时间作为最终结果。</p>
+
+<h2 id="section-2">实现哲学家就餐问题的死锁避免</h2>
+
+<p>可能产生死锁的代码</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.concurrent.locks.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Chopstick</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">Lock</span> <span class="n">lock</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">Chopstick</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">lock</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReentrantLock</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">pickUp</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">lock</span><span class="o">.</span><span class="na">lock</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">putDown</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">lock</span><span class="o">.</span><span class="na">unlock</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Philosopher</span> <span class="kd">extends</span> <span class="n">Thread</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">bites</span> <span class="o">=</span> <span class="mi">10</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">Chopstick</span> <span class="n">left</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">Chopstick</span> <span class="n">right</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">Philosopher</span><span class="o">(</span><span class="kt">int</span> <span class="n">name</span><span class="o">,</span> <span class="n">Chopstick</span> <span class="n">left</span><span class="o">,</span> <span class="n">Chopstick</span> <span class="n">right</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">left</span> <span class="o">=</span> <span class="n">left</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">right</span> <span class="o">=</span> <span class="n">right</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">pickUp</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">left</span><span class="o">.</span><span class="na">pickUp</span><span class="o">();</span>
+        <span class="n">right</span><span class="o">.</span><span class="na">pickUp</span><span class="o">();</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">" pick up"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">eat</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">pickUp</span><span class="o">();</span>
+        <span class="n">chew</span><span class="o">();</span>
+        <span class="n">putDown</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">putDown</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">left</span><span class="o">.</span><span class="na">putDown</span><span class="o">();</span>
+        <span class="n">right</span><span class="o">.</span><span class="na">putDown</span><span class="o">();</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">" put down"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">chew</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">" chew"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">run</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">bites</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">eat</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Chopstick</span> <span class="n">cA</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Chopstick</span><span class="o">();</span>
+        <span class="n">Chopstick</span> <span class="n">cB</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Chopstick</span><span class="o">();</span>
+        <span class="n">Chopstick</span> <span class="n">cC</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Chopstick</span><span class="o">();</span>
+        <span class="n">Philosopher</span> <span class="n">pA</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Philosopher</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="n">cA</span><span class="o">,</span> <span class="n">cB</span><span class="o">);</span>
+        <span class="n">Philosopher</span> <span class="n">pB</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Philosopher</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="n">cB</span><span class="o">,</span> <span class="n">cC</span><span class="o">);</span>
+        <span class="n">Philosopher</span> <span class="n">pC</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Philosopher</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="n">cC</span><span class="o">,</span> <span class="n">cA</span><span class="o">);</span>
+        <span class="n">pA</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="n">pB</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="n">pC</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+<p>可以通过实现如果右筷子繁忙则放下左筷子实现死锁避免。</p>
+
+<p>避免死锁可能的代码</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.concurrent.locks.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Chopstick</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">Lock</span> <span class="n">lock</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">Chopstick</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">lock</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReentrantLock</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">pickUp</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">lock</span><span class="o">.</span><span class="na">tryLock</span><span class="o">();</span> <span class="c1">// 修改后</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">putDown</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">lock</span><span class="o">.</span><span class="na">unlock</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Philosopher</span> <span class="kd">extends</span> <span class="n">Thread</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">bites</span> <span class="o">=</span> <span class="mi">10</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">Chopstick</span> <span class="n">left</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">Chopstick</span> <span class="n">right</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">Philosopher</span><span class="o">(</span><span class="kt">int</span> <span class="n">name</span><span class="o">,</span> <span class="n">Chopstick</span> <span class="n">left</span><span class="o">,</span> <span class="n">Chopstick</span> <span class="n">right</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">left</span> <span class="o">=</span> <span class="n">left</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">right</span> <span class="o">=</span> <span class="n">right</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">pickUp</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">left</span><span class="o">.</span><span class="na">pickUp</span><span class="o">())</span> <span class="o">{</span> <span class="c1">// 修改后</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">right</span><span class="o">.</span><span class="na">pickUp</span><span class="o">())</span> <span class="o">{</span> <span class="c1">// 修改后</span>
+            <span class="n">left</span><span class="o">.</span><span class="na">putDown</span><span class="o">();</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">" pick up"</span><span class="o">);</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">eat</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">pickUp</span><span class="o">())</span> <span class="o">{</span> <span class="c1">// 修改后</span>
+            <span class="n">chew</span><span class="o">();</span>
+            <span class="n">putDown</span><span class="o">();</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">putDown</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">left</span><span class="o">.</span><span class="na">putDown</span><span class="o">();</span>
+        <span class="n">right</span><span class="o">.</span><span class="na">putDown</span><span class="o">();</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">" put down"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">chew</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">" chew"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">run</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">bites</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">eat</span><span class="o">())</span> <span class="o">{</span> <span class="c1">// 修改后</span>
+                <span class="n">i</span><span class="o">--;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Chopstick</span> <span class="n">cA</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Chopstick</span><span class="o">();</span>
+        <span class="n">Chopstick</span> <span class="n">cB</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Chopstick</span><span class="o">();</span>
+        <span class="n">Chopstick</span> <span class="n">cC</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Chopstick</span><span class="o">();</span>
+        <span class="n">Philosopher</span> <span class="n">pA</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Philosopher</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="n">cA</span><span class="o">,</span> <span class="n">cB</span><span class="o">);</span>
+        <span class="n">Philosopher</span> <span class="n">pB</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Philosopher</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="n">cB</span><span class="o">,</span> <span class="n">cC</span><span class="o">);</span>
+        <span class="n">Philosopher</span> <span class="n">pC</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Philosopher</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="n">cC</span><span class="o">,</span> <span class="n">cA</span><span class="o">);</span>
+        <span class="n">pA</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="n">pB</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+        <span class="n">pC</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h2 id="section-3">设计一个死锁避免类</h2>
+
+<p>常用的死锁避免方法是请求一个进程在最开始就声明它所需要的锁。然后我们去检查这些进程是否会产生死锁。</p>
+
+<h4 id="section-4">死锁发现</h4>
+
+<p>假设三个进程会依次需要这些锁：</p>
+
+<ul>
+  <li>A = {1, 2, 3, 4}</li>
+  <li>B = {1, 3, 5}</li>
+  <li>C = {7, 5, 9, 2}</li>
+</ul>
+
+<p>这将会产生死锁，因为</p>
+
+<ul>
+  <li>A 持有 2 请求 3</li>
+  <li>B 持有 3 请求 5</li>
+  <li>C 持有 5 请求 2</li>
+</ul>
+
+<p>我们可以将此想象成图，有一条从2指向3的边，从3指向5的边，从5指向2的边，形成了环，即代表存在死锁。存在一条边(w,v)如果一个进程在持有w时请求锁v。这样我们有这样一张图：(1, 2), (2, 3), (3, 4), (1, 3), (3, 5), (7, 5), (5, 9), (9, 2)。</p>
+
+<p>我们设计的死锁避免类会有一个declare()方法，线程和进程使用这个方法将其所需的资源输入，我们将新的边加入图中，如果产生的这些新的边导致途中出现了环，我们回溯，删除加入的边，然后返回。为此，我们需要一个侦测是否有环形成的算法，我们可以使用DFS进行环的侦测。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.concurrent.locks.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.LinkedList</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">LockFactory</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="n">LockFactory</span> <span class="n">instance</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">numberOfLocks</span> <span class="o">=</span> <span class="mi">5</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">LockNode</span><span class="o">[]</span> <span class="n">locks</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">LockNode</span><span class="o">&gt;&gt;</span> <span class="n">lockOrder</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="n">LockFactory</span><span class="o">(</span><span class="kt">int</span> <span class="n">count</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">locks</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LockNode</span><span class="o">[</span><span class="n">count</span><span class="o">];</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">count</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">locks</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LockNode</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="n">count</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">lockOrder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">LockNode</span><span class="o">&gt;&gt;();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">LockFactory</span> <span class="n">getInstance</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">synchronized</span> <span class="n">LockFactory</span> <span class="n">initialize</span><span class="o">(</span><span class="kt">int</span> <span class="n">count</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">instance</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LockFactory</span><span class="o">(</span><span class="n">count</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">hasCycle</span><span class="o">(</span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Boolean</span><span class="o">&gt;</span> <span class="n">touchedNodes</span><span class="o">,</span> <span class="kt">int</span><span class="o">[]</span><span class="n">resourcesInOrder</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">resource</span> <span class="o">:</span> <span class="n">resourcesInOrder</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">touchedNodes</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">resource</span><span class="o">)</span> <span class="o">==</span> <span class="kc">false</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">LockNode</span> <span class="n">n</span> <span class="o">=</span> <span class="n">locks</span><span class="o">[</span><span class="n">resource</span><span class="o">];</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">hasCycle</span><span class="o">(</span><span class="n">touchedNodes</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">declare</span><span class="o">(</span><span class="kt">int</span> <span class="n">ownerId</span><span class="o">,</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">resourcesInOrder</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Boolean</span><span class="o">&gt;</span> <span class="n">touchedNodes</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Boolean</span><span class="o">&gt;();</span>
+
+        <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="n">touchedNodes</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">resourcesInOrder</span><span class="o">[</span><span class="mi">0</span><span class="o">],</span> <span class="kc">false</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">index</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">resourcesInOrder</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">index</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">LockNode</span> <span class="n">prev</span> <span class="o">=</span> <span class="n">locks</span><span class="o">[</span><span class="n">resourcesInOrder</span><span class="o">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="o">]];</span>
+            <span class="n">LockNode</span> <span class="n">curr</span> <span class="o">=</span> <span class="n">locks</span><span class="o">[</span><span class="n">resourcesInOrder</span><span class="o">[</span><span class="n">index</span><span class="o">]];</span>
+            <span class="n">prev</span><span class="o">.</span><span class="na">joinTo</span><span class="o">(</span><span class="n">curr</span><span class="o">);</span>
+            <span class="n">touchedNodes</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">resourcesInOrder</span><span class="o">[</span><span class="n">index</span><span class="o">],</span> <span class="kc">false</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">hasCycle</span><span class="o">(</span><span class="n">touchedNodes</span><span class="o">,</span> <span class="n">resourcesInOrder</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"cycle detected"</span><span class="o">);</span>
+            <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">resourcesInOrder</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">j</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="n">LockNode</span> <span class="n">p</span> <span class="o">=</span> <span class="n">locks</span><span class="o">[</span><span class="n">resourcesInOrder</span><span class="o">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="o">]];</span>
+                <span class="n">LockNode</span> <span class="n">c</span> <span class="o">=</span> <span class="n">locks</span><span class="o">[</span><span class="n">resourcesInOrder</span><span class="o">[</span><span class="n">j</span><span class="o">]];</span>
+                <span class="n">p</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">LockNode</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">LockNode</span><span class="o">&gt;();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">resourcesInOrder</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">LockNode</span> <span class="n">resource</span> <span class="o">=</span> <span class="n">locks</span><span class="o">[</span><span class="n">resourcesInOrder</span><span class="o">[</span><span class="n">i</span><span class="o">]];</span>
+            <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">resource</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">lockOrder</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">ownerId</span><span class="o">,</span> <span class="n">list</span><span class="o">);</span>
+
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">Lock</span> <span class="n">getLock</span><span class="o">(</span><span class="kt">int</span> <span class="n">ownerId</span><span class="o">,</span> <span class="kt">int</span> <span class="n">resourceID</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">LockNode</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">lockOrder</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">ownerId</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">list</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="n">LockNode</span> <span class="n">head</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">getFirst</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">head</span><span class="o">.</span><span class="na">getId</span><span class="o">()</span> <span class="o">==</span> <span class="n">resourceID</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">list</span><span class="o">.</span><span class="na">removeFirst</span><span class="o">();</span>
+            <span class="k">return</span> <span class="n">head</span><span class="o">.</span><span class="na">getLock</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kn">import</span> <span class="nn">java.util.ArrayList</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.locks.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">LockNode</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">enum</span> <span class="n">VisitState</span> <span class="o">{</span>
+        <span class="n">FRESH</span><span class="o">,</span>
+        <span class="n">VISITING</span><span class="o">,</span>
+        <span class="n">VISITED</span>
+    <span class="o">};</span>
+
+    <span class="kd">private</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">LockNode</span><span class="o">&gt;</span> <span class="n">children</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">lockId</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">Lock</span> <span class="n">lock</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">maxLocks</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">LockNode</span><span class="o">(</span><span class="kt">int</span> <span class="n">id</span><span class="o">,</span> <span class="kt">int</span> <span class="n">max</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">lockId</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">maxLocks</span> <span class="o">=</span> <span class="n">max</span><span class="o">;</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">LockNode</span><span class="o">&gt;();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">joinTo</span><span class="o">(</span><span class="n">LockNode</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">children</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">remove</span><span class="o">(</span><span class="n">LockNode</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">children</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">hasCycle</span><span class="o">(</span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Boolean</span><span class="o">&gt;</span> <span class="n">touchedNodes</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">VisitState</span><span class="o">[]</span> <span class="n">visited</span> <span class="o">=</span> <span class="k">new</span> <span class="n">VisitState</span><span class="o">[</span><span class="n">maxLocks</span><span class="o">];</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">maxLocks</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">visited</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">VisitState</span><span class="o">.</span><span class="na">FRESH</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">hasCycle</span><span class="o">(</span><span class="n">visited</span><span class="o">,</span> <span class="n">touchedNodes</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">hasCycle</span><span class="o">(</span><span class="n">VisitState</span><span class="o">[]</span> <span class="n">visited</span><span class="o">,</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Boolean</span><span class="o">&gt;</span> <span class="n">touchedNodes</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">touchedNodes</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">lockId</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">touchedNodes</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">lockId</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">visited</span><span class="o">[</span><span class="n">lockId</span><span class="o">]</span> <span class="o">==</span> <span class="n">VisitState</span><span class="o">.</span><span class="na">VISITING</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">visited</span><span class="o">[</span><span class="n">lockId</span><span class="o">]</span> <span class="o">==</span> <span class="n">VisitState</span><span class="o">.</span><span class="na">FRESH</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">visited</span><span class="o">[</span><span class="n">lockId</span><span class="o">]</span> <span class="o">=</span> <span class="n">VisitState</span><span class="o">.</span><span class="na">VISITING</span><span class="o">;</span>
+            <span class="k">for</span> <span class="o">(</span><span class="n">LockNode</span> <span class="n">n</span> <span class="o">:</span> <span class="n">children</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="na">hasCycle</span><span class="o">(</span><span class="n">visited</span><span class="o">,</span> <span class="n">touchedNodes</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="n">visited</span><span class="o">[</span><span class="n">lockId</span><span class="o">]</span> <span class="o">=</span> <span class="n">VisitState</span><span class="o">.</span><span class="na">VISITED</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">Lock</span> <span class="n">getLock</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">lock</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">lock</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReentrantLock</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">lock</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">getId</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">lockId</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">LockFactory</span><span class="o">.</span><span class="na">initialize</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+        <span class="n">LockFactory</span> <span class="n">locks</span> <span class="o">=</span> <span class="n">LockFactory</span><span class="o">.</span><span class="na">getInstance</span><span class="o">();</span>
+        <span class="kt">int</span><span class="o">[]</span> <span class="n">a</span> <span class="o">=</span> <span class="o">{</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">};</span>
+        <span class="kt">int</span><span class="o">[]</span> <span class="n">b</span> <span class="o">=</span> <span class="o">{</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">5</span><span class="o">};</span>
+        <span class="kt">int</span><span class="o">[]</span> <span class="n">c</span> <span class="o">=</span> <span class="o">{</span><span class="mi">7</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">9</span><span class="o">,</span> <span class="mi">2</span><span class="o">};</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"declaring a"</span><span class="o">);</span>
+        <span class="n">locks</span><span class="o">.</span><span class="na">declare</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">a</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"declaring b"</span><span class="o">);</span>
+        <span class="n">locks</span><span class="o">.</span><span class="na">declare</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="n">b</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"declaring c"</span><span class="o">);</span>
+        <span class="n">locks</span><span class="o">.</span><span class="na">declare</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="n">c</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="section-5">使用信号量控制方法调用顺序</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Foo</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Foo</span><span class="o">()</span> <span class="o">{</span>
+        <span class="o">...</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">first</span><span class="o">()</span> <span class="o">{</span>
+        <span class="o">...</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">second</span><span class="o">()</span> <span class="o">{</span>
+        <span class="o">...</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">third</span><span class="o">()</span> <span class="o">{</span>
+        <span class="o">...</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>同一个Foo实例，传递给三个不同线程，要求依次，线程A调用first()，B调用second()，C调用third()，设计一种机制保证调用顺序。</p>
+
+<p>可以使用信号量</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Foo</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Semaphore</span> <span class="n">sem1</span><span class="o">,</span> <span class="n">sem2</span>
+
+    <span class="kd">public</span> <span class="n">Foo</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">sem1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Semaphore</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+            <span class="n">sem2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Semaphore</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
+
+            <span class="n">sem1</span><span class="o">.</span><span class="na">acquire</span><span class="o">();</span>
+            <span class="n">sem2</span><span class="o">.</span><span class="na">acquire</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">()</span> <span class="o">{</span>
+
+        <span class="o">}</span>
+        <span class="o">...</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">first</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="o">...</span>
+            <span class="n">sem1</span><span class="o">.</span><span class="na">release</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">second</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">sem1</span><span class="o">.</span><span class="na">acquire</span><span class="o">();</span>
+            <span class="n">sem1</span><span class="o">.</span><span class="na">release</span><span class="o">();</span>
+            <span class="o">...</span>
+            <span class="n">sem2</span><span class="o">.</span><span class="na">release</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">()</span> <span class="o">{</span>
+
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">third</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">sem2</span><span class="o">.</span><span class="na">acquire</span><span class="o">();</span>
+            <span class="n">sem2</span><span class="o">.</span><span class="na">release</span><span class="o">();</span>
+            <span class="o">...</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">()</span> <span class="o">{</span>
+            
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="section-6">情景分析</h3>
+
+<p>一个类有一个synchronized方法A和一个普通方法B。如果这个类的实例中有两个线程，他们可以同时执行A吗？他们可以同时一个执行A，一个执行B吗？</p>
+
+<p>答：</p>
+
+<p>不可以同时执行A，因为是同一个实例，所以同一时间只能有一个线程执行同步方法A。</p>
+
+<p>可以同时执行A和B，因为B是普通方法，不需要同步。</p>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blog/2016/06/14/CC150-Ch16-summary/" data-toggle="tooltip" data-placement="top" title="CC150 Chapter 16---Threads and Locks">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/blog/2016/06/16/State-Pattern/" data-toggle="tooltip" data-placement="top" title="State Pattern Summary">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- Duoshuo Share start -->
+                <style>
+                    .ds-share{
+                        text-align: right;
+                    }
+                    
+                    @media only screen and (max-width: 700px) {
+                        .ds-share {
+
+                        }
+                    }
+                </style>
+
+                <div class="ds-share"
+                    data-thread-key="/blog/2016/06/15/CC150-Ch16-Questions" data-title="CC150 Chapter 16---Threads and Locks Question"
+                    data-images="http://lisentoday/img/green.jpg"
+                    data-content="线程(thread)与进程(process)的区别
+
+
+  进程：程序运行的实例。进程拥有独立的资源(CPU和内存)，每个进程不能访问其他进程的变量，想要... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/06/15/CC150-Ch16-Questions/">
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- Duoshuo Share end-->
+
+
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread" data-thread-key="/blog/2016/06/15/CC150-Ch16-Questions" data-title="CC150 Chapter 16---Threads and Locks Question" data-url="http://lisentoday/blog/2016/06/15/CC150-Ch16-Questions/"></div>
+                </div>
+                <!-- 多说评论框 end -->
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"cnfeat"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <!-- kill the Facebook and Weibo -->
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    
+                    <!--
+                    
+                    -->
+
+                    <!--
+                    
+                    -->
+
+                    
+                    <!--
+                    
+                    -->
+
+                </ul>
+                <p class="copyright text-muted">
+                &copy; 2016 lisen ❖ Powered by Jekyll.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+
+
+<!-- Highlight.js -->
+<script>
+    async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js",function(){
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+<link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

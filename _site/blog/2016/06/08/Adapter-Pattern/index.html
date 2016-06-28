@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="李森|不仅仅是一个程序员">
+
+    <title>Adapter Pattern Summary - 四木成森</title>
+
+    <link rel="canonical" href="http://lisentoday/blog/2016/06/08/Adapter-Pattern/">
+
+    <!-- Icons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+
+
+
+
+
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">四木成森</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">主页</a>
+                </li>
+                
+                <li>
+                    <a href="/a_introduction/">我的简介</a>
+                </li>
+                
+                <li>
+                    <a href="/b_study/">学习</a>
+                </li>
+                
+                <li>
+                    <a href="/c_life/">生活</a>
+                </li>
+                
+                <li>
+                    <a href="/d_collection/">我的收藏</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/green.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="Tags">
+                        
+                        <a class="tag" href="/Tags/#study" title="study">study</a>
+                        
+                    </div>
+                    <h1>Adapter Pattern Summary</h1>
+                    
+                    <span class="meta">Posted by lisen on June 8, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
+
+                <h1 id="adapter-pattern">设计模式-适配器模式(Adapter Pattern)</h1>
+
+<p>将一个接口转换成另一个接口，以符合客户的期望。</p>
+
+<p>类比中标转美标的转换插头。</p>
+
+<p>假设已有一个软件系统，希望和一个新的厂商类库搭配使用，但新厂商的接口不同于旧厂商接口，需要写一个类将新厂商接口转换成所期待的接口。</p>
+
+<p><img src="https://shishirkumarblog.files.wordpress.com/2011/07/adapter.jpg" alt="Adapter Pattern" /></p>
+
+<h1 id="section">火鸡适配为鸭子</h1>
+
+<p><strong>鸭子</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Duck</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">quack</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">fly</span><span class="o">();</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<p><strong>火鸡</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Turkey</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">gobble</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">shortFly</span><span class="o">();</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<p><strong>适配器</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TurkeyAdapter</span> <span class="kd">implements</span> <span class="n">Duck</span> <span class="o">{</span>
+    <span class="n">Turkey</span> <span class="n">turkey</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="n">TurkeyAdapter</span><span class="o">(</span><span class="n">Turkey</span> <span class="n">turkey</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">turkey</span> <span class="o">=</span> <span class="n">turkey</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">quack</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">turkey</span><span class="o">.</span><span class="na">gobble</span><span class="o">();</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">fly</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">turkey</span><span class="o">.</span><span class="na">shortFly</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre>
+</div>
+
+<h1 id="section-1">适配器模式解析</h1>
+
+<p><img src="https://obsoletedeveloper.files.wordpress.com/2012/09/hf-adapter.jpg" alt="Adapter Pattern 1" /></p>
+
+<h3 id="section-2">客户使用适配器过程</h3>
+
+<ol>
+  <li>客户通过目标接口调用适配器的方法对适配器发出请求</li>
+  <li>适配器使用被适配者接口把请求转换成被适配者的一个或多个调用接口。</li>
+  <li>客户接受到调用的结果，但并未察觉这一切是适配器在起转换作用。</li>
+</ol>
+
+<h1 id="section-3">适配器模式定义</h1>
+
+<p><strong>适配器模式</strong>—将一个类的接口，转换成客户期望的另一个接口。适配器让原本接口不兼容的类可以合作无间。</p>
+
+<h1 id="section-4">类图</h1>
+
+<p><img src="http://www.dofactory.com/images/diagrams/net/adapter.gif" alt="UML" /></p>
+
+<ul>
+  <li>客户只看到目标接口</li>
+  <li>适配器实现目标接口</li>
+  <li>适配器与被适配者组合</li>
+  <li>所有的请求都委托给被适配者</li>
+</ul>
+
+<h1 id="section-5">对象和类的适配器</h1>
+
+<p>之前是对象适配器的图，其实有两种适配器，下面是类适配器的图。</p>
+
+<p><img src="http://fuzzduck.com/images/ClassAdapterUML.gif" alt="UML1" /></p>
+
+<p>由于类适配器需要多重继承实现，而Java不支持多重继承，所以在Java中无法实现。</p>
+
+<h1 id="section-6">类似模式对比</h1>
+
+<table>
+    <tr>
+        <th>装饰者模式</th>
+        <td>不改变接口，但加入责任</td>
+    </tr>
+    <tr>
+        <th>适配器模式</th>
+        <td>将一个接口转成另一个接口</td>
+    </tr>
+    <tr>
+        <th>外观模式</th>
+        <td>让接口更简单</td>
+    </tr>
+</table>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blog/2016/06/07/Method-Invocation/" data-toggle="tooltip" data-placement="top" title="Method Invocation Summary">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/blog/2016/06/08/Facade-Pattern/" data-toggle="tooltip" data-placement="top" title="Facade Pattern Summary">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- Duoshuo Share start -->
+                <style>
+                    .ds-share{
+                        text-align: right;
+                    }
+                    
+                    @media only screen and (max-width: 700px) {
+                        .ds-share {
+
+                        }
+                    }
+                </style>
+
+                <div class="ds-share"
+                    data-thread-key="/blog/2016/06/08/Adapter-Pattern" data-title="Adapter Pattern Summary"
+                    data-images="http://lisentoday/img/green.jpg"
+                    data-content="设计模式-适配器模式(Adapter Pattern)
+
+将一个接口转换成另一个接口，以符合客户的期望。
+
+类比中标转美标的转换插头。
+
+假设已有一个软件... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/06/08/Adapter-Pattern/">
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- Duoshuo Share end-->
+
+
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread" data-thread-key="/blog/2016/06/08/Adapter-Pattern" data-title="Adapter Pattern Summary" data-url="http://lisentoday/blog/2016/06/08/Adapter-Pattern/"></div>
+                </div>
+                <!-- 多说评论框 end -->
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"cnfeat"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <!-- kill the Facebook and Weibo -->
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    
+                    <!--
+                    
+                    -->
+
+                    <!--
+                    
+                    -->
+
+                    
+                    <!--
+                    
+                    -->
+
+                </ul>
+                <p class="copyright text-muted">
+                &copy; 2016 lisen ❖ Powered by Jekyll.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+
+
+<!-- Highlight.js -->
+<script>
+    async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js",function(){
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+<link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

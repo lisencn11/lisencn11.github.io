@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="李森|不仅仅是一个程序员">
+
+    <title>CC150 Chapter 10---Sorting and Searching - 四木成森</title>
+
+    <link rel="canonical" href="http://lisentoday/blog/2016/06/23/CC150-Ch11-summary/">
+
+    <!-- Icons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+
+
+
+
+
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">四木成森</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">主页</a>
+                </li>
+                
+                <li>
+                    <a href="/a_introduction/">我的简介</a>
+                </li>
+                
+                <li>
+                    <a href="/b_study/">学习</a>
+                </li>
+                
+                <li>
+                    <a href="/c_life/">生活</a>
+                </li>
+                
+                <li>
+                    <a href="/d_collection/">我的收藏</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/green.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="Tags">
+                        
+                        <a class="tag" href="/Tags/#study" title="study">study</a>
+                        
+                    </div>
+                    <h1>CC150 Chapter 10---Sorting and Searching</h1>
+                    
+                    <span class="meta">Posted by lisen on June 23, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
+
+                <h1 id="sorting-algorithm">排序算法(Sorting Algorithm)</h1>
+
+<h3 id="bubble-sort">冒泡排序(Bubble Sort)</h3>
+
+<p>最坏情况O(n<sup>2</sup>)时间复杂度。O(1)空间复杂度。<br />
+从数组第一对数开始，如果前比后大则调换顺序，一直到最后一对，这是一趟冒泡排序，保证最后一个数字是最大的，进行n趟或直到一次冒泡没有调换顺序为止。</p>
+
+<h3 id="selection-sort">选择排序(Selection Sort)</h3>
+
+<p>最坏情况O(n<sup>2</sup>)时间复杂度。O(1)空间复杂度。<br />
+第一趟，遍历所有数，找到最小的，移到第一个位置。第二趟，找到除第一个数外最小的，移到第二个位置。重复n趟。</p>
+
+<h3 id="merge-sort">归并排序(Merge Sort)</h3>
+
+<p>最坏情况O(nlogn)时间复杂度。O(n)空间复杂度。<br />
+将数组对半分，对每一半使用相同的排序算法，然后将他们合并。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.Random</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MergeSort</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">RANDOMNUMBER</span> <span class="o">=</span> <span class="mi">20</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">mergesort</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">array</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span><span class="o">[]</span> <span class="n">helper</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">array</span><span class="o">.</span><span class="na">length</span><span class="o">];</span>
+        <span class="n">mergesort</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">helper</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">array</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">mergesort</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">array</span><span class="o">,</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">helper</span><span class="o">,</span> <span class="kt">int</span> <span class="n">low</span><span class="o">,</span> <span class="kt">int</span> <span class="n">high</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">low</span> <span class="o">&lt;</span> <span class="n">high</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">middle</span> <span class="o">=</span> <span class="n">low</span> <span class="o">+</span> <span class="o">(</span><span class="n">high</span> <span class="o">-</span> <span class="n">low</span><span class="o">)</span> <span class="o">/</span> <span class="mi">2</span><span class="o">;</span>
+            <span class="n">mergesort</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">helper</span><span class="o">,</span> <span class="n">low</span><span class="o">,</span> <span class="n">middle</span><span class="o">);</span>
+            <span class="n">mergesort</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">helper</span><span class="o">,</span> <span class="n">middle</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span> <span class="n">high</span><span class="o">);</span>
+            <span class="n">merge</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">helper</span><span class="o">,</span> <span class="n">low</span><span class="o">,</span> <span class="n">middle</span><span class="o">,</span> <span class="n">high</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">merge</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">array</span><span class="o">,</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">helper</span><span class="o">,</span> <span class="kt">int</span> <span class="n">low</span><span class="o">,</span> <span class="kt">int</span> <span class="n">middle</span><span class="o">,</span> <span class="kt">int</span> <span class="n">high</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">low</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">high</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">helper</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">array</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+        <span class="o">}</span>
+
+        <span class="kt">int</span> <span class="n">helperLeft</span> <span class="o">=</span> <span class="n">low</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">helperRight</span> <span class="o">=</span> <span class="n">middle</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">current</span> <span class="o">=</span> <span class="n">low</span><span class="o">;</span>
+
+        <span class="k">while</span> <span class="o">(</span><span class="n">helperLeft</span> <span class="o">&lt;=</span> <span class="n">middle</span> <span class="o">&amp;&amp;</span> <span class="n">helperRight</span> <span class="o">&lt;=</span> <span class="n">high</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">helper</span><span class="o">[</span><span class="n">helperLeft</span><span class="o">]</span> <span class="o">&lt;=</span> <span class="n">helper</span><span class="o">[</span><span class="n">helperRight</span><span class="o">])</span> <span class="o">{</span>
+                <span class="n">array</span><span class="o">[</span><span class="n">current</span><span class="o">]</span> <span class="o">=</span> <span class="n">helper</span><span class="o">[</span><span class="n">helperLeft</span><span class="o">];</span>
+                <span class="n">helperLeft</span><span class="o">++;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">array</span><span class="o">[</span><span class="n">current</span><span class="o">]</span> <span class="o">=</span> <span class="n">helper</span><span class="o">[</span><span class="n">helperRight</span><span class="o">];</span>
+                <span class="n">helperRight</span><span class="o">++;</span>
+            <span class="o">}</span>
+            <span class="n">current</span><span class="o">++;</span>
+        <span class="o">}</span>
+
+        <span class="kt">int</span> <span class="n">remaining</span> <span class="o">=</span> <span class="n">middle</span> <span class="o">-</span> <span class="n">helperLeft</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">remaining</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">array</span><span class="o">[</span><span class="n">current</span> <span class="o">+</span> <span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">helper</span><span class="o">[</span><span class="n">helperLeft</span> <span class="o">+</span> <span class="n">i</span><span class="o">];</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Random</span> <span class="n">randomGenerator</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Random</span><span class="o">();</span>
+        <span class="kt">int</span><span class="o">[]</span> <span class="n">randoms</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">RANDOMNUMBER</span><span class="o">];</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Before Sorting:"</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">RANDOMNUMBER</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">randoms</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">randomGenerator</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">randoms</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">+</span> <span class="s">" "</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
+
+        <span class="n">MergeSort</span><span class="o">.</span><span class="na">mergesort</span><span class="o">(</span><span class="n">randoms</span><span class="o">);</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"After Sorting:"</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">RANDOMNUMBER</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">randoms</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">+</span> <span class="s">" "</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>注意merge()最后只需要对左半边进行处理，因为如果剩下的是右半边，那么已经在所在位置了。</p>
+
+<h3 id="quick-sort">快速排序(Quick Sort)</h3>
+
+<p>平均情况O(nlogn)时间复杂度，最坏情况O(n<sup>2</sup>)时间复杂度。O(logn)空间复杂度。<br />
+随机取一个数划分数组，所有比这个数小的数都在比这个数大的数前面。理想情况下，我们取到中位数，然而这并不现实，所以有最坏O(n<sup>2</sup>)的时间复杂度。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.Random</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ModifyQuickSort</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">RANDOMNUMBER</span> <span class="o">=</span> <span class="mi">20</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">quicksort</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">array</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">quicksort</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">array</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">quicksort</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">array</span><span class="o">,</span> <span class="kt">int</span> <span class="n">left</span><span class="o">,</span> <span class="kt">int</span> <span class="n">right</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">partition</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="o">);</span>
+            <span class="n">quicksort</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+            <span class="n">quicksort</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span> <span class="n">right</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">partition</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">array</span><span class="o">,</span> <span class="kt">int</span> <span class="n">left</span><span class="o">,</span> <span class="kt">int</span> <span class="n">right</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">pivot</span> <span class="o">=</span> <span class="n">array</span><span class="o">[</span><span class="n">left</span><span class="o">];</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">while</span> <span class="o">(</span><span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span> <span class="o">&amp;&amp;</span> <span class="n">array</span><span class="o">[</span><span class="n">right</span><span class="o">]</span> <span class="o">&gt;=</span> <span class="n">pivot</span><span class="o">)</span> <span class="n">right</span><span class="o">--;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="o">)</span> <span class="n">array</span><span class="o">[</span><span class="n">left</span><span class="o">++]</span> <span class="o">=</span> <span class="n">array</span><span class="o">[</span><span class="n">right</span><span class="o">];</span>
+            <span class="k">while</span> <span class="o">(</span><span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span> <span class="o">&amp;&amp;</span> <span class="n">array</span><span class="o">[</span><span class="n">left</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">pivot</span><span class="o">)</span> <span class="n">left</span><span class="o">++;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="o">)</span> <span class="n">array</span><span class="o">[</span><span class="n">right</span><span class="o">--]</span> <span class="o">=</span> <span class="n">array</span><span class="o">[</span><span class="n">left</span><span class="o">];</span>
+        <span class="o">}</span>
+        <span class="n">array</span><span class="o">[</span><span class="n">left</span><span class="o">]</span> <span class="o">=</span> <span class="n">pivot</span><span class="o">;</span>
+        <span class="k">return</span> <span class="n">left</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Random</span> <span class="n">randomGenerator</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Random</span><span class="o">();</span>
+        <span class="kt">int</span><span class="o">[]</span> <span class="n">randoms</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">RANDOMNUMBER</span><span class="o">];</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Before Sorting:"</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">RANDOMNUMBER</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">randoms</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">randomGenerator</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">randoms</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">+</span> <span class="s">" "</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
+
+        <span class="n">ModifyQuickSort</span><span class="o">.</span><span class="na">quicksort</span><span class="o">(</span><span class="n">randoms</span><span class="o">);</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"After Sorting:"</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">RANDOMNUMBER</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">randoms</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">+</span> <span class="s">" "</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>这段代码思路来源于<a href="http://blog.csdn.net/morewindows/article/details/6684558">MoreWindows的博客</a>，我认为在划分的实现上比CC150的代码更加简洁易懂，即挖坑填数法。</p>
+
+<h3 id="radix-sort">基数排序(Radix Sort)</h3>
+
+<p>O(n)时间复杂度。O(logn)空间复杂度。<br />
+与比较排序不同，技术排序能够达到O(n)的复杂度。但是需要保证待排序数组中的所有数都属于一个有限的范围</p>
+
+<h1 id="searching-algorithm">查找算法(Searching Algorithm)</h1>
+
+<p>当我们说到查找算法，我们通常想到二分查找。</p>
+
+<p>二分查找要求数组<strong>有序</strong>，我们把目标与数组中位数比较，若比中位数大则在右半边继续查找，否则则在左半边继续查找，直到找到目标。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BinarySearch</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">TARGET</span> <span class="o">=</span> <span class="mi">49</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">binarySearch</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">array</span><span class="o">,</span> <span class="kt">int</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">low</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">high</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="n">low</span> <span class="o">+</span> <span class="o">(</span><span class="n">high</span> <span class="o">-</span> <span class="n">low</span><span class="o">)</span> <span class="o">/</span> <span class="mi">2</span><span class="o">;</span>
+
+        <span class="k">while</span> <span class="o">(</span><span class="n">low</span> <span class="o">&lt;</span> <span class="n">high</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">mid</span> <span class="o">=</span> <span class="n">low</span> <span class="o">+</span> <span class="o">(</span><span class="n">high</span> <span class="o">-</span> <span class="n">low</span><span class="o">)</span> <span class="o">/</span> <span class="mi">2</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">mid</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">high</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">mid</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">low</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">mid</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">low</span><span class="o">]</span> <span class="o">==</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">low</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="o">{</span><span class="mi">6</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">10</span><span class="o">,</span> <span class="mi">12</span><span class="o">,</span> <span class="mi">19</span><span class="o">,</span> <span class="mi">26</span><span class="o">,</span> <span class="mi">36</span><span class="o">,</span> <span class="mi">49</span><span class="o">,</span> <span class="mi">49</span><span class="o">,</span> <span class="mi">49</span><span class="o">,</span> <span class="mi">57</span><span class="o">,</span> <span class="mi">61</span><span class="o">,</span> <span class="mi">62</span><span class="o">,</span> <span class="mi">65</span><span class="o">,</span> <span class="mi">73</span><span class="o">,</span> <span class="mi">74</span><span class="o">,</span> <span class="mi">86</span><span class="o">,</span> <span class="mi">88</span><span class="o">};</span>
+        <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">BinarySearch</span><span class="o">.</span><span class="na">binarySearch</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">TARGET</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"search "</span> <span class="o">+</span> <span class="n">TARGET</span> <span class="o">+</span> <span class="s">" in: "</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">array</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">+</span> <span class="s">" "</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"\nindex of target is "</span> <span class="o">+</span> <span class="n">index</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blog/2016/06/22/Leetcode-49-summary/" data-toggle="tooltip" data-placement="top" title="Leetcode Problem 49 Summary">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/blog/2016/06/24/Rate-Rise/" data-toggle="tooltip" data-placement="top" title="美元加息的含义和目的是什么？">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- Duoshuo Share start -->
+                <style>
+                    .ds-share{
+                        text-align: right;
+                    }
+                    
+                    @media only screen and (max-width: 700px) {
+                        .ds-share {
+
+                        }
+                    }
+                </style>
+
+                <div class="ds-share"
+                    data-thread-key="/blog/2016/06/23/CC150-Ch11-summary" data-title="CC150 Chapter 10---Sorting and Searching"
+                    data-images="http://lisentoday/img/green.jpg"
+                    data-content="排序算法(Sorting Algorithm)
+
+冒泡排序(Bubble Sort)
+
+最坏情况O(n2)时间复杂度。O(1)空间复杂度。
+从数组第一对数... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/06/23/CC150-Ch11-summary/">
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- Duoshuo Share end-->
+
+
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread" data-thread-key="/blog/2016/06/23/CC150-Ch11-summary" data-title="CC150 Chapter 10---Sorting and Searching" data-url="http://lisentoday/blog/2016/06/23/CC150-Ch11-summary/"></div>
+                </div>
+                <!-- 多说评论框 end -->
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"cnfeat"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <!-- kill the Facebook and Weibo -->
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    
+                    <!--
+                    
+                    -->
+
+                    <!--
+                    
+                    -->
+
+                    
+                    <!--
+                    
+                    -->
+
+                </ul>
+                <p class="copyright text-muted">
+                &copy; 2016 lisen ❖ Powered by Jekyll.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+
+
+<!-- Highlight.js -->
+<script>
+    async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js",function(){
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+<link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>

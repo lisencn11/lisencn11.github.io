@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="李森|不仅仅是一个程序员">
+
+    <title>CC150 Chapter 11---Sorting Questions - 四木成森</title>
+
+    <link rel="canonical" href="http://lisentoday/blog/2016/06/27/CC150-Ch11-Sorting-Questions/">
+
+    <!-- Icons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+
+
+
+
+
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">四木成森</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">主页</a>
+                </li>
+                
+                <li>
+                    <a href="/a_introduction/">我的简介</a>
+                </li>
+                
+                <li>
+                    <a href="/b_study/">学习</a>
+                </li>
+                
+                <li>
+                    <a href="/c_life/">生活</a>
+                </li>
+                
+                <li>
+                    <a href="/d_collection/">我的收藏</a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/green.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="Tags">
+                        
+                        <a class="tag" href="/Tags/#study" title="study">study</a>
+                        
+                    </div>
+                    <h1>CC150 Chapter 11---Sorting Questions</h1>
+                    
+                    <span class="meta">Posted by lisen on June 27, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 post-container">
+
+                <h3 id="ababmergeba">两个有序数组A和B，A的尾部有足够空间放B，写一个方法mergeB到A中成有序数组</h3>
+
+<p><strong>in place merge</strong>，如果从头merge会导致A中元素被覆盖，但是从A的尾部到头部开始merge则可以避免覆盖。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Solution0</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">merge</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">a</span><span class="o">,</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">b</span><span class="o">,</span> <span class="kt">int</span> <span class="n">lastA</span><span class="o">,</span> <span class="kt">int</span> <span class="n">lastB</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">a</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">a</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">b</span><span class="o">;</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">b</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">b</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kt">int</span> <span class="n">last</span> <span class="o">=</span> <span class="n">lastA</span> <span class="o">+</span> <span class="n">lastB</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="k">while</span> <span class="o">((</span><span class="n">last</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="n">lastA</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="n">lastB</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">a</span><span class="o">[</span><span class="n">lastA</span><span class="o">]</span> <span class="o">&gt;=</span> <span class="n">b</span><span class="o">[</span><span class="n">lastB</span><span class="o">])</span> <span class="o">{</span>
+                <span class="n">a</span><span class="o">[</span><span class="n">last</span><span class="o">--]</span> <span class="o">=</span> <span class="n">a</span><span class="o">[</span><span class="n">lastA</span><span class="o">--];</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">a</span><span class="o">[</span><span class="n">last</span><span class="o">--]</span> <span class="o">=</span> <span class="n">b</span><span class="o">[</span><span class="n">lastB</span><span class="o">--];</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">while</span> <span class="o">(</span><span class="n">lastB</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">a</span><span class="o">[</span><span class="n">last</span><span class="o">--]</span> <span class="o">=</span> <span class="n">a</span><span class="o">[</span><span class="n">lastB</span><span class="o">--];</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span><span class="o">[]</span> <span class="n">a</span> <span class="o">=</span> <span class="o">{</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">9</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">};</span>
+        <span class="kt">int</span><span class="o">[]</span> <span class="n">b</span> <span class="o">=</span> <span class="o">{</span><span class="mi">2</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">8</span><span class="o">};</span>
+        <span class="n">Solution0</span> <span class="n">solution</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Solution0</span><span class="o">();</span>
+        <span class="n">solution</span><span class="o">.</span><span class="na">merge</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">3</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="o">(</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="n">a</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">+</span> <span class="s">" "</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="anagram">对一个字符串数组排序，另所有的anagram(所含字母相同但是顺序不同)互相挨着</h3>
+
+<h5 id="comparatorarrayssort">实现Comparator接口后，用Arrays.sort()排序</h5>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Comparator</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AnagramComparator</span> <span class="kd">implements</span> <span class="n">Comparator</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">compare</span><span class="o">(</span><span class="n">String</span> <span class="n">s1</span><span class="o">,</span> <span class="n">String</span> <span class="n">s2</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">char</span><span class="o">[]</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">();</span>
+        <span class="kt">char</span><span class="o">[]</span> <span class="n">c2</span> <span class="o">=</span> <span class="n">s2</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">();</span>
+        <span class="n">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">c1</span><span class="o">);</span>
+        <span class="n">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">c2</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">c1</span><span class="o">.</span><span class="na">toString</span><span class="o">().</span><span class="na">compareTo</span><span class="o">(</span><span class="n">c2</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">String</span><span class="o">[]</span> <span class="n">str</span> <span class="o">=</span> <span class="o">{</span><span class="s">"abcde"</span><span class="o">,</span> <span class="s">"bcdea"</span><span class="o">,</span> <span class="s">"abcdd"</span><span class="o">};</span>
+        <span class="n">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">str</span><span class="o">,</span> <span class="k">new</span> <span class="n">AnagramComparator</span><span class="o">());</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">s</span> <span class="o">:</span> <span class="n">str</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h5 id="hashmapstring-liststringanagramkeylist">使用HashMap&lt;String, List<string>&gt;，以anagram排序后作为key，排序后相同的放入一个list</string></h5>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.LinkedList</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Map</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Solution1</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">sort</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">strings</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;();</span>
+        <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">s</span> <span class="o">:</span> <span class="n">strings</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">char</span><span class="o">[]</span> <span class="n">c</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">();</span>
+            <span class="n">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+            <span class="n">String</span> <span class="n">key</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">key</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">list</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+            <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">list</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">key</span> <span class="o">:</span> <span class="n">map</span><span class="o">.</span><span class="na">keySet</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">list</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+            <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">s</span> <span class="o">:</span> <span class="n">list</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">strings</span><span class="o">[</span><span class="n">index</span><span class="o">]</span> <span class="o">=</span> <span class="n">s</span><span class="o">;</span>
+                <span class="n">index</span><span class="o">++;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">String</span><span class="o">[]</span> <span class="n">strings</span> <span class="o">=</span> <span class="o">{</span><span class="s">"abcd"</span><span class="o">,</span> <span class="s">"senli"</span><span class="o">,</span> <span class="s">"17463"</span><span class="o">,</span> <span class="s">"bdca"</span><span class="o">,</span> <span class="s">"47316"</span><span class="o">,</span> <span class="s">"lisen"</span><span class="o">};</span>
+        <span class="n">Solution1</span> <span class="n">solution</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Solution1</span><span class="o">();</span>
+        <span class="n">solution</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">strings</span><span class="o">);</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">s</span> <span class="o">:</span> <span class="n">strings</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="rotate">一个排好序的整型数组，旋转(rotate)未知次，设计算法找到特定元素，假设数组升序排列</h3>
+
+<p>分类讨论即可，首先判断left-mid，mid-right这两段哪段为单调递增，然后根据target与array[mid]的比较结果判断target在mid的哪一边。</p>
+
+<p><strong>注意</strong>处理left，mid，和right相等的情况，如果只有left和mid相等，则可判断target在mid-right中；如果三个都相等，则无法判断left-mid段为定值，还是mid-right段为定值，故两端都要求解。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Solution2</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">find</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">array</span><span class="o">,</span> <span class="kt">int</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">search</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">array</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">,</span> <span class="n">target</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">search</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">array</span><span class="o">,</span> <span class="kt">int</span> <span class="n">left</span><span class="o">,</span> <span class="kt">int</span> <span class="n">right</span><span class="o">,</span> <span class="kt">int</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="o">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="o">)</span> <span class="o">/</span> <span class="mi">2</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">target</span> <span class="o">==</span> <span class="n">array</span><span class="o">[</span><span class="n">mid</span><span class="o">])</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">mid</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">right</span> <span class="o">&lt;</span> <span class="n">left</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">left</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">array</span><span class="o">[</span><span class="n">mid</span><span class="o">])</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">target</span> <span class="o">&gt;=</span> <span class="n">array</span><span class="o">[</span><span class="n">left</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="n">target</span> <span class="o">&lt;=</span> <span class="n">array</span><span class="o">[</span><span class="n">mid</span><span class="o">])</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">search</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="o">,</span> <span class="n">target</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">search</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span> <span class="n">right</span><span class="o">,</span> <span class="n">target</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">mid</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">array</span><span class="o">[</span><span class="n">left</span><span class="o">])</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">target</span> <span class="o">&gt;=</span> <span class="n">array</span><span class="o">[</span><span class="n">mid</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="n">target</span> <span class="o">&lt;=</span><span class="n">array</span><span class="o">[</span><span class="n">right</span><span class="o">])</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">search</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span> <span class="n">right</span><span class="o">,</span> <span class="n">target</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">search</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="o">,</span> <span class="n">target</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">left</span><span class="o">]</span> <span class="o">==</span> <span class="n">array</span><span class="o">[</span><span class="n">left</span><span class="o">])</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">array</span><span class="o">[</span><span class="n">mid</span><span class="o">]</span> <span class="o">!=</span> <span class="n">array</span><span class="o">[</span><span class="n">right</span><span class="o">])</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">search</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span> <span class="n">right</span><span class="o">,</span> <span class="n">target</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="n">search</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="o">,</span> <span class="n">target</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">result</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="n">search</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span> <span class="n">right</span><span class="o">,</span> <span class="n">target</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="o">{</span><span class="mi">10</span><span class="o">,</span> <span class="mi">15</span><span class="o">,</span> <span class="mi">20</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">5</span><span class="o">};</span>
+        <span class="n">Solution2</span> <span class="n">solution</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Solution2</span><span class="o">();</span>
+        <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="na">find</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="mi">20</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"index of element: "</span> <span class="o">+</span> <span class="n">index</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="gbstring">假设有一个20GB的文件，每行是一个String。如何对文件进行排序</h3>
+
+<p>20GB暗示我们文件不能全部加载进内存，我们只能把部分文件加载进内存。</p>
+
+<p>我们可以将文件分成若干个小部分，每部分<strong>x</strong>MB大小。对每个<strong>x</strong>MB大小的部分分别排序后，对于这些部分进行归并排序，这里我们只需要把每个部分的第一个元素载入内存即可，而不需要全部载入。</p>
+
+<p>这个算法叫做<strong>外部排序</strong>。</p>
+
+<h3 id="stringstringstring">一个有序String数组中散布着空String，写一个方法找到指定String的位置</h3>
+
+<p>二分查找，当mid为空时同时向左右查找最近的不为空的String，然后用compareTo()对两个String进行比较。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Solution3</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">searchR</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">strings</span><span class="o">,</span> <span class="n">String</span> <span class="n">str</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">strings</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">str</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">str</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">searchR</span><span class="o">(</span><span class="n">strings</span><span class="o">,</span> <span class="n">str</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">strings</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">searchR</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">strings</span><span class="o">,</span> <span class="n">String</span> <span class="n">str</span><span class="o">,</span> <span class="kt">int</span> <span class="n">low</span><span class="o">,</span> <span class="kt">int</span> <span class="n">high</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">low</span> <span class="o">&gt;</span> <span class="n">high</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="n">low</span> <span class="o">+</span> <span class="o">(</span><span class="n">high</span> <span class="o">-</span> <span class="n">low</span><span class="o">)</span> <span class="o">/</span> <span class="mi">2</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">strings</span><span class="o">[</span><span class="n">mid</span><span class="o">].</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
+            <span class="kt">int</span> <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+            <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">left</span> <span class="o">&lt;</span> <span class="n">low</span> <span class="o">&amp;&amp;</span> <span class="n">right</span> <span class="o">&gt;</span> <span class="n">high</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">right</span> <span class="o">&lt;=</span> <span class="n">high</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">strings</span><span class="o">[</span><span class="n">right</span><span class="o">].</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="n">mid</span> <span class="o">=</span> <span class="n">right</span><span class="o">;</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">left</span> <span class="o">&gt;=</span> <span class="n">low</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">strings</span><span class="o">[</span><span class="n">left</span><span class="o">].</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span><span class="o">;</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="o">}</span>
+                <span class="n">left</span><span class="o">--;</span>
+                <span class="n">right</span><span class="o">++;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">strings</span><span class="o">[</span><span class="n">mid</span><span class="o">].</span><span class="na">equals</span><span class="o">(</span><span class="n">str</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">mid</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">strings</span><span class="o">[</span><span class="n">mid</span><span class="o">].</span><span class="na">compareTo</span><span class="o">(</span><span class="n">str</span><span class="o">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">searchR</span><span class="o">(</span><span class="n">strings</span><span class="o">,</span> <span class="n">str</span><span class="o">,</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span> <span class="n">high</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">searchR</span><span class="o">(</span><span class="n">strings</span><span class="o">,</span> <span class="n">str</span><span class="o">,</span> <span class="n">low</span><span class="o">,</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">String</span><span class="o">[]</span> <span class="n">strings</span> <span class="o">=</span> <span class="o">{</span><span class="s">"hongmao"</span><span class="o">,</span> <span class="s">"lisen"</span><span class="o">,</span> <span class="s">""</span><span class="o">,</span> <span class="s">"senli"</span><span class="o">,</span> <span class="s">""</span><span class="o">,</span> <span class="s">""</span><span class="o">,</span> <span class="s">""</span><span class="o">,</span> <span class="s">""</span><span class="o">,</span> <span class="s">"wenhong"</span><span class="o">};</span>
+        <span class="n">String</span> <span class="n">target</span> <span class="o">=</span> <span class="s">"lisen"</span><span class="o">;</span>
+        <span class="n">Solution3</span> <span class="n">solution</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Solution3</span><span class="o">();</span>
+        <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="na">searchR</span><span class="o">(</span><span class="n">strings</span><span class="o">,</span> <span class="n">target</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">index</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="mn">一个M*N的矩阵，每一行和每一列都是升序排列，写一个方法找到指定元素</h3>
+
+<p>首先，我们可以对每一行使用二分查找，这样的时间复杂度是O(M*logN)。</p>
+
+<p>然后，我们注意到，这个矩阵有以下特性：</p>
+
+<ul>
+  <li>如果一列的开头比target大，则这一列可以忽略。</li>
+  <li>如果一行的开头比target大，则这一行可以忽略。</li>
+  <li>如果一列的结尾比target小，则这一列可以忽略。</li>
+  <li>如果一行的结尾比target小，则这一行可以忽略。</li>
+</ul>
+
+<p>我们将这四条特性相结合，我们希望无论当前元素比target大或小我们都能有所操作，所以结合一四或者二三。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.awt.Point</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Solution4</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Point</span> <span class="n">find</span><span class="o">(</span><span class="kt">int</span><span class="o">[][]</span> <span class="n">matrix</span><span class="o">,</span> <span class="kt">int</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">row</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">col</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">row</span> <span class="o">&lt;</span> <span class="n">matrix</span><span class="o">.</span><span class="na">length</span> <span class="o">&amp;&amp;</span> <span class="n">col</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">matrix</span><span class="o">[</span><span class="n">row</span><span class="o">][</span><span class="n">col</span><span class="o">]</span> <span class="o">==</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">new</span> <span class="n">Point</span><span class="o">(</span><span class="n">row</span><span class="o">,</span> <span class="n">col</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">matrix</span><span class="o">[</span><span class="n">row</span><span class="o">][</span><span class="n">col</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">col</span><span class="o">--;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">row</span><span class="o">++;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">Point</span><span class="o">(-</span><span class="mi">1</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span><span class="o">[][]</span> <span class="n">matrix</span> <span class="o">=</span> <span class="err">\</span><span class="o">{</span><span class="err">\</span><span class="o">{</span><span class="mi">15</span><span class="o">,</span> <span class="mi">20</span><span class="o">,</span> <span class="mi">40</span><span class="o">,</span> <span class="mi">85</span><span class="err">\</span><span class="o">},</span> <span class="err">\</span><span class="o">{</span><span class="mi">20</span><span class="o">,</span> <span class="mi">35</span><span class="o">,</span> <span class="mi">80</span><span class="o">,</span> <span class="mi">95</span><span class="err">\</span><span class="o">},</span> <span class="err">\</span><span class="o">{</span><span class="mi">30</span><span class="o">,</span> <span class="mi">55</span><span class="o">,</span> <span class="mi">95</span><span class="o">,</span> <span class="mi">105</span><span class="err">\</span><span class="o">},</span> <span class="err">\</span><span class="o">{</span><span class="mi">40</span><span class="o">,</span> <span class="mi">80</span><span class="o">,</span> <span class="mi">100</span><span class="o">,</span> <span class="mi">120</span><span class="err">\</span><span class="o">}</span><span class="err">\</span><span class="o">};</span>
+        <span class="n">Solution4</span> <span class="n">solution</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Solution4</span><span class="o">();</span>
+        <span class="kt">int</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">55</span><span class="o">;</span>
+        <span class="n">Point</span> <span class="n">point</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="na">find</span><span class="o">(</span><span class="n">matrix</span><span class="o">,</span> <span class="n">target</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">point</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p><em>第二种算法较复杂，待日后充分理解再补充…</em></p>
+
+<h3 id="section">马戏团表演叠罗汉，要求上面的人身高和体重同时要比下面的人小，写一个方法计算最多可能人数</h3>
+
+<p>思路是抽象为最长递增子序列问题。我们将人先按照身高进行排序，以排序后的顺序作为体重数组的下标就会发现，问题抽象为在按照身高排序后的体重数组中找到最长的递增子序列。</p>
+
+<p>我们使用的是动态规划O(n<sup>2</sup>)复杂度的算法。从前到后依次计算以当前元素结尾的最长递增子序列是什么，这样需要遍历整个序列，为O(n)。对于每个元素的最长子序列计算，我们需要遍历其之前的所有元素，找到体重小于其的最长子序列，为O(n)。故最终为O(n<sup>2</sup>)。</p>
+
+<p>下面代码中，我们写了一个Person类，实现了Comparable接口，override compareTo方法，以实现按照身高的排序。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="kd">implements</span> <span class="n">Comparable</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">height</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">weight</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">Person</span><span class="o">(</span><span class="kt">int</span> <span class="n">height</span><span class="o">,</span> <span class="kt">int</span> <span class="n">weight</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">height</span> <span class="o">=</span> <span class="n">height</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">weight</span> <span class="o">=</span> <span class="n">weight</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">getH</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">height</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">getW</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">weight</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">compareTo</span><span class="o">(</span><span class="n">Person</span> <span class="n">person</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">height</span> <span class="o">!=</span> <span class="n">person</span><span class="o">.</span><span class="na">getH</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">((</span><span class="n">Integer</span><span class="o">)</span><span class="k">this</span><span class="o">.</span><span class="na">height</span><span class="o">).</span><span class="na">compareTo</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="na">getH</span><span class="o">());</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">((</span><span class="n">Integer</span><span class="o">)</span><span class="k">this</span><span class="o">.</span><span class="na">weight</span><span class="o">).</span><span class="na">compareTo</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="na">getW</span><span class="o">());</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">isBefore</span><span class="o">(</span><span class="n">Person</span> <span class="n">p</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">height</span> <span class="o">&lt;</span> <span class="n">p</span><span class="o">.</span><span class="na">getH</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="na">weight</span> <span class="o">&lt;</span> <span class="n">p</span><span class="o">.</span><span class="na">getW</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">toString</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"Height: "</span> <span class="o">+</span> <span class="n">height</span> <span class="o">+</span> <span class="s">" Weight: "</span> <span class="o">+</span> <span class="n">weight</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kn">import</span> <span class="nn">java.util.ArrayList</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Collections</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Solution5</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">getIncreasingSequence</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">persons</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Collections</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">persons</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">longestIncreasingSubsequence</span><span class="o">(</span><span class="n">persons</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">longestIncreasingSubsequence</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">persons</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;[]</span> <span class="n">solutions</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">[</span><span class="n">persons</span><span class="o">.</span><span class="na">size</span><span class="o">()];</span>
+        <span class="n">longestIncreasingSubsequence</span><span class="o">(</span><span class="n">persons</span><span class="o">,</span> <span class="n">solutions</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">bestSequence</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">persons</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">bestSequence</span> <span class="o">=</span> <span class="n">seqWithMaxLength</span><span class="o">(</span><span class="n">bestSequence</span><span class="o">,</span> <span class="n">solutions</span><span class="o">[</span><span class="n">i</span><span class="o">]);</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="n">bestSequence</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">longestIncreasingSubsequence</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">persons</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;[]</span> <span class="n">solutions</span><span class="o">,</span> <span class="kt">int</span> <span class="n">currentIndex</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">currentIndex</span> <span class="o">&gt;=</span> <span class="n">persons</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">||</span> <span class="n">currentIndex</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="n">Person</span> <span class="n">currentElement</span> <span class="o">=</span> <span class="n">persons</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">currentIndex</span><span class="o">);</span>
+
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">bestSequence</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">currentIndex</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">persons</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">isBefore</span><span class="o">(</span><span class="n">currentElement</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">bestSequence</span> <span class="o">=</span> <span class="n">seqWithMaxLength</span><span class="o">(</span><span class="n">bestSequence</span><span class="o">,</span> <span class="n">solutions</span><span class="o">[</span><span class="n">i</span><span class="o">]);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">newSolution</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">bestSequence</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">newSolution</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">bestSequence</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">newSolution</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">currentElement</span><span class="o">);</span>
+
+        <span class="n">solutions</span><span class="o">[</span><span class="n">currentIndex</span><span class="o">]</span> <span class="o">=</span> <span class="n">newSolution</span><span class="o">;</span>
+        <span class="n">longestIncreasingSubsequence</span><span class="o">(</span><span class="n">persons</span><span class="o">,</span> <span class="n">solutions</span><span class="o">,</span> <span class="n">currentIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">seqWithMaxLength</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">seq1</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">seq2</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">seq1</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="k">return</span> <span class="n">seq2</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">seq2</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="k">return</span> <span class="n">seq1</span><span class="o">;</span>
+        <span class="k">return</span> <span class="n">seq1</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="n">seq2</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">?</span> <span class="n">seq1</span> <span class="o">:</span> <span class="n">seq2</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">persons</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;();</span>
+        <span class="n">persons</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">Person</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">13</span><span class="o">));</span>
+        <span class="n">persons</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">Person</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">14</span><span class="o">));</span>
+        <span class="n">persons</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">Person</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">10</span><span class="o">));</span>
+        <span class="n">persons</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">Person</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">11</span><span class="o">));</span>
+        <span class="n">persons</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">Person</span><span class="o">(</span><span class="mi">4</span><span class="o">,</span> <span class="mi">12</span><span class="o">));</span>
+        <span class="n">Solution5</span> <span class="n">solution</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Solution5</span><span class="o">();</span>
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="na">getIncreasingSequence</span><span class="o">(</span><span class="n">persons</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">Person</span> <span class="n">p</span> <span class="o">:</span> <span class="n">list</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">p</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="trackint-xgetrankofnumberint-x">不断的读一个整型流，写一个数据结构和算法，实现对于整型排名的追踪，即输入一个整型，返回小于等于这个整型的个数：对每个数调用，track(int x)；得到一个整型排名，getRankOfNumber(int x)</h3>
+
+<p>考虑使用二分查找树(binary search tree)实现，这样插入和查询排名的复杂度均是O(logn)。</p>
+
+<p>每个二叉树节点有两个域，data域和leftRank域。data域是数据，leftRank是左子树中节点的数量。</p>
+
+<p>插入数据的操作很简单，若数据小于等于当前数据则新建左子树或者交给左子树负责；大于当前数据同理。</p>
+
+<p>查询数据分为小于，等于，大于三种情况。小于的话则交给左子树查询，返回左子树的结果；等于的话直接返回当前leftRank，即左子树节点个数即可；大于的话交给右子树，查询出的结果是在右子树中的rank，所以我们要<strong>+leftRank+1</strong>，即加上左子树和当前节点。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RankNode</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">leftSize</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="n">RankNode</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">data</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">RankNode</span><span class="o">(</span><span class="kt">int</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">insert</span><span class="o">(</span><span class="kt">int</span> <span class="n">newData</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">newData</span> <span class="o">&lt;=</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">left</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">left</span><span class="o">.</span><span class="na">insert</span><span class="o">(</span><span class="n">newData</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RankNode</span><span class="o">(</span><span class="n">newData</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="n">leftSize</span><span class="o">++;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">right</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">right</span><span class="o">.</span><span class="na">insert</span><span class="o">(</span><span class="n">newData</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RankNode</span><span class="o">(</span><span class="n">newData</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">getRank</span><span class="o">(</span><span class="kt">int</span> <span class="n">searchData</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">searchData</span> <span class="o">&lt;</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">left</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="n">left</span><span class="o">.</span><span class="na">getRank</span><span class="o">(</span><span class="n">searchData</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">searchData</span> <span class="o">&gt;</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">rightRank</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">right</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">rightRank</span> <span class="o">=</span> <span class="n">right</span><span class="o">.</span><span class="na">getRank</span><span class="o">(</span><span class="n">searchData</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="n">leftSize</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">rightRank</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">leftSize</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Solution6</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="n">RankNode</span> <span class="n">root</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">track</span><span class="o">(</span><span class="kt">int</span> <span class="n">number</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">root</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RankNode</span><span class="o">(</span><span class="n">number</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">root</span><span class="o">.</span><span class="na">insert</span><span class="o">(</span><span class="n">number</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">getRankOfNumber</span><span class="o">(</span><span class="kt">int</span> <span class="n">number</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">root</span><span class="o">.</span><span class="na">getRank</span><span class="o">(</span><span class="n">number</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Solution6</span><span class="o">.</span><span class="na">track</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+        <span class="n">Solution6</span><span class="o">.</span><span class="na">track</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
+        <span class="n">Solution6</span><span class="o">.</span><span class="na">track</span><span class="o">(</span><span class="mi">4</span><span class="o">);</span>
+        <span class="n">Solution6</span><span class="o">.</span><span class="na">track</span><span class="o">(</span><span class="mi">6</span><span class="o">);</span>
+        <span class="n">Solution6</span><span class="o">.</span><span class="na">track</span><span class="o">(</span><span class="mi">8</span><span class="o">);</span>
+        <span class="n">Solution6</span><span class="o">.</span><span class="na">track</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+        <span class="n">Solution6</span><span class="o">.</span><span class="na">track</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+        <span class="n">Solution6</span><span class="o">.</span><span class="na">track</span><span class="o">(</span><span class="mi">3</span><span class="o">);</span>
+        <span class="n">Solution6</span><span class="o">.</span><span class="na">track</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>
+        <span class="n">Solution6</span><span class="o">.</span><span class="na">track</span><span class="o">(</span><span class="mi">7</span><span class="o">);</span>
+        <span class="n">Solution6</span><span class="o">.</span><span class="na">track</span><span class="o">(</span><span class="mi">9</span><span class="o">);</span>
+        <span class="n">Solution6</span><span class="o">.</span><span class="na">track</span><span class="o">(</span><span class="mi">11</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">Solution6</span><span class="o">.</span><span class="na">getRankOfNumber</span><span class="o">(</span><span class="mi">7</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/blog/2016/06/24/Rate-Rise/" data-toggle="tooltip" data-placement="top" title="美元加息的含义和目的是什么？">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                <!-- Duoshuo Share start -->
+                <style>
+                    .ds-share{
+                        text-align: right;
+                    }
+                    
+                    @media only screen and (max-width: 700px) {
+                        .ds-share {
+
+                        }
+                    }
+                </style>
+
+                <div class="ds-share"
+                    data-thread-key="/blog/2016/06/27/CC150-Ch11-Sorting-Questions" data-title="CC150 Chapter 11---Sorting Questions"
+                    data-images="http://lisentoday/img/green.jpg"
+                    data-content="两个有序数组A和B，A的尾部有足够空间放B，写一个方法mergeB到A中成有序数组
+
+in place merge，如果从头merge会导致A中元素被覆盖... | Microdust:Azeril's blog"
+                    data-url="http://lisentoday/blog/2016/06/27/CC150-Ch11-Sorting-Questions/">
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- Duoshuo Share end-->
+
+
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread" data-thread-key="/blog/2016/06/27/CC150-Ch11-Sorting-Questions" data-title="CC150 Chapter 11---Sorting Questions" data-url="http://lisentoday/blog/2016/06/27/CC150-Ch11-Sorting-Questions/"></div>
+                </div>
+                <!-- 多说评论框 end -->
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"cnfeat"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <!-- kill the Facebook and Weibo -->
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    
+                    <!--
+                    
+                    -->
+
+                    <!--
+                    
+                    -->
+
+                    
+                    <!--
+                    
+                    -->
+
+                </ul>
+                <p class="copyright text-muted">
+                &copy; 2016 lisen ❖ Powered by Jekyll.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+
+
+<!-- Highlight.js -->
+<script>
+    async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js",function(){
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+<link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+
+
+</body>
+
+</html>
