@@ -25,31 +25,36 @@ tags: [study]
 
 ```java
 public class Solution {
-    public int countNumbersWithUniqueDigits(int n) {
-        if (n == 0) {
-            return 1;
-        }
-        int[] totalCount = new int[10];
-        int[] nthCount = new int[10];
-        totalCount[0] = 10;
-        nthCount[0] = 9;
-        
-        if (1 == n) {
-            return totalCount[0];
+    public List<List<String>> groupAnagrams(String[] strs) {
+        if (strs == null || strs.length == 0) {
+            return new ArrayList<List<String>>();
         }
         
-        for (int i = 1, j = 9; i < 10; i++, j--) {
-            nthCount[i] = nthCount[i - 1] * j;
-            totalCount[i] = totalCount[i - 1] + nthCount[i];
-            if ((i + 1) == n) {
-                return totalCount[i];
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        List<String> list = null;
+        List<List<String>> result = new ArrayList<List<String>>();
+        
+        for (String s : strs) {
+            char[] c = s.toCharArray();
+            Arrays.sort(c);
+            String stringKey = s.valueOf(c);
+            if (!map.containsKey(stringKey)) {
+                list = new ArrayList<String>();
+                list.add(s);
+                map.put(stringKey, list);
+            } else {
+                list = map.get(stringKey);
+                list.add(s);
+                map.put(stringKey, list);
             }
         }
         
-        if (n > 10) {
-            return totalCount[9];
+        Set<String> set = map.keySet();
+        for (String s : set) {
+            list = map.get(s);
+            result.add(list);
         }
-        return -1;
+        return result;
     }
 }
 ```
