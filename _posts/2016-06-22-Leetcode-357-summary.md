@@ -25,6 +25,5 @@ tags: [study]
 
 ```java
 public class Solution {
-    
 }
 ```
