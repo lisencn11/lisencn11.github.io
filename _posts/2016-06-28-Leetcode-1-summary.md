@@ -25,6 +25,34 @@ tags: [study]
 
 ```java
 public class Solution {
+    public int countNumbersWithUniqueDigits(int n) {
+        if (n == 0) {
+            return 1;
+        }
+        int[] totalCount = new int[10];
+        int[] nthCount = new int[10];
+        totalCount[0] = 10;
+        nthCount[0] = 9;
+        
+        if (1 == n) {
+            return totalCount[0];
+        }
+        
+        for (int i = 1, j = 9; i < 10; i++, j--) {
+            nthCount[i] = nthCount[i - 1] * j;
+            totalCount[i] = totalCount[i - 1] + nthCount[i];
+            if ((i + 1) == n) {
+                return totalCount[i];
+            }
+        }
+        
+        if (n > 10) {
+            return totalCount[9];
+        }
+        return -1;
+    }
+}
+public class Solution {
     public List<List<String>> groupAnagrams(String[] strs) {
         if (strs == null || strs.length == 0) {
             return new ArrayList<List<String>>();
@@ -57,34 +85,6 @@ public class Solution {
             result.add(list);
         }
         return result;
-    }
-}
-public class Solution {
-    public int countNumbersWithUniqueDigits(int n) {
-        if (n == 0) {
-            return 1;
-        }
-        int[] totalCount = new int[10];
-        int[] nthCount = new int[10];
-        totalCount[0] = 10;
-        nthCount[0] = 9;
-        
-        if (1 == n) {
-            return totalCount[0];
-        }
-        
-        for (int i = 1, j = 9; i < 10; i++, j--) {
-            nthCount[i] = nthCount[i - 1] * j;
-            totalCount[i] = totalCount[i - 1] + nthCount[i];
-            if ((i + 1) == n) {
-                return totalCount[i];
-            }
-        }
-        
-        if (n > 10) {
-            return totalCount[9];
-        }
-        return -1;
     }
 }
 ```
