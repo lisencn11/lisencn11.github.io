@@ -33,6 +33,8 @@ public class Solution {
         Map<String, List<String>> map = new HashMap<String, List<String>>();
         List<String> list = null;
         List<List<String>> result = new ArrayList<List<String>>();
+        int i = 0;
+        i++;
         
         for (String s : strs) {
             char[] c = s.toCharArray();
