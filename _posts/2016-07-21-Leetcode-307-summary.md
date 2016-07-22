@@ -22,10 +22,10 @@ update 和 sumRange 操作大量均匀分布
 
 有两种数据结构支持快捷的更改和求和操作
 
-1. 线段树
-2. 树状数组
+1. [线段树](http://lisentoday.com/blog/2016/07/21/Segment_Tree_Summary/)
+2. [树状数组](http://lisentoday.com/blog/2016/07/21/Binary_Indexed_Tree_Summary/)
 
-由于这两种数据结构都没有接触过，所以单写两篇博客学习它们，这里暂时略过。
+由于这两种数据结构都没有接触过，所以单写两篇博客学习它们，这里就不再赘述，可以点进对应名称进入专题博客。
 
 # 代码
 
