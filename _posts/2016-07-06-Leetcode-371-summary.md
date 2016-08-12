@@ -34,3 +34,26 @@ public class Solution {
     }
 }
 {% endhighlight %}
+
+# 位运算总结
+
+**&** 表示 **与**  
+**|** 表示 **或**  
+**^** 表示 **异或**  
+**~** 表示 **反**
+
+得到一个数的负数的方法是取反加一，如对 2(0010) 取反 1101 加一 1110 即为 -2。
+
+### 减法代码
+
+{% highlight java %}
+public int getSubtract(int a, int b) {
+	while (b != 0) {
+		int borrow = (~a) & b;
+		a = a ^ b;
+		b = borrow << 1;
+	}
+	
+	return a;
+}
+{% endhighlight %}
