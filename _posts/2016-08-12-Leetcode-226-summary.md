@@ -11,7 +11,11 @@ tags: [study]
 
 Invert a binary tree.
 
+![from](https://raw.githubusercontent.com/lisencn11/lisencn11.github.io/master/img/Screen%20Shot%202016-08-12%20at%205.09.18%20PM.png)
 
+to
+
+![to](https://raw.githubusercontent.com/lisencn11/lisencn11.github.io/master/img/Screen%20Shot%202016-08-12%20at%205.09.22%20PM.png)
 
 # 我的算法
 
