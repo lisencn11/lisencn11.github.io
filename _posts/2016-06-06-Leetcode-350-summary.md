@@ -18,46 +18,29 @@ tags: [study]
 
 # 代码
 
-```java
-
+{% highlight java %}
 public class Solution {
     public int[] intersect(int[] nums1, int[] nums2) {
-        if (nums1 == null || nums2 == null) {
-            return null;
-        }
-        
-        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
-        List<Integer> list = new ArrayList<Integer>();
-        
+        Map<Integer, Integer> numToFreq = new HashMap<>();
         for (int i = 0; i < nums1.length; i++) {
-            Integer key = new Integer(nums1[i]);
-            if (map.containsKey(key)) {
-                Integer value = map.get(key);
-                value++;
-                map.put(key, value);
-            } else {
-                map.put(key, new Integer(1));
-            }
+            if (!numToFreq.containsKey(nums1[i])) numToFreq.put(nums1[i], 0);
+            numToFreq.put(nums1[i], numToFreq.get(nums1[i]) + 1);
         }
         
+        List<Integer> res = new ArrayList<>();
         for (int i = 0; i < nums2.length; i++) {
-            Integer key = new Integer(nums2[i]);
-            if (map.containsKey(key) && map.get(key) > 0) {
-                Integer value = map.get(key);
-                value--;
-                map.put(key,value);
-                list.add(key);
+            if (numToFreq.containsKey(nums2[i]) && numToFreq.get(nums2[i]) != 0) {
+                numToFreq.put(nums2[i], numToFreq.get(nums2[i]) - 1);
+                res.add(nums2[i]);
             }
         }
         
-        int[] result = new int[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            result[i] = list.get(i);
-        }
+        int[] ret = new int[res.size()];
+        int iter = 0;
+        for (Integer i : res) ret[iter++] = i;
         
-        return result;
+        return ret;
     }
 }
-
-```
+{% endhighlight %}
 
