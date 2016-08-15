@@ -23,10 +23,11 @@ tags: [study]
 * 刚开始被例子误导，没有考虑大写的元音
 * 边界条件，如判断是否元音的同时还要判断pointer是否越界，因为存在情况：String中没有vowel
 
+update: 二刷使用StringBuilder和HashSet
+
 # 代码
 
-```java
-
+{% highlight java %}
 public class Solution {
     public String reverseVowels(String s) {
         if (s == null || s.length() < 2) {
@@ -59,6 +60,38 @@ public class Solution {
         return new String(str);
     }
 }
+{% endhighlight %}
 
-```
+### 二刷
 
+{% highlight java %}
+public class Solution {
+    public String reverseVowels(String s) {
+        Set<Character> vowels = new HashSet<>();
+        vowels.add('A');
+        vowels.add('a');
+        vowels.add('I');
+        vowels.add('i');
+        vowels.add('O');
+        vowels.add('o');
+        vowels.add('U');
+        vowels.add('u');
+        vowels.add('E');
+        vowels.add('e');
+        
+        StringBuilder res = new StringBuilder();
+        int vowel = s.length() - 1;
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (!vowels.contains(s.charAt(i))) {
+                res.append(s.charAt(i));
+            } else {
+                while (!vowels.contains(s.charAt(vowel--))){}
+                res.append(s.charAt(vowel + 1));
+            }
+        }
+        
+        return res.toString();
+    }
+}
+{% endhighlight %}
