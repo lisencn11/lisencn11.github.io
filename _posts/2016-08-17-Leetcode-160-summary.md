@@ -9,63 +9,91 @@ tags: [study]
 
 # 题目
 
-Given a pattern and a string str, find if str follows the same pattern.
+Write a program to find the node at which the intersection of two singly linked lists begins.
 
-Here follow means a full match, such that there is a bijection between a letter in pattern and a non-empty word in str.
+For example, the following two linked lists:
 
-Examples:  
-pattern = "abba", str = "dog cat cat dog" should return true.  
-pattern = "abba", str = "dog cat cat fish" should return false.  
-pattern = "aaaa", str = "dog cat cat dog" should return false.  
-pattern = "abba", str = "dog dog dog dog" should return false.
+![](https://lisencn11.github.io/img/problem160.png)
 
-Notes:  
-You may assume pattern contains only lowercase letters, and str contains lowercase letters separated by a single space.
+begin to intersect at node c1.
+
+Notes:
+
+* If the two linked lists have no intersection at all, return null.
+* The linked lists must retain their original structure after the function returns.
+* You may assume there are no cycles anywhere in the entire linked structure.
+* Your code should preferably run in O(n) time and use only O(1) memory.
 
 # 我的算法
 
-对 pattern 中的字母和 str 中的字符串构成一对一的映射，检查一致性。
+首先第一想法是HashSet做，很简单，但是做不到空间复杂度 O(1) ，考虑如果遍历一遍两个数组得到长度差然后先将长的链表指针移到同一起跑线即可， discuss 中给出了基于这种思路，但是不需要比较长度的算法，一并贴上。
 
 # 代码
 
 {% highlight java %}
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
 public class Solution {
-    public boolean wordPattern(String pattern, String str) {
-        String[] patternToStr = new String[26];
-        String[] strs = str.split(" ");
-        Map<String, Character> strToPattern = new HashMap<>();
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        int lenA = length(headA);
+        int lenB = length(headB);
         
-        if (strs.length != pattern.length()) return false;
-        
-        for (int i = 0; i < strs.length; i++) {
-            if (patternToStr[(int)(pattern.charAt(i) - 'a')] == null) 
-                patternToStr[(int)(pattern.charAt(i) - 'a')] = strs[i];
-            if (!strToPattern.containsKey(strs[i]))
-                strToPattern.put(strs[i], pattern.charAt(i));
-            if (!patternToStr[(int)(pattern.charAt(i) - 'a')].equals(strs[i]))
-                return false;
-            if (strToPattern.get(strs[i]) != pattern.charAt(i))
-                return false;
+        int diff = 0;
+        ListNode iterA = headA;
+        ListNode iterB = headB;
+        if (lenA > lenB) {
+            diff = lenA - lenB;
+            for (int i = 0; i < diff; i++) iterA = iterA.next;
+        } else {
+            diff = lenB - lenA;
+            for (int i = 0; i < diff; i++) iterB = iterB.next;
         }
         
-        return true;
+        while (iterA != null && iterA != iterB) {
+            iterA = iterA.next;
+            iterB = iterB.next;
+        }
+        
+        return iterA;
+    }
+    
+    private int length(ListNode head) {
+        int len = 0;
+        while (head != null) {
+            head = head.next;
+            len++;
+        }
+        return len;
     }
 }
 {% endhighlight %}
 
 # discuss摘录
 
-巧用Map.put()返回值
-
 {% highlight java %}
-public boolean wordPattern(String pattern, String str) {
-    String[] words = str.split(" ");
-    if (words.length != pattern.length())
-        return false;
-    Map index = new HashMap();
-    for (Integer i=0; i<words.length; ++i)
-        if (index.put(pattern.charAt(i), i) != index.put(words[i], i))
-            return false;
-    return true;
+public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+    //boundary check
+    if(headA == null || headB == null) return null;
+    
+    ListNode a = headA;
+    ListNode b = headB;
+    
+    //if a & b have different len, then we will stop the loop after second iteration
+    while( a != b){
+    	//for the end of first iteration, we just reset the pointer to the head of another linkedlist
+        a = a == null? headB : a.next;
+        b = b == null? headA : b.next;    
+    }
+    
+    return a;
 }
 {% endhighlight %}
