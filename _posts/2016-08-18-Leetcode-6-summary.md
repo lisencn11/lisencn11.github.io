@@ -23,37 +23,32 @@ convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
 
 # 我的算法
 
-因为会调用 sumRange() 很多次，所以考虑动态规划算法，将从 0 到 j 的和保存起来， 求从 i 到 j 的和只需要用 0 到 j 的和减去 0 到 i - 1 的和即可。
+对每一行创建一个 StringBuilder 模拟 zigzag的顺序挨个加入。
 
 # 代码
 
 {% highlight java %}
-public class NumArray {
-    int[] sums;
-
-    public NumArray(int[] nums) {
-        if (nums == null || nums.length == 0) {
-            sums = nums;
-            return;
+public class Solution {
+    public String convert(String s, int numRows) {
+        StringBuilder[] convert = new StringBuilder[numRows];
+        for (int i = 0; i < numRows; i++) convert[i] = new StringBuilder();
+        
+        int iter = 0;
+        while (iter < s.length()) {
+            for (int i = 0; i < numRows && iter < s.length(); i++) {
+                convert[i].append(s.charAt(iter++));
+            }
+            
+            for (int i = numRows - 2; i > 0  && iter < s.length(); i--) {
+                convert[i].append(s.charAt(iter++));
+            }
         }
         
-        sums = new int[nums.length];
-        sums[0] = nums[0];
-        for (int i = 1; i < nums.length; i++)
-            sums[i] = nums[i] + sums[i - 1];
-    }
-
-    public int sumRange(int i, int j) {
-        if (sums == null || sums.length == 0) return 0;
-        
-        if (i == 0) return sums[j];
-        else return sums[j] - sums[i - 1];
+        StringBuilder ret = new StringBuilder();
+        for (int i = 0; i < convert.length; i++)
+            ret.append(convert[i]);
+            
+        return ret.toString();
     }
 }
-
-
-// Your NumArray object will be instantiated and called as such:
-// NumArray numArray = new NumArray(nums);
-// numArray.sumRange(0, 1);
-// numArray.sumRange(1, 2);
 {% endhighlight %}
