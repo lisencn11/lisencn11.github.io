@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Leetcode Problem 369 Summary
-date: 2016-08-18
+date: 2016-08-19
 categories: blog
 tags: [study]
 
