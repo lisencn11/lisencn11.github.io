@@ -53,3 +53,29 @@ public class Solution {
     }
 }
 {% endhighlight %}
+
+# 二刷update
+
+当时做这题脑子不清醒啊。。。
+
+很简单的就是对于 n 位数，第一位有 9 种可能（排除 0 ），后面各位依次有 9 8 7 6 ... 1 种可能，相乘即可。
+
+### 代码
+
+{% highlight java %}
+public class Solution {
+    public int countNumbersWithUniqueDigits(int n) {
+        if (n == 0) return 1;
+        
+        int preCount = countNumbersWithUniqueDigits(n - 1);
+        int count = 9;
+        int base = 9;
+        for (int i = 2; i <= n; i++) {
+            count *= base--;
+            if (base == 0) break;
+        }
+        
+        return count + preCount;
+    }
+}
+{% endhighlight %}
