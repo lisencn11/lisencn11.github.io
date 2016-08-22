@@ -21,8 +21,7 @@ tags: [study]
 
 # 代码
 
-```java
-
+{% highlight %}
 public class Solution {
     public int integerBreak(int n) {
         if (n == 2) {
@@ -38,5 +37,42 @@ public class Solution {
         }
     }
 }
+{% endhighlight %}
 
-```
+# 二刷更新
+
+第一眼看这道题没思路很正常，我们先尝试能否找到规律。
+
+2 = 1 + 1  
+3 = 1 + 2  
+4 = 2 + 2  
+5 = 2 + 3  
+6 = 3 + 3 = 2 + 2 + 2  
+3 * 3 > 2 * 2 * 2 
+
+我们发现规律，对于 2 和 3 ，拆分后的乘积不如拆分前，而之后的各数拆分后乘积均大于原数，说明除了 2 和 3 都应该拆分。
+
+又发现 3 * 3 大于 2 * 2 * 2 得出应该尽量拆分成 3 ，而对于 4 而言则应该拆分成 2。
+
+{% highlight java %}
+public class Solution {
+    public int integerBreak(int n) {
+        if (n == 2) return 1;
+        if (n == 3) return 2;
+        int product = 1;
+        int sum = 0;
+        
+        while (sum < n) {
+            if (sum + 2 == n || sum + 4 == n) {
+                product *= 2;
+                sum += 2;
+            } else {
+                product *= 3;
+                sum += 3;
+            }
+        }
+        
+        return product;
+    }
+}
+{% endhighlight %}

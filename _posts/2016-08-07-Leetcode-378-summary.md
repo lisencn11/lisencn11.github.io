@@ -61,3 +61,35 @@ class Tuple implements Comparable<Tuple> {
     }
 }
 {% endhighlight %}
+
+# 二刷
+
+二刷采取了不同的算法，二分查找，因为这道是新题，没有足够数据看不出两者速度差异。
+
+{% highlight java %}
+public class Solution {
+    public int kthSmallest(int[][] matrix, int k) {
+        int row = matrix.length, col = matrix[0].length;
+        int low = matrix[0][0], high = matrix[row - 1][col - 1];
+        while (low < high) {
+            int mid = low + (high - low) / 2;
+            int num = 0;
+            for (int i = 0; i < row; i++) {
+                int pos = Arrays.binarySearch(matrix[i], mid);
+                if (pos > 0) {
+                    while (pos < (col - 1) && matrix[i][pos + 1] == mid) pos++;
+                }
+                pos = pos < 0 ? -(pos + 1) : pos + 1;
+                
+                num += pos;
+            }
+            if (num < k) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return low;
+    }
+}
+{% endhighlight %}
