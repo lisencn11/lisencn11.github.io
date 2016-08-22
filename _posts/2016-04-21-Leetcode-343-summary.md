@@ -21,7 +21,7 @@ tags: [study]
 
 # 代码
 
-{% highlight %}
+{% highlight java %}
 public class Solution {
     public int integerBreak(int n) {
         if (n == 2) {
