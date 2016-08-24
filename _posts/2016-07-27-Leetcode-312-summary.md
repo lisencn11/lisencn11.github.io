@@ -52,3 +52,43 @@ public class Solution {
     }
 }
 {% endhighlight %}
+
+# 二刷
+
+二刷时还记得思路，但是实现已经忘了，于是这回用 iterative 实现的，感觉还是 recursive 更好。
+
+{% highlight java %}
+public class Solution {
+    public int maxCoins(int[] nums) {
+        int[] numbers = new int[nums.length + 2];
+        for (int i = 0; i < nums.length; i++) {
+            numbers[i + 1] = nums[i];
+        }
+        numbers[0] = numbers[numbers.length - 1] = 1;
+        
+        int[][] max = new int[numbers.length][numbers.length];
+        for (int i = 0 ; i < max.length; i++) {
+            for (int j = 0; j < max[0].length; j++) {
+                max[i][j] = 0;
+            }
+        }
+        for (int i = 1; i < max.length - 1; i++) {
+            max[i][i] = numbers[i - 1] * numbers[i] * numbers[i + 1];
+        }
+
+        // step, range from j to j + i
+        for (int i = 1; i < nums.length; i++) {
+            for (int j = 1; j + i <= nums.length; j++) {
+                int product = 0;
+                for (int k = j; k <= j + i; k++) {
+                    int temp = max[j][k - 1] + max[k + 1][j + i] + (numbers[k] * numbers[j - 1] * numbers[j + i + 1]);
+                    product = temp > product ? temp : product;
+                }
+                max[j][j + i] = product;
+            }
+        }
+        
+        return max[1][nums.length];
+    }
+}
+{% endhighlight %}

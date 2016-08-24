@@ -28,8 +28,7 @@ tags: [study]
 
 # 代码
 
-```java
-
+{% highlight java %}
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -80,15 +79,13 @@ public class Solution {
         return maxMoney.val;
     }
 }
-
-```
+{% endhighlight %}
 
 # 进一步
 
 在discussion中看到得票数最高的答案思路和我的相同，但是存储存储子树数据的方式使用了int[]，而且无须判断子树的子树是否存在，代码更加简洁易懂。
 
-```java
-
+{% highlight java %}
 public int rob(TreeNode root) {
     int[] res = robSub(root);
     return Math.max(res[0], res[1]);
@@ -108,5 +105,38 @@ private int[] robSub(TreeNode root) {
 
     return res;
 }
+{% endhighlight %}
 
-```
+# 二刷
+
+The thief has found himself a new place for his thievery again. There is only one entrance to this area, called the "root." Besides the root, each house has one and only one parent house. After a tour, the smart thief realized that "all houses in this place forms a binary tree". It will automatically contact the police if two directly-linked houses were broken into on the same night.
+
+Determine the maximum amount of money the thief can rob tonight without alerting the police.
+
+{% highlight java %}
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    Map<TreeNode, Integer> map = new HashMap<>();
+    public int rob(TreeNode root) {
+        if (root == null) return 0;
+        if (map.containsKey(root)) return map.get(root);
+        
+        int sum1 = root.val;
+        if (root.left != null) sum1 += rob(root.left.left) + rob(root.left.right);
+        if (root.right != null) sum1 += rob(root.right.left) + rob(root.right.right);
+        
+        int sum2 = rob(root.left) + rob(root.right);
+        sum1 = sum1 > sum2 ? sum1 : sum2;
+        map.put(root, sum1);
+        return sum1;
+    }
+}
+{% endhighlight %}
