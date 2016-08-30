@@ -74,3 +74,31 @@ public class Solution {
     }
 }
 {% endhighlight %}
+
+# 二刷
+
+二刷使用的模的一个规律 a*b mod c = (a mod c) * (b mod c)，所以我们对于 a<sup>12345</sup> mod 1337，可以先算 a<sup>5</sup> mod 1337 再算 a<sup>12340</sup> mod 1337，a<sup>12340</sup> mod 1337 又可以先算 res = a<sup>1234</sup> mod 1337，再算 res<sup>10</sup> mod 1337，所以时间复杂度为 O(n)。
+
+{% highlight java %}
+public class Solution {
+    static final int BASE = 1337;
+    
+    public int superPow(int a, int[] b) {
+        if (b == null || b.length == 0) return 1;
+        return superPowWrapper(a, b, b.length - 1);
+    }
+    
+    private int superPowWrapper(int a, int[] b, int end) {
+        if (end == 0) return powCalculate(a, b[end]);
+        
+        return (powCalculate(superPowWrapper(a, b, end - 1), 10) * powCalculate(a, b[end])) % BASE;
+    }
+    
+    private int powCalculate(int a, int k) {
+        a %= BASE;
+        int result = 1;
+        for (int i = 0; i < k; i++) result = (result * a) % BASE;
+        return result;
+    }
+}
+{% endhighlight %}

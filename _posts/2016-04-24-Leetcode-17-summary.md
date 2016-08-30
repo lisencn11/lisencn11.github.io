@@ -20,8 +20,7 @@ tags: [study]
 
 # 代码
 
-```java
-
+{% highlight java %}
 public class Solution {
     
     String[] map = new String[8];
@@ -67,15 +66,13 @@ public class Solution {
         return result;
     }
 }
-
-```
+{% endhighlight %}
 
 # 更进一步
 
 Discussion中得票最高的答案使用Queue实现了非递归的方法，对每个n-1长度数字串生成的字符串，在第n个数字时取出，在尾部加字母，在扔回队列，使用Queue这个数据结构十分巧妙。
 
-```java
-
+{% highlight java %}
 public List<String> letterCombinations(String digits) {
 
     LinkedList<String> ans = new LinkedList<String>();
@@ -93,7 +90,34 @@ public List<String> letterCombinations(String digits) {
     }
     return ans;
 }
+{% endhighlight %}
 
+# 二刷
 
-```
+以前写的代码简直渣爆。。。
 
+{% highlight java %}
+public class Solution {
+    public List<String> letterCombinations(String digits) {
+        if (digits == null || digits.length() == 0) return new ArrayList<>();
+        String[] map = new String[]{"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        List<String> list = new ArrayList<>();
+        list.add("");
+        char[] numbers = digits.toCharArray();
+        
+        for (int i = 0; i < numbers.length; i++) {
+            List<String> temp = new ArrayList<>();
+            char digit = numbers[i];
+            String str = map[(int) (digit - '2')];
+            for (String s : list) {
+                for (int j = 0; j < str.length(); j++) {
+                    temp.add(s + str.charAt(j));
+                }
+            }
+            list = temp; 
+        }
+        
+        return list;
+    }
+}
+{% endhighlight %}
