@@ -9,7 +9,18 @@ tags: [study]
 
 # 题目
 
-**丑数**是指因式分解后又2， 3， 5组成的数，如10=2*5。约定1是第1个丑数，设计算法求第n个丑数。
+Write a program to find the n-th ugly number.
+
+Ugly numbers are positive numbers whose prime factors only include 2, 3, 5. For example, 1, 2, 3, 4, 5, 6, 8, 9, 10, 12 is the sequence of the first 10 ugly numbers.
+
+Note that 1 is typically treated as an ugly number.
+
+Hint:
+
+1. The naive approach is to call isUgly for every number until you reach the nth one. Most numbers are not ugly. Try to focus your effort on generating only the ugly ones.
+2. An ugly number must be multiplied by either 2, 3, or 5 from a smaller ugly number.
+3. The key is how to maintain the order of the ugly numbers. Try a similar approach of merging from three sorted lists: L1, L2, and L3.
+4. Assume you have Uk, the kth ugly number. Then Uk+1 must be Min(L1 * 2, L2 * 3, L3 * 5).
 
 
 # 算法
@@ -18,8 +29,7 @@ tags: [study]
 
 # 代码
 
-```java
-
+{% highlight java %}
 public class Solution {
     private int min(int i1, int i2, int i3) {
         int min;
@@ -43,6 +53,30 @@ public class Solution {
         return res[n - 1];
     }
 }
+{% endhighlight %}
 
-```
+# 二刷
 
+{% highlight java %}
+public class Solution {
+    public int nthUglyNumber(int n) {
+        int[] ugly = new int[n + 1];
+        ugly[1] = 1;
+        int[] index = new int[]{1, 1, 1};
+        int[] base = new int[]{2, 3, 5};
+        int count = 1;
+        
+        for (int i = 2; i <= n; i++) {
+            int min = Integer.MAX_VALUE;
+            for (int j = 0; j < 3; j++) {
+                min = ugly[index[j]] * base[j] < min ? ugly[index[j]] * base[j] : min;
+            }
+            ugly[i] = min;
+            for (int j = 0; j < 3; j++) {
+                if (ugly[index[j]] * base[j] == min) index[j]++;
+            }
+        }
+        return ugly[n];
+    }
+}
+{% endhighlight %}
