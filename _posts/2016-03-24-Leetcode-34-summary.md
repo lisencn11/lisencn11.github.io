@@ -19,6 +19,7 @@ tags: [study]
 
 # Java代码
 
+{% highlight java %}
 public class Solution {
     public int[] searchRange(int[] nums, int target) {
         int low = 0;
@@ -76,3 +77,45 @@ public class Solution {
         return range;
     }
 }
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public int[] searchRange(int[] nums, int target) {
+        int low = 0;
+        int high = nums.length - 1;
+        
+        while (low < high) {
+            int mid = low + (high - low) / 2;
+            if (nums[mid] == target) {
+                high = mid;
+            } else if (nums[mid] > target) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        if (nums[low] != target) {
+            return new int[]{-1, -1};
+        }
+        int first = low;
+        low = 0;
+        high = nums.length - 1;
+        
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (nums[mid] == target) {
+                low = mid + 1;
+            } else if (nums[mid] > target) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        int second = high;
+        return new int[]{first, second};
+    }
+}
+{% endhighlight %}
