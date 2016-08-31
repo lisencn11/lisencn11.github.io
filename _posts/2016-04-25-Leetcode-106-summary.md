@@ -18,8 +18,7 @@ tags: [study]
 
 # 代码
 
-```java
-
+{% highlight java %}
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -75,15 +74,13 @@ public class Solution {
         return root;
     }
 }
-
-```
+{% endhighlight %}
 
 # 更进一步
 
 我的程序运行结果很慢，Discussion中得票最高的答案使用相同的算法，但是使用HashMap在inorder中查找根节点，结果很快，于是改用HashMap后的代码如下，这里注意，因为HashMap存储的是inorder全局的index，而之前循环查找的是子树array的index，所以要对传参进行修改。
 
-```java
-
+{% highlight java %}
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -135,7 +132,45 @@ public class Solution {
         return root;
     }
 }
+{% endhighlight %}
 
+# 二刷
 
-```
-
+{% highlight java %}
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        TreeNode root = build(inorder, postorder, 0, inorder.length - 1, 0, postorder.length - 1);
+        return root;
+    }
+    
+    private TreeNode build(int[] inorder, int[] postorder, int inFrom, int inTo, int postFrom, int postTo) {
+        if (inFrom > inTo) return null;
+        
+        int value = postorder[postTo];
+        int inRoot = 0;
+        for (int i = inFrom; i <= inTo; i++) {
+            if (inorder[i] == value) {
+                inRoot = i;
+                break;
+            }
+        }
+        
+        int leftLen = inRoot - inFrom;
+        TreeNode left = build(inorder, postorder, inFrom, inRoot - 1, postFrom, postFrom + leftLen - 1);
+        TreeNode right = build(inorder, postorder, inRoot + 1, inTo, postFrom + leftLen, postTo - 1);
+        TreeNode root = new TreeNode(value);
+        root.left = left;
+        root.right = right;
+        return root;
+    }
+}
+{% endhighlight %}
