@@ -41,7 +41,7 @@ tags: [study]
 
 注：广度优先使用的Queue中的参数原本声明的是Point类，但是似乎leetcode不支持，于是改为两个Queue，会在一定程度上影响效率。
 
-```java
+{% highlight java %}
 public class Solution {
     public int numIslands(char[][] grid) {
         if (grid == null || grid.length == 0 || grid[0].length == 0) {
@@ -100,7 +100,7 @@ public class Solution {
         return res;
     }
 }
-```
+{% endhighlight %}
 
 问题：测试用例给了一个17*21的矩阵后出现超时。
 
@@ -110,7 +110,7 @@ public class Solution {
 
 # 代码
 
-```java
+{% highlight java %}
 public class Solution {
     public int numIslands(char[][] grid) {
         if (grid == null || grid.length == 0 || grid[0].length == 0) {
@@ -173,4 +173,39 @@ public class Solution {
         return res;
     }
 }
-```
+{% endhighlight %}
+
+# 二刷
+
+以前代码好渣。。。
+
+{% highlight java %}
+public class Solution {
+    public int numIslands(char[][] grid) {
+        if (grid == null || grid.length == 0) return 0;
+        
+        int m = grid.length, n = grid[0].length;
+        int count = 0;
+        int[][] checked = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == '1' && checked[i][j] == 0) {
+                    dfs(grid, checked, i, j);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    
+    private void dfs(char[][] grid, int[][] checked, int row, int col) {
+        if (checked[row][col] == 1) return;
+        
+        checked[row][col] = 1;
+        if (row > 0 && grid[row - 1][col] == '1') dfs(grid, checked, row - 1, col);
+        if (row < grid.length - 1 && grid[row + 1][col] == '1') dfs(grid, checked, row + 1, col);
+        if (col > 0 && grid[row][col - 1] == '1') dfs(grid, checked, row, col - 1);
+        if (col < grid[0].length - 1 && grid[row][col + 1] == '1') dfs(grid, checked, row, col + 1);
+    }
+}
+{% endhighlight %}

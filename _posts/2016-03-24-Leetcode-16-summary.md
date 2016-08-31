@@ -9,7 +9,11 @@ tags: [study]
 
 # 题目描述
 
-输入一个array，有n个integer，还有一个integer型target。需要找到array中的三个数，使这三个数的加和是最接近target。
+Given an array S of n integers, find three integers in S such that the sum is closest to a given number, target. Return the sum of the three integers. You may assume that each input would have exactly one solution.
+
+>For example, given array S = {-1 2 1 -4}, and target = 1.
+
+>The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
 
 # 思路
 
@@ -17,8 +21,7 @@ tags: [study]
 
 # Java代码
 
-```java
-
+{% highlight java %}
 public class Solution {
     public int threeSumClosest(int[] nums, int target) {
         Arrays.sort(nums);
@@ -58,5 +61,34 @@ public class Solution {
         return ret;
     }
 }
+{% endhighlight %}
 
-```
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        int len = nums.length;
+        if (len < 3) return 0;
+        Arrays.sort(nums);
+        int closest = nums[0] + nums[1] + nums[2];
+        int minDiff = Integer.MAX_VALUE;
+        for (int i = 0; i < len - 2; i++) {
+            int p1 = i + 1;
+            int p2 = len - 1;
+            while (p1 < p2) {
+                int sum = nums[i] + nums[p1] + nums[p2];
+                int diff = Math.abs(sum - target);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closest = sum;
+                }
+                if (sum > target) p2--;
+                else if (sum < target) p1++;
+                else return sum;
+            }
+        }
+        return closest;
+    }
+}
+{% endhighlight %}

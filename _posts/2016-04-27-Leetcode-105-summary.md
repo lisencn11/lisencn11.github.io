@@ -18,8 +18,7 @@ tags: [study]
 
 # 代码
 
-```java
-
+{% highlight java %}
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -63,6 +62,40 @@ public class Solution {
         return root;
     }
 }
+{% endhighlight %}
 
-```
+# 二刷
 
+{% highlight java %}
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        // if (preorder == null || inorder == null || preorder.length == 0 || preorder.length != inorder.length) return null;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < inorder.length; i++) map.put(inorder[i], i);
+        return build(preorder, inorder, 0, preorder.length - 1, 0, inorder.length - 1, map);
+    }
+    
+    private TreeNode build(int[] preorder, int[] inorder, int preFrom, int preTo, int inFrom, int inTo, Map<Integer, Integer> map) {
+        if (preFrom > preTo) return null;
+        
+        int value = preorder[preFrom];
+        int index = map.get(value);
+        int len = index - inFrom;
+        TreeNode left = build(preorder, inorder, preFrom + 1, preFrom + len, inFrom, index - 1, map);
+        TreeNode right = build(preorder, inorder, preFrom + len + 1, preTo, index + 1, inTo, map);
+        TreeNode root = new TreeNode(value);
+        root.left = left;
+        root.right = right;
+        return root;
+    }
+}
+{% endhighlight %}

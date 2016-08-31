@@ -9,7 +9,15 @@ tags: [study]
 
 # 题目描述
 
-输入一个有序可重复数组，和一个目标数，寻找目标数在数组中的范围，输出目标数在数组中的起始和终止位置。如果没找到则输出[-1, -1]。例如[5, 7, 7, 8, 8, 10]，目标值是8，则输出[3, 4]。
+Given a sorted array of integers, find the starting and ending position of a given target value.
+
+Your algorithm's runtime complexity must be in the order of O(log n).
+
+If the target is not found in the array, return [-1, -1].
+
+For example,  
+Given [5, 7, 7, 8, 8, 10] and target value 8,  
+return [3, 4].
 
 # 思路
 
