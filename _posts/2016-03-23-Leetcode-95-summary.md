@@ -28,8 +28,7 @@ result[0] = null list
 
 # Java代码
 
-```java
-
+{% highlight java %}
 /**
 * Definition for a binary tree node.
 * public class TreeNode {
@@ -70,5 +69,74 @@ public class Solution {
         return node;
     }
 }
+{% endhighlight %}
 
-```
+# 二刷
+
+二刷的思路是 backtrack 求出 n - 1 个结点的所有可能结果，然后将第 n 个结点依次插入到每一层中。
+
+{% highlight java %}
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public List<TreeNode> generateTrees(int n) {
+        List<TreeNode> ret = new ArrayList<>();
+        TreeNode node = new TreeNode(n);
+        
+        if (n == 0) return new ArrayList<>();
+        if (n == 1) {
+            ret.add(node);
+            return ret;
+        }
+        
+        List<TreeNode> pre = generateTrees(n - 1);
+        for (int i = 0; i < pre.size(); i++) {
+            TreeNode root = pre.get(i);
+            TreeNode temp = clone(root);
+            node = new TreeNode(n);
+            node.left = temp;
+            ret.add(node);
+            int height = 0;
+            boolean success = true;
+            while (success) {
+                temp = clone(root);
+                node = new TreeNode(n);
+                success = insert(temp, node, height);
+                if (success) ret.add(temp);
+                height++;
+            }
+        }
+        return ret;
+    }
+    
+    private TreeNode clone(TreeNode root) {
+        if (root == null) return null;
+        
+        TreeNode node = new TreeNode(root.val);
+        TreeNode left = clone(root.left);
+        TreeNode right = clone(root.right);
+        node.left = left;
+        node.right = right;
+        return node;
+    }
+    
+    private boolean insert(TreeNode root, TreeNode node, int height) {
+        if (root == null) return false;
+        if (height == 0) {
+            TreeNode child = root.right;
+            node.left = child;
+            root.right = node;
+            return true;
+        }
+        
+        return insert(root.right, node, height - 1);
+    }
+}
+{% endhighlight %}

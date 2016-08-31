@@ -18,8 +18,7 @@ tags: [study]
 
 # 代码
 
-```java
-
+{% highlight java %}
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -68,6 +67,44 @@ public class Solution {
         return result;
     }
 }
+{% endhighlight %}
 
-```
+# 二刷
 
+{% highlight java %}
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        List<List<Integer>> ret = new ArrayList<>();
+        List<Integer> list = new ArrayList<>();
+        dfs(ret, list, root, sum);
+        return ret;
+    }
+    
+    private void dfs(List<List<Integer>> ret, List<Integer> list, TreeNode root, int sum) {
+        if (root == null) return;
+        if (root.left == null && root.right == null) {
+            if (root.val == sum) {
+                list.add(root.val);
+                ret.add(new ArrayList<>(list));
+                list.remove(list.size() - 1);
+            }
+            return;
+        }
+        
+        int remain = sum - root.val;
+        list.add(root.val);
+        if (root.left != null) dfs(ret, list, root.left, remain);
+        if (root.right != null) dfs(ret, list, root.right, remain);
+        list.remove(list.size() - 1);
+    }
+}
+{% endhighlight %}
