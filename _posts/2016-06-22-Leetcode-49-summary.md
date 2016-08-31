@@ -41,7 +41,7 @@ tags: [study]
 
 # 代码
 
-```java
+{% highlight java %}
 public class Solution {
     public List<List<String>> groupAnagrams(String[] strs) {
         if (strs == null || strs.length == 0) {
@@ -75,4 +75,29 @@ public class Solution {
         return result;
     }
 }
-```
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        Map<String, List<String>> map = new HashMap<>();
+        List<List<String>> ret = new ArrayList<>();
+        
+        for (String s : strs) {
+            char[] temp = s.toCharArray();
+            Arrays.sort(temp);
+            String key = new String(temp);
+            if (!map.containsKey(key)) map.put(key, new ArrayList<>());
+            map.get(key).add(s);
+        }
+        
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+            ret.add(entry.getValue());
+        }
+        
+        return ret;
+    }
+}
+{% endhighlight %}
