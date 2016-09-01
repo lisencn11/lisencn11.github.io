@@ -22,8 +22,7 @@ tags: [study]
 
 # 代码
 
-```java
-
+{% highlight java %}
 public class Solution {
     public List<List<Integer>> permuteUnique(int[] nums) {
         Set<List<Integer>> set = permuteHelper(nums, 0);
@@ -56,8 +55,7 @@ public class Solution {
         return ret;
     }
 }
-
-```
+{% endhighlight %}
 
 # 高效改良算法
 
@@ -69,8 +67,7 @@ public class Solution {
 
 # 代码
 
-```java
-
+{% highlight java %}
 public class Solution {
     public List<List<Integer>> permuteUnique(int[] nums) {
         List<List<Integer>> res = new ArrayList<List<Integer>>();
@@ -98,5 +95,56 @@ public class Solution {
         }
     }
 }
+{% endhighlight %}
 
-```
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        Arrays.sort(nums);
+        Queue<List<Integer>> queue = new LinkedList<>();
+        List<Integer> list = new ArrayList<>();
+        permute(queue, nums, nums.length - 1);
+        List<List<Integer>> ret = new ArrayList<>();
+        while (!queue.isEmpty()) ret.add(queue.poll());
+        return ret;
+    }
+    
+    private void permute(Queue<List<Integer>> queue, int[] nums, int end) {
+        if (end == 0) {
+            List<Integer> list = new ArrayList<>();
+            list.add(nums[0]);
+            queue.offer(list);
+            return;
+        }
+        
+        permute(queue, nums, end - 1);
+        int len = queue.size();
+        int value = nums[end];
+        for (int i = 0; i < len; i++) {
+            List<Integer> pre = queue.poll();
+            for (int j = 0; j < pre.size() + 1 ; j++) {
+                if (j == pre.size()) {
+                    pre.add(value);
+                    List<Integer> temp = new ArrayList<>(pre);
+                    queue.offer(temp);
+                    pre.remove(pre.size() - 1);
+                    break;
+                }
+                if (pre.get(j) == value) {
+                    pre.add(j, value);
+                    List<Integer> temp = new ArrayList<>(pre);
+                    queue.offer(temp);
+                    pre.remove(j);
+                    break;
+                }
+                pre.add(j, value);
+                List<Integer> temp = new ArrayList<>(pre);
+                queue.offer(temp);
+                pre.remove(j);
+            }
+        }
+    }
+}
+{% endhighlight %}
