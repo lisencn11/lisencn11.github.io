@@ -84,3 +84,41 @@ void dfs_com(int[] cand, int cur, int target, List<Integer> path, List<List<Inte
     }
 }
 {% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> ret;
+        Arrays.sort(candidates);
+        ret = combine(candidates, candidates.length - 1, target);
+        return ret;
+    }
+    
+    private List<List<Integer>> combine(int[] candidates, int end, int target) {
+        if (target == 0) {
+            List<Integer> list = new ArrayList<>();
+            List<List<Integer>> ret = new ArrayList<>();
+            ret.add(list);
+            return ret;
+        }
+        if (target < 0) return new ArrayList<>();
+        if (end < 0) return new ArrayList<>();
+        
+        int next = end - 1;
+        while (next >= 0 && candidates[next] == candidates[end]) next--;
+        List<List<Integer>> subList1 = combine(candidates, next, target);
+        List<List<Integer>> subList2 = combine(candidates, end - 1, target - candidates[end]);
+        
+        if (subList2.isEmpty()) return subList1;
+        
+        for (List<Integer> list : subList2) {
+            list.add(candidates[end]);
+        }
+        
+        subList1.addAll(subList2);
+        return subList1;
+    }
+}
+{% endhighlight %}
