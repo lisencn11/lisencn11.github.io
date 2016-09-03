@@ -95,3 +95,74 @@ public class Trie {
 // trie.insert("somestring");
 // trie.search("key");
 {% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+class TrieNode {
+    // Initialize your data structure here.
+    public char item;
+    public TrieNode[] children = new TrieNode[26];
+    boolean end;
+    public TrieNode() {
+        
+    }
+    public TrieNode(char item) {
+        this.item = item;
+        end = false;
+    }
+}
+
+public class Trie {
+    private TrieNode root;
+
+    public Trie() {
+        root = new TrieNode();
+    }
+
+    // Inserts a word into the trie.
+    public void insert(String word) {
+        char[] words = word.toCharArray();
+        TrieNode iter = root;
+        for (int i = 0; i < words.length; i++) {
+            int index = (int) (words[i] - 'a');
+            if (iter.children[index] == null) {
+                TrieNode child = new TrieNode(words[i]);
+                iter.children[index] = child;
+            }
+            iter = iter.children[index];
+        }
+        iter.end = true;
+    }
+
+    // Returns if the word is in the trie.
+    public boolean search(String word) {
+        char[] words = word.toCharArray();
+        TrieNode iter = root;
+        for (int i = 0; i < words.length; i++) {
+            int index = (int) (words[i] - 'a');
+            if (iter.children[index] == null) return false;
+            iter = iter.children[index];
+        }
+        return iter.end;
+    }
+
+    // Returns if there is any word in the trie
+    // that starts with the given prefix.
+    public boolean startsWith(String prefix) {
+        char[] words = prefix.toCharArray();
+        TrieNode iter = root;
+        for (int i = 0; i < words.length; i++) {
+            int index = (int) (words[i] - 'a');
+            if (iter.children[index] == null) return false;
+            iter = iter.children[index];
+        }
+        return true;
+    }
+}
+
+// Your Trie object will be instantiated and called as such:
+// Trie trie = new Trie();
+// trie.insert("somestring");
+// trie.search("key");
+{% endhighlight %}
