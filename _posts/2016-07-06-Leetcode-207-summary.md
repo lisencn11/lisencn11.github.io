@@ -84,3 +84,42 @@ public class Solution {
     }
 }
 {% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        int[][] connect = new int[numCourses][numCourses];
+        int[] indegree = new int[numCourses];
+        
+        for(int[] pair : prerequisites) {
+            int ready = pair[0];
+            int pre = pair[1];
+            if (connect[pre][ready] == 0) indegree[ready]++;
+            connect[pre][ready] = 1;
+        }
+        
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < numCourses; i++) {
+            if (indegree[i] == 0) queue.offer(i);
+        }
+        
+        int count = 0;
+        while (!queue.isEmpty()) {
+            int course = queue.poll();
+            count++;
+            for (int i = 0; i < numCourses; i++) {
+                if (connect[course][i] == 1) {
+                    indegree[i]--;
+                    if (indegree[i] == 0) {
+                        queue.offer(i);
+                    }
+                    connect[course][i] = 0;
+                }
+            }
+        }
+        return count == numCourses;
+    }
+}
+{% endhighlight %}

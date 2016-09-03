@@ -19,8 +19,7 @@ tags: [study]
 
 # 代码
 
-```java
-
+{% highlight java %}
 public class Solution {
     public boolean canJump(int[] nums) {
         if (nums == null || nums.length < 1) {
@@ -37,6 +36,21 @@ public class Solution {
         return lastIndexReached == 0;
     }
 }
+{% endhighlight %}
 
-```
+# 二刷
 
+{% highlight java %}
+public class Solution {
+    public boolean canJump(int[] nums) {
+        int curr = 0;
+        int max = 0;
+        while (curr <= max && curr < nums.length) {
+            int jumpTo = nums[curr] + curr;
+            max = jumpTo > max ? jumpTo : max;
+            curr++;
+        }
+        return max >= nums.length - 1;
+    }
+}
+{% endhighlight %}
