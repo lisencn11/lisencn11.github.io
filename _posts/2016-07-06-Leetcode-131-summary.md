@@ -9,15 +9,16 @@ tags: [study]
 
 # 题目
 
-**输入**一个字符串String。
+Given a string s, partition s such that every substring of the partition is a palindrome.
 
-**输出**一个List<List<String>>，其中的每个List要求为原String的一个划分，划分后满足每个List中的每一个子字符串为轴对称Palindrome的。最后输出所有可能的划分。
+Return all possible palindrome partitioning of s.
 
-例如输入"aab"  
-输出  
-[
-  ["aa","b"],
-  ["a","a","b"]
+For example, given s = "aab",  
+Return
+
+[  
+  ["aa","b"],  
+  ["a","a","b"]  
 ]
 
 # 我的算法
@@ -68,6 +69,44 @@ public class Solution {
         char[] str = s.toCharArray();
         partition(str, 0, result, new ArrayList<String>());
         return result;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public List<List<String>> partition(String s) {
+        int len = s.length();
+        List<List<String>> ret = new ArrayList<>();
+        List<String> list = new ArrayList<>();
+        partitionHelper(s, len, ret, list);
+        return ret;
+    }
+    
+    private void partitionHelper(String s, int index, List<List<String>> ret, List<String> list) {
+        if (index == 0) {
+            ret.add(new ArrayList<>(list));
+            return;
+        }
+        
+        for (int i = index - 1; i >=0; i--) {
+            if (isValid(s.substring(i, index))) {
+                list.add(0, s.substring(i, index));
+                partitionHelper(s, i, ret, list);
+                list.remove(0);
+            }
+        }
+    }
+    
+    private boolean isValid(String s) {
+        int p1 = 0;
+        int p2 = s.length() - 1;
+        while (p1 < p2) {
+            if (s.charAt(p1++) != s.charAt(p2--)) return false;
+        }
+        return true;
     }
 }
 {% endhighlight %}
