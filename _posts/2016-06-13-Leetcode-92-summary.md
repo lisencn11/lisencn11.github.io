@@ -82,8 +82,7 @@ public class Solution {
 
 # 代码
 
-```java
-
+{% highlight java %}
 public ListNode reverseBetween(ListNode head, int m, int n) {
     if(head == null) return null;
     ListNode dummy = new ListNode(0); // create a dummy node to mark the head of this list
@@ -111,5 +110,41 @@ public ListNode reverseBetween(ListNode head, int m, int n) {
     return dummy.next;
 
 }
+{% endhighlight %}
 
-```
+# 二刷
+
+{% highlight java %}
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        ListNode fakeHead = new ListNode(0);
+        fakeHead.next = head;
+        ListNode from = fakeHead;
+        ListNode to = head;
+        for (int i = 1; i < m; i++) {
+            from = from.next;
+            to = to.next;
+        }
+        
+        ListNode iter = to.next;
+        int counter = m + 1;
+        while (counter <= n) {
+            to.next = iter.next;
+            iter.next = from.next;
+            from.next = iter;
+            
+            iter = to.next;
+            counter++;
+        }
+        return fakeHead.next;
+    }
+}
+{% endhighlight %}
