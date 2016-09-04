@@ -9,13 +9,11 @@ tags: [study]
 
 # 题目
 
-**输入**一个排好序的整型链表。
+Given a sorted linked list, delete all nodes that have duplicate numbers, leaving only distinct numbers from the original list.
 
-**输出**删除所有含有重复元素的整型
-
-例如  
-输入 1->2->3->3->4->4->5, 输出 1->2->5.  
-输入 1->1->1->2->3, 输出 2->3.
+For example,  
+Given 1->2->3->3->4->4->5, return 1->2->5.  
+Given 1->1->1->2->3, return 2->3.
 
 # 我的算法
 
@@ -71,6 +69,42 @@ public class Solution {
             preStart.next = null;
         }
         return fakeHead.next;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null) return head;
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode prev = dummy;
+        ListNode curr = head;
+
+        while (curr != null) {
+            if (curr.next != null && curr.val == curr.next.val) {
+                while (curr.next != null && curr.val == curr.next.val) {
+                    curr = curr.next;
+                }
+            } else {
+                prev.next = curr;
+                prev = curr;
+            }
+            curr = curr.next;
+        }
+        prev.next = null;
+        return dummy.next;
     }
 }
 {% endhighlight %}

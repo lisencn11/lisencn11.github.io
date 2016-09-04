@@ -97,3 +97,31 @@ public class Solution {
     }
 }
 {% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+        int sum = 0;
+        int currSum = 0;
+        int start = 0;
+        int len = gas.length;
+        for (int i = 0; i < len; i++) {
+            int diff = gas[i] - cost[i];
+            currSum += diff;
+            sum += diff;
+            if (currSum < 0) {
+                currSum = 0;
+                start = i + 1;
+            }
+        }
+        
+        if (sum >= 0) {
+            return start;
+        } else {
+            return -1;
+        }
+    }
+}
+{% endhighlight %}
