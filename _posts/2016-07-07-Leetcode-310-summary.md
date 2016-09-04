@@ -9,16 +9,33 @@ tags: [study]
 
 # 题目
 
-**输入**一个无向图，这个图可以表示成树，即图中不存在环。
+For a undirected graph with tree characteristics, we can choose any node as the root. The result graph is then a rooted tree. Among all possible rooted trees, those with minimum height are called minimum height trees (MHTs). Given such a graph, write a function to find all the MHTs and return a list of their root labels.
 
-**输出**找到最小高度树minimum height trees (MHTs)的根节点。
+Format  
+The graph contains n nodes which are labeled from 0 to n - 1. You will be given the number n and a list of undirected edges (each edge is a pair of labels).
 
-例如
+You can assume that no duplicate edges will appear in edges. Since all edges are undirected, [0, 1] is the same as [1, 0] and thus will not appear together in edges.
 
-n = 6, edges = [[0, 3], [1, 3], [2, 3], [4, 3], [5, 4]]
+Example 1:
 
-返回List[3, 4]，表示3或者4座位根节点都可以达到最小高度树。
+Given n = 4, edges = [[1, 0], [1, 2], [1, 3]]
 
+return [1]
+
+Example 2:
+
+Given n = 6, edges = [[0, 3], [1, 3], [2, 3], [4, 3], [5, 4]]
+
+return [3, 4]
+
+Hint:
+
+How many MHTs can a graph have at most?
+Note:
+
+(1) According to the definition of tree on Wikipedia: “a tree is an undirected graph in which any two vertices are connected by exactly one path. In other words, any connected graph without simple cycles is a tree.”
+
+(2) The height of a rooted tree is the number of edges on the longest downward path between the root and a leaf.
 
 # 我的算法
 
@@ -68,6 +85,70 @@ public class Solution {
             leaves = newLeaves;
         }
         return leaves;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public List<Integer> findMinHeightTrees(int n, int[][] edges) {
+        List<List<Integer>> connect = new ArrayList<>();
+        for (int i = 0; i < n; i++) connect.add(new ArrayList<>());
+        
+        for (int[] edge : edges) {
+            connect.get(edge[0]).add(edge[1]);
+            connect.get(edge[1]).add(edge[0]);
+        }
+        
+        Set<Integer> set = new HashSet<>();
+        int first = -1;
+        int second = -1;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.offer(0);
+        set.add(0);
+        while (!queue.isEmpty()) {
+            Integer node = queue.poll();
+            first = node;
+            List<Integer> adjacent = connect.get(node);
+            for (Integer neighbor : adjacent) {
+                if (!set.contains(neighbor)) {
+                    set.add(neighbor);
+                    queue.offer(neighbor);
+                }
+            }
+        }
+        
+        queue.offer(first);
+        set = new HashSet<>();
+        set.add(first);
+        int[] pre = new int[n];
+        while (!queue.isEmpty()) {
+            Integer node = queue.poll();
+            second = node;
+            List<Integer> adjacent = connect.get(node);
+            for (Integer neighbor : adjacent) {
+                if (!set.contains(neighbor)) {
+                    set.add(neighbor);
+                    queue.offer(neighbor);
+                    pre[neighbor] = node;
+                }
+            }
+        }
+        
+        List<Integer> list = new ArrayList<>();
+        int iter = second;
+        while (iter != first) {
+            list.add(iter);
+            iter = pre[iter];
+        }
+        list.add(iter);
+        int half = list.size() / 2;
+        List<Integer> ret = new ArrayList<>();
+        ret.add(list.get(half));
+        if (list.size() % 2 == 0) ret.add(list.get(half - 1));
+        return ret;
     }
 }
 {% endhighlight %}

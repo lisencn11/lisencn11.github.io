@@ -9,9 +9,13 @@ tags: [study]
 
 # 题目
 
-**输入**一个整型数组，里面有n个整型，均为正数。一个正整数s。
+Given an array of n positive integers and a positive integer s, find the minimal length of a subarray of which the sum ≥ s. If there isn't one, return 0 instead.
 
-**输出**找到整型数组中最小子序列，满足sum>=s，如果没有则返回0.
+For example, given the array [2,3,1,2,4,3] and s = 7,
+the subarray [4,3] has the minimal length under the problem constraint.
+
+More practice:  
+If you have figured out the O(n) solution, try coding another solution of which the time complexity is O(n log n).
 
 # 我的算法
 
@@ -54,6 +58,31 @@ public class Solution {
         } else {
             return 0;
         }
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public int minSubArrayLen(int s, int[] nums) {
+        int p1 = 0;
+        int p2 = 0;
+        int sum = 0;
+        int len = Integer.MAX_VALUE;
+        while (p2 < nums.length) {
+            sum += nums[p2];
+            if (sum >= s) {
+                while (sum - nums[p1] >= s) {
+                    sum -= nums[p1];
+                    p1++;
+                }
+                len = (p2 - p1 + 1) < len ? (p2 - p1 + 1) : len; 
+            }
+            p2++;
+        }
+        return len != Integer.MAX_VALUE ? len : 0;
     }
 }
 {% endhighlight %}
