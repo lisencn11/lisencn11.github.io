@@ -58,7 +58,7 @@ public class Solution {
         List<Integer> result = new ArrayList<>();
         int[] roots = new int[m * n];
         Arrays.fill(roots, -1);
-        int[][] dirs = new int[][]{{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        int[][] dirs = new int[][]\{{0, 1}, {1, 0}, {0, -1}, {-1, 0\}};
         int count = 0;
         for (int[] pos : positions) {
             int root = n * pos[0] + pos[1];
