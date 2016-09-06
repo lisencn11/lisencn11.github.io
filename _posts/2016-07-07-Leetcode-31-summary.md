@@ -9,11 +9,13 @@ tags: [study]
 
 # 题目
 
-**输入**一个整型数组。
+Implement next permutation, which rearranges numbers into the lexicographically next greater permutation of numbers.
 
-**输出**这个整型数组的下一个字典序表示。
+If such arrangement is not possible, it must rearrange it as the lowest possible order (ie, sorted in ascending order).
 
-例如
+The replacement must be in-place, do not allocate extra memory.
+
+Here are some examples. Inputs are in the left-hand column and its corresponding outputs are in the right-hand column.
 
 1,2,3 → 1,3,2  
 3,2,1 → 1,2,3  
@@ -80,6 +82,34 @@ public class Solution {
             low++;
             high--;
         }
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public void nextPermutation(int[] nums) {
+        int p1 = nums.length - 1;
+        while (p1 > 0 && nums[p1 - 1] >= nums[p1]) p1--;
+        if (p1 == 0) {
+            Arrays.sort(nums);
+            return;
+        }
+        int swap = p1 - 1;
+        p1 = nums.length - 1;
+        while (p1 > swap && nums[p1] <= nums[swap]) p1--; 
+        swap(nums, swap, p1);
+        p1 = swap + 1;
+        int p2 = nums.length - 1;
+        while (p1 < p2) swap(nums, p1++, p2--);
+    }
+    
+    private void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
     }
 }
 {% endhighlight %}

@@ -53,27 +53,28 @@ public class Solution {
 }
 {% endhighlight %}
 
-# 改进
-
-该算法复杂度无需改进，但是其中的逻辑判断略显复杂，在面试过程中很容易出错，故对代码进行改进。
-
-* 如果汽车从A能开到B-1，但不能开到B，则从A和B间任何一点都不能开到B。
-* 如果所有加油站的累积邮箱改变量为正，则一定存在一个加油站能作为起点。
+# 二刷
 
 {% highlight java %}
 public class Solution {
-    public int canCompleteCircuit(int[] gas, int[] cost) {
-        int start = 0, total = 0, tank = 0;
-        
-        for (int i = 0; i < gas.length; i++) {
-            if ((tank += gas[i] - cost[i]) < 0) {
-                start = i + 1;
-                total += tank;
-                tank = 0;
-            }
+    public double myPow(double x, int n) {
+        if (n == 0) return 1;
+        if (n == 1) return x;
+        long pow = (long) n;
+        pow = pow > 0 ? pow : -pow;
+        double ret;
+        if (pow % 2 == 1) {
+            long half = pow / 2;
+            double temp = myPow(x, (int) half);
+            ret = temp * temp * x;
+        } else {
+            long half = pow / 2;
+            double temp = myPow(x, (int) half);
+            ret = temp * temp;
         }
         
-        return (total + tank < 0) ? -1 : start;
+        return n > 0 ? ret : 1 / ret;
+        
     }
 }
 {% endhighlight %}

@@ -9,15 +9,16 @@ tags: [study]
 
 # 题目
 
-**输入**一段DNA序列，其中包含'A', 'C', 'G', 'T'四种字符。
+All DNA is composed of a series of nucleotides abbreviated as A, C, G, and T, for example: "ACGAATTCCG". When studying DNA, it is sometimes useful to identify repeated sequences within the DNA.
 
-**输出**找到所有在这段DNA中重复的长度为10的子序列
+Write a function to find all the 10-letter-long sequences (substrings) that occur more than once in a DNA molecule.
 
-例如
+For example,
 
-s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
+Given s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT",
 
-返回["AAAAACCCCC", "CCCCCAAAAA"]，表示这两段长度为10的子序列有重复。
+Return:  
+["AAAAACCCCC", "CCCCCAAAAA"].
 
 
 # 我的算法
@@ -84,6 +85,63 @@ public class Solution {
             }
         }
         return ret;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+问题在于没有找到办法判断是第二次还是第三次及以上。
+
+{% highlight java %}
+public class Solution {
+    public List<String> findRepeatedDnaSequences(String s) {
+        int[] shift = new int[26];
+        char[] reverse = new char[4];
+        char[] str = s.toCharArray();
+        shift[(int) ('C' - 'A')] = 1;
+        shift[(int) ('G' - 'A')] = 2;
+        shift[(int) ('T' - 'A')] = 3;
+        reverse[0] = 'A';
+        reverse[1] = 'C';
+        reverse[2] = 'G';
+        reverse[3] = 'T';
+        
+        int p1 = 0;
+        int p2 = 0;
+        int encode = 0;
+        Set<Integer> set = new HashSet<>();
+        Set<Integer> ret = new HashSet<>();
+        while (p2 < 10 && p2 < str.length) {
+            char curr = str[p2];
+            encode += shift[(int) (curr - 'A')] << (p2 * 2);
+            p2++;
+        }
+        
+        set.add(encode);
+        while (p2 < str.length) {
+            char curr = str[p2];
+            encode >>= 2;
+            encode += shift[(int) (curr - 'A')] << 18;
+            if (!set.add(encode)) ret.add(encode);
+            p2++;
+        }
+        
+        List<String> list = new ArrayList<>();
+        for (Integer i : ret) {
+            list.add(itos(i, reverse));
+        }
+        return list;
+    }
+    
+    private String itos(int num, char[] reverse) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 10; i++) {
+            int index = (num & 3);
+            num >>= 2;
+            sb.append(reverse[index]);
+        }
+        return sb.toString();
     }
 }
 {% endhighlight %}

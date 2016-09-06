@@ -9,23 +9,21 @@ tags: [study]
 
 # 题目
 
-**输入**两个整型，一个除数，一个被除数。
+Given two integers representing the numerator and denominator of a fraction, return the fraction in string format.
 
-**输出**除法结果。
-
-除法结果有可能是整数，有可能是有限小数，也有可能是无限循环小数，但不可能是无限不循环小数。
+If the fractional part is repeating, enclose the repeating part in parentheses.
 
 For example,
 
 Given numerator = 1, denominator = 2, return "0.5".  
 Given numerator = 2, denominator = 1, return "2".  
-Given numerator = 2, denominator = 3, return "0.(6)".  
+Given numerator = 2, denominator = 3, return "0.(6)".
 
 Hint:
 
-No scary math, just apply elementary math knowledge.   Still remember how to perform a long division?  
-Try a long division on 4/9, the repeating part is obvious. Now try 4/333. Do you see a pattern?  
-Be wary of edge cases! List out as many test cases as you can think of and test your code thoroughly.
+1. No scary math, just apply elementary math knowledge. Still remember how to perform a long division?
+2. Try a long division on 4/9, the repeating part is obvious. Now try 4/333. Do you see a pattern?
+3. Be wary of edge cases! List out as many test cases as you can think of and test your code thoroughly.
 
 # 我的算法
 
@@ -87,6 +85,44 @@ public class Solution {
         }
         
         return ret;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public String fractionToDecimal(int numerator, int denominator) {
+        boolean positive = true;
+        if ((numerator < 0 && denominator > 0) || (numerator > 0 && denominator < 0)) positive = false;
+        if (numerator == 0) return new String("0");
+        if (denominator == 0) return new String();
+        if (numerator % denominator == 0) return Long.toString((((long) numerator) / (long) denominator));
+        long up = Math.abs((long) numerator);
+        long down = Math.abs((long) denominator); 
+        long remain = up % down;
+        long digit = up / down;
+        StringBuilder sb = new StringBuilder();
+        sb.append(digit).append(".");
+        Map<Long, Integer> map = new HashMap<>();
+        while (remain != 0) {
+            
+            if (map.containsKey(remain)) {
+                int index = map.get(remain);
+                sb.insert(index, "(");
+                sb.append(")");
+                break;
+            } else {
+                map.put(remain, sb.length());
+                remain *= 10;
+                digit = remain / down;
+                sb.append(digit);
+                remain = remain % down;
+            }
+        }
+        if (!positive) sb.insert(0, "-");
+        return sb.toString();
     }
 }
 {% endhighlight %}

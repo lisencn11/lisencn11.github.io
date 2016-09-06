@@ -68,3 +68,43 @@ public class Solution {
     }
 }
 {% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public List<String> findItinerary(String[][] tickets) {
+        List<String> result = new ArrayList<>();
+        Map<String, List<String>> map = new HashMap<>();
+        int flight = 0;
+        for(String[] ticket : tickets) {
+            if (!map.containsKey(ticket[0])) map.put(ticket[0], new ArrayList<>());
+            map.get(ticket[0]).add(ticket[1]);
+            flight++;
+        }
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+            List<String> list = entry.getValue();
+            Collections.sort(list);
+        }
+        result.add("JFK");
+        dfs(map, result, flight, 0, "JFK");
+        return result;
+    }
+    
+    private boolean dfs(Map<String, List<String>> map, List<String> result, int flight, int currFlight, String src) {
+        if (currFlight == flight) return true;
+        List<String> list = new ArrayList<>();
+        if (map.containsKey(src)) list = map.get(src);
+        if (list == null || list.isEmpty()) return false;
+        for (int i = 0; i < list.size(); i++) {
+            String dest = list.get(i);
+            result.add(dest);
+            list.remove(i);
+            if (dfs(map, result, flight, currFlight + 1, dest)) return true;
+            list.add(i, dest);
+            result.remove(result.size() - 1);
+        }
+        return false;
+    }
+}
+{% endhighlight %}
