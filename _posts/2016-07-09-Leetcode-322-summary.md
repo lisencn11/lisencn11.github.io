@@ -50,3 +50,26 @@ public class Solution {
     }
 }
 {% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public int coinChange(int[] coins, int amount) {
+        int[] number = new int[amount + 1];
+        Arrays.fill(number, -1);
+        number[0] = 0;
+        Arrays.sort(coins);
+        for (int i = 1; i <= amount; i++) {
+            int min = Integer.MAX_VALUE;
+            for (int j = 0; j < coins.length && i - coins[j] >= 0; j++) {
+                if (number[i - coins[j]] >= 0) {
+                    min = number[i - coins[j]] + 1 < min ? number[i - coins[j]] + 1 : min;
+                }
+            }
+            number[i] = min == Integer.MAX_VALUE ? -1 : min;
+        }
+        return number[amount];
+    }
+}
+{% endhighlight %}

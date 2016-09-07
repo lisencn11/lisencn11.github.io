@@ -25,8 +25,7 @@ tags: [study]
 
 # 代码
 
-```java
-
+{% highlight java %}
 /**
  * // This is the interface that allows for creating nested lists.
  * // You should not implement it, or speculate about its implementation
@@ -81,5 +80,40 @@ public class NestedIterator implements Iterator<Integer> {
  * NestedIterator i = new NestedIterator(nestedList);
  * while (i.hasNext()) v[f()] = i.next();
  */
+{% endhighlight %}
 
-```
+# 二刷
+
+{% highlight java %}
+public class NestedIterator implements Iterator<Integer> {
+    Stack<NestedInteger> elements;
+
+    public NestedIterator(List<NestedInteger> nestedList) {
+        elements = new Stack<>();
+        for (int i = nestedList.size() - 1; i >= 0; i--) {
+            elements.push(nestedList.get(i));
+        }
+    }
+
+    @Override
+    public Integer next() {
+        return elements.pop().getInteger();
+    }
+
+    @Override
+    public boolean hasNext() {
+        if (elements.isEmpty()) return false;
+        NestedInteger ni = elements.peek();
+        while (!elements.isEmpty() && !ni.isInteger()) {
+            List<NestedInteger> list = ni.getList();
+            elements.pop();
+            for (int i = list.size() - 1; i >= 0; i--) {
+                elements.push(list.get(i));
+            }
+            ni = elements.isEmpty() ? null : elements.peek();
+        }
+        if (ni != null && ni.isInteger()) return true;
+        else return false;
+    }
+}
+{% endhighlight %}
