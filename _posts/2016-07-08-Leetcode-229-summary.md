@@ -9,9 +9,7 @@ tags: [study]
 
 # 题目
 
-**输入**一个长度为n的整型数组。
-
-**输出**找到所有出现次数大于⌊ n / 3 ⌋的元素。时间复杂度为O(n)，空间复杂度为O(1)。
+Given an integer array of size n, find all elements that appear more than ⌊ n/3 ⌋ times. The algorithm should run in linear time and in O(1) space.
 
 # 我的算法
 
@@ -67,6 +65,48 @@ public class Solution {
             ret.add(num2);
         }
         return ret;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public List<Integer> majorityElement(int[] nums) {
+        if (nums == null || nums.length == 0) return new ArrayList<>();
+        List<Integer> result = new ArrayList<>();
+        int majorityA = 0;
+        int countA = 0;
+        int majorityB = 0;
+        int countB = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == majorityA) {
+                countA++;
+            } else if (nums[i] == majorityB) {
+                countB++;
+            } else {
+                if (countA == 0) {
+                    countA = 1;
+                    majorityA = nums[i];
+                } else if (countB == 0) {
+                    countB = 1;
+                    majorityB = nums[i];
+                } else {
+                    countA--;
+                    countB--;
+                }
+            }
+        }
+        countA = 0;
+        countB = 0;
+        for (int i = 0; i < nums.length; i++) {
+            countA = nums[i] == majorityA ? countA + 1 : countA;
+            countB = nums[i] == majorityB ? countB + 1 : countB;
+        }
+        if (countA > nums.length / 3) result.add(majorityA);
+        if (countB > nums.length / 3 && majorityA != majorityB) result.add(majorityB);
+        return result;
     }
 }
 {% endhighlight %}
