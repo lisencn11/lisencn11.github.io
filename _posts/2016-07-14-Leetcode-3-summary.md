@@ -9,16 +9,15 @@ tags: [study]
 
 # 题目
 
-**输入**一个字符串。
+Given a string, find the length of the longest substring without repeating characters.
 
-**输出**字符串中没有重复字符的最长子串。
+Examples:
 
-如：  
-> Given "abcabcbb", the answer is "abc", which the length is 3.
->   
+Given "abcabcbb", the answer is "abc", which the length is 3.
+
 Given "bbbbb", the answer is "b", with the length of 1.
-  
->Given "pwwkew", the answer is "wke", with the length of 3. Note that the answer must be a substring, "pwke" is a subsequence and not a substring.
+
+Given "pwwkew", the answer is "wke", with the length of 3. Note that the answer must be a substring, "pwke" is a subsequence and not a substring.
 
 # 我的算法
 
@@ -53,3 +52,31 @@ public class Solution {
     }
 }
 {% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        if (s == null || s.length() == 0) return 0;
+        int p1 = 0;
+        int p2 = 0;
+        int max = 0;
+        Set<Character> set = new HashSet<>();
+        while (p2 < s.length()) {
+            if (set.contains(s.charAt(p2))) {
+                while (s.charAt(p1) != s.charAt(p2)) {
+                    set.remove(s.charAt(p1));
+                    p1++;
+                }
+                p1++;
+            } else {
+                set.add(s.charAt(p2));
+            }
+            max = (p2 - p1 + 1) > max ? (p2 - p1 + 1) : max;
+            p2++;
+        }
+        return max;
+    }
+}
+{% endhighlight java %}

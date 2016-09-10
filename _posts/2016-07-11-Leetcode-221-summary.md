@@ -9,17 +9,16 @@ tags: [study]
 
 # 题目
 
-**输入**一个由'1'和'0'组成的矩阵。
+Given a 2D binary matrix filled with 0's and 1's, find the largest square containing only 1's and return its area.
 
-**输出**由1组成的正方形的最大面积。
+For example, given the following matrix:
 
-如：  
->1 0 1 0 0  
+1 0 1 0 0  
 1 0 1 1 1  
 1 1 1 1 1  
 1 0 0 1 0
 
->Result: 4
+Return 4.
 
 # 我的算法
 
@@ -58,6 +57,35 @@ public class Solution {
         }
         
         return ret * ret;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public int maximalSquare(char[][] matrix) {
+        if (matrix == null || matrix.length == 0) return 0;
+        int m = matrix.length, n = matrix[0].length;
+        int[][] area = new int[m][n];
+        int max = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                area[i][j] = (int) (matrix[i][j] - '0');
+                max = area[i][j] > max ? area[i][j] : max;
+            }
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                int leftUpper = area[i - 1][j - 1];
+                int left = area[i][j - 1];
+                int upper = area[i - 1][j];
+                area[i][j] = area[i][j] == 0 ? 0 : Math.min(Math.min(leftUpper, left), upper) + 1;
+                max = area[i][j] > max ? area[i][j] : max;
+            }
+        }
+        return max * max;
     }
 }
 {% endhighlight %}

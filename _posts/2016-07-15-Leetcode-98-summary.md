@@ -9,11 +9,27 @@ tags: [study]
 
 # 题目
 
-**输入**一棵树的根节点。
+Given a binary tree, determine if it is a valid binary search tree (BST).
 
-**输出**这棵树是否是二叉搜索树。
+Assume a BST is defined as follows:
 
-二叉搜索树左节点小于父节点，右节点大于父节点，且左右子树仍为二叉搜索树。
+The left subtree of a node contains only nodes with keys less than the node's key.
+The right subtree of a node contains only nodes with keys greater than the node's key.
+Both the left and right subtrees must also be binary search trees.
+
+Example 1:
+
+ 2  
+/ \  
+1  3
+  
+Binary tree [2,1,3], return true.
+
+Example 2:
+
+ 1  
+/ \  
+2 3
 
 # 我的算法
 
@@ -103,5 +119,61 @@ public boolean isValidBST (TreeNode root){
         }
     }
     return true ; 
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public boolean isValidBST(TreeNode root) {
+        return valid(root).valid;
+    }
+    
+    private Result valid(TreeNode root) {
+        if (root == null) return new Result(null, true);
+        if (root.left == null && root.right == null) return new Result(new int[]{root.val, root.val}, true);
+        if (root.left == null) {
+            Result right = valid(root.right);
+            if (right.valid && root.val < right.bound[0]) {
+                return new Result(new int[]{root.val, right.bound[1]}, true);
+            } else {
+                return new Result(null, false);
+            }
+        }
+        if (root.right == null) {
+            Result left = valid(root.left);
+            if (left.valid && root.val > left.bound[1]) {
+                return new Result(new int[]{left.bound[0], root.val}, true);
+            } else {
+                return new Result(null, false);
+            }
+        }
+        Result left = valid(root.left);
+        Result right = valid(root.right);
+        if (left.valid && right.valid && left.bound[1] < root.val && right.bound[0] > root.val) {
+            return new Result(new int[]{left.bound[0], right.bound[1]}, true);
+        } else {
+            return new Result(null, false);
+        }
+    }
+    
+    class Result {
+        int[] bound;
+        boolean valid;
+        public Result(int[] bound, boolean valid) {
+            this.bound = bound;
+            this.valid = valid;
+        }
+    }
 }
 {% endhighlight %}

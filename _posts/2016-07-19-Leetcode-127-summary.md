@@ -9,18 +9,25 @@ tags: [study]
 
 # 题目
 
-字符串由 a-z 组成，给出一个起点字符串，一个终点字符串，一个中间点字符串集合Set，字符串每次只能变一个字符，问最短经过多少步，可以从起点字符串，通过中间点字符串集合中的元素，变成终点字符串。如果不能则返回0。
+Given two words (beginWord and endWord), and a dictionary's word list, find the length of shortest transformation sequence from beginWord to endWord, such that:
 
-例如：
+1. Only one letter can be changed at a time
+2. Each intermediate word must exist in the word list
+For example,
 
->Given:  
+Given:  
 beginWord = "hit"  
 endWord = "cog"  
-wordList = ["hot","dot","dog","lot","log"]  
+wordList = ["hot","dot","dog","lot","log"]
+
 As one shortest transformation is "hit" -> "hot" -> "dot" -> "dog" -> "cog",  
 return its length 5.
 
-所有字符串长度相等，且均只包含小写字母。
+Note:
+
+* Return 0 if there is no such transformation sequence.
+* All words have the same length.
+* All words contain only lowercase alphabetic characters.
 
 # 我的算法
 
@@ -60,6 +67,40 @@ public class Solution {
             counter++;
         }
         
+        return 0;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public int ladderLength(String beginWord, String endWord, Set<String> wordList) {
+        Queue<String> queue = new LinkedList<>();
+        queue.offer(beginWord);
+        wordList.remove(beginWord);
+        int count = 1;
+
+        while (!queue.isEmpty()) {
+            int len = queue.size();
+            count++;
+            for (int i = 0; i < len; i++) {
+                String curr = queue.poll();
+                for (int j = 0; j < curr.length(); j++) {
+                    StringBuilder sb = new StringBuilder(curr);
+                    for (char ch = 'a'; ch <= 'z'; ch++) {
+                        sb.setCharAt(j, ch);
+                        String neighbor = sb.toString();
+                        if (wordList.contains(neighbor)) {
+                            if (neighbor.equals(endWord)) return count;
+                            queue.offer(neighbor);
+                            wordList.remove(neighbor);
+                        }
+                    }
+                }
+            }
+        }
         return 0;
     }
 }

@@ -9,9 +9,17 @@ tags: [study]
 
 # 题目
 
-**输入**一个整型数组
+Given an array S of n integers, are there elements a, b, c in S such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero.
 
-**输出**一个List<List<Integer>>，其中每个List由数组中的三个元素组成，这三个元素加和为 0 。
+Note: The solution set must not contain duplicate triplets.
+
+For example, given array S = [-1, 0, 1, 2, -1, -4],
+
+A solution set is:  
+[  
+  [-1, 0, 1],  
+  [-1, -1, 2]  
+]
 
 # 我的算法
 
@@ -84,6 +92,42 @@ public class Solution {
             }
         }
         return res;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length - 2; i++) {
+            int p1 = i + 1;
+            int p2 = nums.length - 1;
+            while (p1 < p2) {
+                if (nums[i] + nums[p1] + nums[p2] == 0) {
+                    List<Integer> list = new ArrayList<>();
+                    list.add(nums[i]);
+                    list.add(nums[p1]);
+                    list.add(nums[p2]);
+                    result.add(list);
+                    p1++;
+                    p2--;
+                    while (p1 < p2 && nums[p1] == nums[p1 - 1]) p1++;
+                    while (p1 < p2 && nums[p2] == nums[p2 + 1]) p2--;
+                } else if (nums[i] + nums[p1] + nums[p2] < 0) {
+                    p1++;
+                    while (p1 < p2 && nums[p1] == nums[p1 - 1]) p1++;
+                } else {
+                    p2--;
+                    while (p1 < p2 && nums[p2] == nums[p2 + 1]) p2--;
+                }
+            }
+            while (i < nums.length - 1 && nums[i] == nums[i + 1]) i++;
+        }
+        return result;
     }
 }
 {% endhighlight %}
