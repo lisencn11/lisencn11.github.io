@@ -9,7 +9,9 @@ tags: [study]
 
 # 题目
 
-在不使用 * / % 三个运算符的情况下进行两个整型的除法
+Divide two integers without using multiplication, division and mod operator.
+
+If it is overflow, return MAX_INT.
 
 # 我的算法
 
@@ -44,6 +46,40 @@ public class Solution {
             cumuTimes = -cumuTimes;
         
         return cumuTimes;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public int divide(int dividend, int divisor) {
+        boolean oppo = false;
+        if ((dividend > 0 && divisor < 0) || (dividend < 0 && divisor > 0)) oppo = true;
+        
+        long up = Math.abs((long) dividend);
+        long down = Math.abs((long) divisor);
+        long result = 0;
+        long sum = 0;
+        while (sum + down <= up) {
+            long currResult = 1;
+            long currSum = down;
+            long preResult = 0;
+            long preSum = 0;
+            while (sum + currSum <= up) {
+                preResult = currResult;
+                preSum = currSum;
+                currSum += currSum;
+                currResult += currResult;
+            }
+            sum += preSum;
+            result += preResult;
+        }
+        
+        if (oppo) result = -result;
+        if (result > Integer.MAX_VALUE || result < Integer.MIN_VALUE) return Integer.MAX_VALUE;
+        else return (int) result;
     }
 }
 {% endhighlight %}

@@ -9,13 +9,11 @@ tags: [study]
 
 # 题目
 
-**输入**一个非负整型数组
+Given a list of non negative integers, arrange them such that they form the largest number.
 
-**输出**数组内元素所能拼接成的最大的数
+For example, given [3, 30, 34, 5, 9], the largest formed number is 9534330.
 
-例如：
-
->given [3, 30, 34, 5, 9], the largest formed number is 9534330.
+Note: The result may be very large, so you need to return a string instead of an integer.
 
 # 我的算法
 
@@ -53,6 +51,34 @@ public class Solution {
         while (!queue.isEmpty()) ret.append(queue.poll());
         
         return ret.toString();
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public String largestNumber(int[] nums) {
+        if (nums == null || nums.length == 0) return "";
+        
+        String[] numbers = new String[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            numbers[i] = Integer.toString(nums[i]);
+        }
+        Arrays.sort(numbers, new Comparator<String>() {
+            public int compare(String s1, String s2) {
+                String s1Larger = s1 + s2;
+                String s2Larger = s2 + s1;
+                return s1Larger.compareTo(s2Larger);
+            }
+        });
+        StringBuilder result = new StringBuilder();
+        for (int i = numbers.length - 1; i >= 0; i--) {
+            result.append(numbers[i]);
+        }
+        if (result.charAt(0) == '0') return "0";
+        return result.toString();
     }
 }
 {% endhighlight %}

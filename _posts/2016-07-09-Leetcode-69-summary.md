@@ -9,9 +9,9 @@ tags: [study]
 
 # 题目
 
-**输入**一个整型。
+Implement int sqrt(int x).
 
-**输出**这个整型的平方根。
+Compute and return the square root of x.
 
 # 我的算法
 
