@@ -9,14 +9,23 @@ tags: [study]
 
 # 题目
 
-**输入**一个 String 字符串。
+Given an input string, reverse the string word by word.
 
-**输出**将字符串中的各单词倒序，但是单词内字符不倒序。
+For example,  
+Given s = "the sky is blue",  
+return "blue is sky the".
 
-需要确定的细节：
+Update (2015-02-12):  
+For C programmers: Try to solve it in-place in O(1) space.
 
-1. 原字符串可以包含头空格和尾空格，单词间可以有多个空格。
-2. 倒序后头空格和尾空格需要消除，单词间也只允许一个空格。
+Clarification:  
+
+* What constitutes a word?  
+A sequence of non-space characters constitutes a word.
+* Could the input string contain leading or trailing spaces?  
+Yes. However, your reversed string should not contain leading or trailing spaces.
+* How about multiple spaces between two words?  
+Reduce them to a single space in the reversed string.
 
 # 我的算法
 
@@ -39,3 +48,23 @@ public class Solution {
     }
 }
 {% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public String reverseWords(String s) {
+        String[] strs = s.split(" ");
+        StringBuilder sb = new StringBuilder();
+        for (int i = strs.length - 1; i >= 0; i--) {
+            if (!strs[i].equals("")) {
+                sb.append(strs[i]);
+                sb.append(" ");
+            }
+        }
+        if (sb.length() == 0) return "";
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
+}
+{% endhighlight java %}

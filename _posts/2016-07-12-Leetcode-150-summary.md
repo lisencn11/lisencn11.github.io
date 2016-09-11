@@ -9,12 +9,12 @@ tags: [study]
 
 # 题目
 
-**输入**String数组存储的逆波兰表达式。
+Evaluate the value of an arithmetic expression in Reverse Polish Notation.
 
-**输出**表达式运算结果。
+Valid operators are +, -, *, /. Each operand may be an integer or another expression.
 
-如：  
->["2", "1", "+", "3", "*"] -> ((2 + 1) * 3) -> 9  
+Some examples:  
+  ["2", "1", "+", "3", "*"] -> ((2 + 1) * 3) -> 9  
   ["4", "13", "5", "/", "+"] -> (4 + (13 / 5)) -> 6
 
 # 我的算法
@@ -60,6 +60,35 @@ public class Solution {
         }
         ret = stack.pop();
         return ret;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public int evalRPN(String[] tokens) {
+        if (tokens == null || tokens.length == 0) return 0;
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 0; i < tokens.length; i++) {
+            if (tokens[i].charAt(tokens[i].length() - 1) <= '9' && tokens[i].charAt(tokens[i].length() - 1) >= '0') {
+                stack.push(Integer.parseInt(tokens[i]));
+            } else {
+                int num2 = stack.pop();
+                int num1 = stack.pop();
+                if (tokens[i].charAt(0) == '+') {
+                    stack.push(num1 + num2);
+                } else if (tokens[i].charAt(0) == '-') {
+                    stack.push(num1 - num2);
+                } else if (tokens[i].charAt(0) == '*') {
+                    stack.push(num1 * num2);
+                } else {
+                    stack.push(num1 / num2);
+                }
+            }
+        }
+        return stack.pop();
     }
 }
 {% endhighlight %}

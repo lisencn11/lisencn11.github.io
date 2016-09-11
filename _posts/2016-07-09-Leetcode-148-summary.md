@@ -9,11 +9,7 @@ tags: [study]
 
 # 题目
 
-**输入**一个整型链表。
-
-**输出**排序后的整型链表。
-
-要求排序的时间复杂度为O(nlogn)，空间复杂度为O(1)。
+Sort a linked list in O(n log n) time using constant space complexity.
 
 # 我的算法
 
@@ -65,6 +61,70 @@ public class Solution {
         if (h1 != null) iter.next = h1;
         if (h2 != null) iter.next = h2;
         return fakeHead.next;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode sortList(ListNode head) {
+        int len = 0;
+        ListNode iter = head;
+        while (iter != null) {
+            len++;
+            iter = iter.next;
+        }
+        ListNode fakeHead = null;
+        for (int step = 1; step < len; step *= 2) {
+            fakeHead = new ListNode(0);
+            iter = fakeHead;
+            fakeHead.next = head;
+            ListNode p1 = head;
+            ListNode p2 = head;
+            for (int i = 0; i < step && p2 != null; i++) {
+                p2 = p2.next;
+            }
+            while (p2 != null) {
+                iter = merge(iter, p1, p2, step);
+                p1 = iter.next;
+                p2 = iter.next;
+                for (int i = 0; i < step && p2 != null; i++) {
+                    p2 = p2.next;
+                }
+            }
+            head = fakeHead.next;
+        }
+        return head;
+    }
+    
+    private ListNode merge(ListNode head, ListNode node1, ListNode node2, int len) {
+        int count1 = 0;
+        int count2 = 0;
+        while (count1 < len || count2 < len) {
+            if (count1 < len && (count2 >= len || node2 == null || node1.val <= node2.val)) {
+                head.next = node1;
+                node1 = node1.next;
+                count1++;
+            } else {
+                if (node2 == null) break;
+                head.next = node2;
+                node2 = node2.next;
+                count2++;
+            }
+            head = head.next;
+        }
+        head.next = node2;
+        return head;
     }
 }
 {% endhighlight %}

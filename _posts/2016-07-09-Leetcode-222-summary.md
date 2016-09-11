@@ -9,9 +9,11 @@ tags: [study]
 
 # 题目
 
-**输入**一个完全二叉树（除最后一层外每层都满，最后一层从左到右依次填充）的根节点。
+Given a complete binary tree, count the number of nodes.
 
-**输出**这棵二叉树的总节点数。
+Definition of a complete binary tree from Wikipedia:
+
+In a complete binary tree every level, except possibly the last, is completely filled, and all nodes in the last level are as far left as possible. It can have between 1 and 2h nodes inclusive at the last level h.
 
 # 我的算法
 
@@ -50,6 +52,51 @@ public class Solution {
         } else {
             return (1 << (h - 2)) + countNodes(root.left);
         }
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public int countNodes(TreeNode root) {
+        if (root == null) return 0;
+        if (root.left == null && root.right == null) return 1;
+        int leftLeft = getLeftDepth(root.left);
+        int leftRight = getRightDepth(root.left);
+        if (leftRight == leftLeft) {
+            return (1 << leftLeft) + countNodes(root.right);
+        } else {
+            return (1 << (leftLeft - 1)) + countNodes(root.left);
+        }
+    }
+    
+    private int getLeftDepth(TreeNode root) {
+        int depth = 0;
+        while (root != null) {
+            depth++;
+            root = root.left;
+        }
+        return depth;
+    }
+    
+    private int getRightDepth(TreeNode root) {
+        int depth = 0;
+        while (root != null) {
+            depth++;
+            root = root.right;
+        }
+        return depth;
     }
 }
 {% endhighlight %}

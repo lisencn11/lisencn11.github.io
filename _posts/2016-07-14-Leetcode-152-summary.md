@@ -9,12 +9,9 @@ tags: [study]
 
 # 题目
 
-**输入**一个整型数组，含正负数。
+Find the contiguous subarray within an array (containing at least one number) which has the largest product.
 
-**输出**输出乘积最大的连续子数组的乘积。
-
-如：  
-> given the array [2,3,-2,4],  
+For example, given the array [2,3,-2,4],
 the contiguous subarray [2,3] has the largest product = 6.
 
 # 我的算法
