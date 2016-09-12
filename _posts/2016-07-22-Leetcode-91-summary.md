@@ -9,19 +9,15 @@ tags: [study]
 
 # 题目
 
-解码：
+A message containing letters from A-Z is being encoded to numbers using the following mapping:
 
 'A' -> 1  
 'B' -> 2  
 ...  
-'Z' -> 26
+'Z' -> 26  
+Given an encoded message containing digits, determine the total number of ways to decode it.
 
-**输入**一个字符串
-
-**输出**这个字符串能够解码为多少种字母组合
-
-如：
-
+For example,  
 Given encoded message "12", it could be decoded as "AB" (1 2) or "L" (12).
 
 The number of ways decoding "12" is 2.
@@ -64,6 +60,47 @@ public class Solution {
             pre = cur;
         }
         return cur;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public int numDecodings(String s) {
+        if (s == null || s.length() == 0) return 0;
+        if (s.charAt(0) == '0') return 0;
+        int[] ways = new int[s.length()];
+        ways[0] = 1;
+        for (int i = 1; i < s.length(); i++) {
+            if (s.charAt(i) == '0') {
+                if (i - 2 >= 0 && (s.charAt(i - 1) == '1' || s.charAt(i - 1) == '2')) {
+                    ways[i] = ways[i - 2];
+                } else if (s.charAt(i - 1) != '1' && s.charAt(i - 1) != '2') {
+                    return 0;
+                } else {
+                    ways[i] = 1;
+                }
+            } else if (s.charAt(i) >= '1' && s.charAt(i) <= '6') {
+                ways[i] = ways[i - 1];
+                if (i - 2 >= 0 && (s.charAt(i - 1) == '1' || s.charAt(i - 1) == '2')) {
+                    ways[i] += ways[i - 2];
+                } else if (i - 2 < 0 && (s.charAt(i - 1) == '1' || s.charAt(i - 1) == '2')) {
+                    ways[i] += 1;
+                }
+            } else if (s.charAt(i) >= '7' && s.charAt(i) <= '9') {
+                ways[i] = ways[i - 1];
+                if (i - 2 >= 0 && (s.charAt(i - 1) == '1')) {
+                    ways[i] += ways[i - 2];
+                } else if (i - 2 < 0 && (s.charAt(i - 1) == '1')) {
+                    ways[i] += 1;
+                }
+            } else {
+                return 0;
+            }
+        }
+        return ways[s.length() - 1];
     }
 }
 {% endhighlight %}
