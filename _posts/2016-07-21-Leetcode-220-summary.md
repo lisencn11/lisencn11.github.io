@@ -9,9 +9,7 @@ tags: [study]
 
 # 题目
 
-**输入**一个整型数组 nums ，一个整型t，一个整型k。
-
-**输出** boolean 类型，在整型数组中，是否能够找到两个不同的 index i 和 j ，满足 nums[i] 和 nums[j]差值不大于 t ，同时 i 和 j 的差值不大于 k。
+Given an array of integers, find out whether there are two distinct indices i and j in the array such that the difference between nums[i] and nums[j] is at most t and the difference between i and j is at most k.
 
 # 我的算法
 
@@ -93,6 +91,30 @@ public class Solution {
             map.put(bucket, remappedNum);
         }
         return false;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
+         if (nums == null || nums.length == 0) return false;
+         TreeSet<Integer> set = new TreeSet<>();
+         
+         for (int i = 0; i < nums.length; i++) {
+             Integer floor = set.floor(nums[i]);
+             Integer ceil = set.ceiling(nums[i]);
+             if ((floor != null && floor >= nums[i] - t) || (ceil != null && ceil <= nums[i] + t)) {
+                 return true;
+             }
+             set.add(nums[i]);
+             if (i >= k) {
+                 set.remove(nums[i - k]);
+             }
+         }
+         return false;
     }
 }
 {% endhighlight %}

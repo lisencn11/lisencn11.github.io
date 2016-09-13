@@ -9,12 +9,14 @@ tags: [study]
 
 # 题目
 
-**输入**一个单链表L: L0→L1→…→Ln-1→Ln。
+Given a singly linked list L: L0→L1→…→Ln-1→Ln,  
+reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…
 
-**输出**转换单链表L0→Ln→L1→Ln-1→L2→Ln-2→…。
+You must do this in-place without altering the nodes' values.
 
-如：  
->Given {1,2,3,4}, reorder it to {1,4,2,3}.
+For example,  
+Given {1,2,3,4}, reorder it to {1,4,2,3}.
+
 # 我的算法
 
 算法分为三步：
@@ -66,6 +68,60 @@ public class Solution {
             iter1 = iter2.next;
             iter2 = preSlow.next;
         }
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public void reorderList(ListNode head) {
+        if (head == null || head.next == null) return;
+        ListNode dummy = new ListNode(0);
+        ListNode fast = dummy;
+        ListNode slow = dummy;
+        dummy.next = head;
+        while (fast!= null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        ListNode secondHead = slow.next;
+        slow.next = null;
+        ListNode iter = secondHead;
+        ListNode next = iter.next;
+        while (secondHead.next != null) {
+            secondHead.next = next.next;
+            next.next = iter;
+            iter = next;
+            next = secondHead.next;
+        }
+        secondHead = iter;
+        
+        ListNode iter1 = head;
+        ListNode iter2 = secondHead;
+        iter = dummy;
+        while (iter1 != null || iter2 != null) {
+            if (iter1 != null) {
+                iter.next = iter1;
+                iter1 = iter1.next;
+                iter = iter.next;
+            }
+            if (iter2 != null) {
+                iter.next = iter2;
+                iter2 = iter2.next;
+                iter = iter.next;
+            }
+        }
+        iter.next = null;
     }
 }
 {% endhighlight %}

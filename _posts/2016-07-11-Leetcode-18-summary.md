@@ -9,18 +9,17 @@ tags: [study]
 
 # 题目
 
-**输入**一个整型数组nums，一个整型target。
+Given an array S of n integers, are there elements a, b, c, and d in S such that a + b + c + d = target? Find all unique quadruplets in the array which gives the sum of target.
 
-**输出**一个List<List<Integer>> 其中每个List都是数组中的4个元素，满足条件加和为0。
+Note: The solution set must not contain duplicate quadruplets.
 
-如：  
->For example, given array S = [1, 0, -1, 0, -2, 2], and target = 0.
+For example, given array S = [1, 0, -1, 0, -2, 2], and target = 0.
 
->A solution set is:
-[
-  [-1,  0, 0, 1],
-  [-2, -1, 1, 2],
-  [-2,  0, 0, 2]
+A solution set is:  
+[  
+  [-1,  0, 0, 1],  
+  [-2, -1, 1, 2],  
+  [-2,  0, 0, 2]  
 ]
 
 # 我的算法
@@ -87,3 +86,62 @@ public class Solution {
 * 当前上界nums[d] * 4 < target，则可直接返回结果
 * 当前下界nums[a] * 4 > target，则可直接返回结果
 * 当前nums[a] == nums[a + 1]或者nums[d] == nums[d - 1]，则可以跳过下个元素，因为最后不能含有相同结果
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        if (nums == null || nums.length == 0) return new ArrayList<>();
+        
+        Arrays.sort(nums);
+        List<List<Integer>> result = new ArrayList<>();
+        for (int i = 0; i < nums.length - 3; i++) {
+            for (int j = i + 1; j < nums.length - 2; j++) {
+                int p1 = j + 1;
+                int p2 = nums.length - 1;
+                int preSum = nums[i] + nums[j];
+                while (p1 < p2) {
+                    if (preSum + nums[p1] + nums[p2] > target) {
+                        int oldValue = nums[p2];
+                        while (p2 > p1 && nums[p2] == oldValue) {
+                            p2--;
+                        }
+                    } else if (preSum + nums[p1] + nums[p2] < target) {
+                        int oldValue = nums[p1];
+                        while (p1 < p2 && nums[p1] == oldValue) {
+                            p1++;
+                        }
+                    } else {
+                        List<Integer> list = new ArrayList<>();
+                        list.add(nums[i]);
+                        list.add(nums[j]);
+                        list.add(nums[p1]);
+                        list.add(nums[p2]);
+                        result.add(list);
+                        int oldValue = nums[p1];
+                        while (p1 < p2 && nums[p1] == oldValue) {
+                            p1++;
+                        }
+                        oldValue = nums[p2];
+                        while (p1 < p2 && nums[p2] == oldValue) {
+                            p2--;
+                        }
+                    }
+                }
+                int oldValue = nums[j];
+                while (j < nums.length - 2 && nums[j] == oldValue) {
+                    j++;
+                }
+                j--;
+            }
+            int oldValue = nums[i];
+            while (i < nums.length - 3 && nums[i] == oldValue) {
+                i++;
+            }
+            i--;
+        }
+        return result;
+    }
+}
+{% endhighlight %}

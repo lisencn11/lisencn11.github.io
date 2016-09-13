@@ -9,11 +9,13 @@ tags: [study]
 
 # 题目
 
-**输入**两个String类型表示的正整型。
+Given two numbers represented as strings, return multiplication of the numbers as a string.
 
-**输出**两数相乘结果。
+Note:
 
-**要求**两个数任意大，不能将其转为int，不能使用BigInteger。
+* The numbers can be arbitrarily large and are non-negative.
+* Converting the input string to integer is NOT allowed.
+* You should NOT use internal library such as BigInteger.
 
 # 我的算法
 
@@ -89,5 +91,109 @@ public class Solution {
         
         return sb.toString();
     }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public String multiply(String num1, String num2) {
+        int m = num1.length(), n = num2.length();
+        String[] halfResult = new String[n];
+        for (int i = n - 1; i >= 0; i--) {
+            int index = n - 1 - i;
+            halfResult[index] = unitMulti(num1, num2.charAt(i));
+        }
+        String result = halfResult[0];
+        for (int i = 1; i < n; i++) {
+            result = unitPlus(result, halfResult[i], i);
+        }
+        
+        int start = 0;
+        while (start < result.length() && result.charAt(start) == '0') start++;
+        if (start == result.length()) return "0";
+        else return result.substring(start);
+    }
+    
+    private String unitMulti(String num1, char num2) {
+        int carry = 0;
+        int digit2 = (int) (num2 - '0');
+        StringBuilder sb = new StringBuilder();
+        for (int i = num1.length() - 1; i >= 0; i--) {
+            int digit = (int) (num1.charAt(i) - '0');
+            digit = digit * digit2 + carry;
+            carry = digit / 10;
+            digit = digit % 10;
+            sb.insert(0, digit);
+        }
+        if (carry != 0) sb.insert(0, carry);
+        return sb.toString();
+    }
+    
+    private String unitPlus(String num1, String num2, int shift) {
+        int carry = 0;
+        StringBuilder sb = new StringBuilder();
+        StringBuilder number2 = new StringBuilder(num2);
+        for (int i = 0; i < shift; i++) {
+            number2.append(0);
+        }
+        num2 = number2.toString();
+        
+        int p1 = num1.length() - 1;
+        int p2 = num2.length() - 1;
+        while (p1 >= 0 || p2 >= 0) {
+            if (p1 < 0) {
+                int digit2 = (int) (num2.charAt(p2) - '0');
+                digit2 += carry;
+                carry = digit2 / 10;
+                digit2 = digit2 % 10;
+                sb.insert(0, digit2);
+                p2--;
+            } else if (p2 < 0) {
+                int digit1 = (int) (num1.charAt(p1) - '0');
+                digit1 += carry;
+                carry = digit1 / 10;
+                digit1 = digit1 % 10;
+                sb.insert(0, digit1);
+                p1--;
+            } else {
+                int digit1 = (int) (num1.charAt(p1) - '0');
+                int digit2 = (int) (num2.charAt(p2) - '0');
+                int digit = digit1 + digit2 + carry;
+                carry = digit / 10;
+                digit = digit % 10;
+                sb.insert(0, digit);
+                p1--;
+                p2--;
+            }
+        }
+        if (carry != 0) sb.insert(0, carry);
+        return sb.toString();
+    }
+}
+{% endhighlight %}
+
+# discuss
+
+{% highlight java %}
+public String multiply(String num1, String num2) {
+    int m = num1.length(), n = num2.length();
+    int[] pos = new int[m + n];
+   
+    for(int i = m - 1; i >= 0; i--) {
+        for(int j = n - 1; j >= 0; j--) {
+            int mul = (num1.charAt(i) - '0') * (num2.charAt(j) - '0'); 
+            int p1 = i + j, p2 = i + j + 1;
+            int sum = mul + pos[p2];
+
+            pos[p1] += sum / 10;
+            pos[p2] = (sum) % 10;
+        }
+    }  
+    
+    StringBuilder sb = new StringBuilder();
+    for(int p : pos) if(!(sb.length() == 0 && p == 0)) sb.append(p);
+    return sb.length() == 0 ? "0" : sb.toString();
 }
 {% endhighlight %}

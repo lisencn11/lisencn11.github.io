@@ -9,12 +9,10 @@ tags: [study]
 
 # 题目
 
-**输入**一个链表。
+Given a list, rotate the list to the right by k places, where k is non-negative.
 
-**输出**向右旋转链表k位。
-
-如：  
->Given 1->2->3->4->5->NULL and k = 2,  
+For example:  
+Given 1->2->3->4->5->NULL and k = 2,  
 return 4->5->1->2->3->NULL.
 
 # 我的算法
@@ -58,6 +56,51 @@ public class Solution {
         endNode.next = tail.next;
         tail.next = head;
         return startNode;
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        if (head == null || head.next == null) return head;
+        int len = 0;
+        ListNode iter = head;
+        while (iter != null) {
+            len++;
+            iter = iter.next;
+        }
+        
+        k %= len;
+        if (k == 0) return head;
+        ListNode fast = head;
+        ListNode slow = head;
+        ListNode pre1 = null;
+        ListNode pre2 = null;
+        for (int i = 0; i < k; i++) {
+            fast = fast.next;
+        }
+        
+        while (fast != null) {
+            pre1 = slow;
+            pre2 = fast;
+            slow = slow.next;
+            fast = fast.next;
+        }
+        
+        pre2.next = head;
+        pre1.next = null;
+        return slow;
     }
 }
 {% endhighlight %}
