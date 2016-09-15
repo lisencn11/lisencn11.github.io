@@ -86,6 +86,54 @@ public class Solution {
 }
 {% endhighlight %}
 
-# 另一种算法-Union Find
+# 二刷
 
-待续。
+{% highlight java %}
+public class Solution {
+    public void solve(char[][] board) {
+        if (board == null || board.length == 0) return;
+        int m = board.length, n = board[0].length;
+        for (int i = 0; i < m; i++) {
+            if (board[i][0] == 'O') {
+                bfs(board, i, 0);
+            }
+            if (board[i][n - 1] == 'O') {
+                bfs(board, i, n - 1);
+            }
+        }
+        for (int j = 0; j < n; j++) {
+            if (board[0][j] == 'O') {
+                bfs(board, 0, j);
+            }
+            if (board[m - 1][j] == 'O') {
+                bfs(board, m - 1, j);
+            }
+        }
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i][j] == 'O') board[i][j] = 'X';
+                else if (board[i][j] == '1') board[i][j] = 'O';
+            }
+        }
+    }
+    
+    private void bfs(char[][] board, int i, int j) {
+        int[] shift = new int[]{0, 1, 0, -1, 0};
+        board[i][j] = '1';
+        
+        Queue<int[]> queue = new LinkedList<>();
+        queue.offer(new int[]{i, j});
+        while (!queue.isEmpty()) {
+            int[] point = queue.poll();
+            for (int k = 1; k < shift.length; k++) {
+                int x = point[0] + shift[k - 1];
+                int y = point[1] + shift[k];
+                if (x >= 0 && y >= 0 && x < board.length && y < board[0].length && board[x][y] == 'O') {
+                    board[x][y] = '1';
+                    queue.offer(new int[]{x, y});
+                }
+            }
+        }
+    }
+}
+{% endhighlight %}
