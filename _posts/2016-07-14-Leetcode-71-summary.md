@@ -9,13 +9,17 @@ tags: [study]
 
 # 题目
 
-**输入**一个Unix风格的绝对路径。
+Given an absolute path for a file (Unix-style), simplify it.
 
-**输出**简化后的绝对路径。
+For example,  
+path = "/home/", => "/home"  
+path = "/a/./b/../../c/", => "/c"  
 
-如：  
->path = "/home/", => "/home"  
-path = "/a/./b/../../c/", => "/c"
+Corner Cases:  
+* Did you consider the case where path = "/../"?
+In this case, you should return "/".  
+* Another corner case is the path might contain multiple slashes '/' together, such as "/home//foo/".
+In this case, you should ignore redundant slashes and return "/home/foo".
 
 # 我的算法
 
@@ -55,6 +59,40 @@ public class Solution {
         }
         
         return sb.toString();
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public String simplifyPath(String path) {
+        String[] folders = path.split("/");
+        StringBuilder result = new StringBuilder();
+        Stack<String> stack = new Stack<>();
+        for (String f : folders) {
+            if (f.equals(".") || f.equals("")) {
+                continue;
+            } else if (f.equals("..")) {
+                if (!stack.isEmpty()) {
+                    stack.pop();
+                } else {
+                    continue;
+                }
+            } else {
+                stack.push(f);
+            }
+        }
+        
+        if (stack.isEmpty()) {
+            result.append("/");
+        } else {
+            while (!stack.isEmpty()) {
+                result.insert(0, "/" + stack.pop());
+            }
+        }
+        return result.toString();
     }
 }
 {% endhighlight %}
