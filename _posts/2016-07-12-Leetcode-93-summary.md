@@ -9,14 +9,13 @@ tags: [study]
 
 # 题目
 
-**输入**一个数字组成的字符串。
+Given a string containing only digits, restore it by returning all possible valid IP address combinations.
 
-**输出**这个字符串所可能表达的IP地址的集合List。
+For example:  
+Given "25525511135",
 
-如：  
->Given "25525511135",
+return ["255.255.11.135", "255.255.111.35"]. (Order does not matter)
 
->return ["255.255.11.135", "255.255.111.35"]. (Order does not matter)
 # 我的算法
 
 递归计算，假设总共 n 位，取后 i 位，计算出前 n - i 位有可能的集合，然后将后 i 位加入即可。
@@ -96,6 +95,41 @@ public class Solution {
             return true;
         } else {
             return false;
+        }
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    static final int IP_PARTS = 4;
+    static final int IP_SEGMENT = 3;
+    
+    public List<String> restoreIpAddresses(String s) {
+        List<String> result = new ArrayList<>();
+        restoreHelper(result, s, "", 0);
+        return result;
+    }
+    
+    private void restoreHelper(List<String> result, String s, String curr, int part) {
+        if (part == IP_PARTS && s.equals("")) {
+            result.add(curr.substring(0, curr.length() - 1));
+            return;
+        }
+        if (part == IP_PARTS || s.equals("")) return;
+        if (((IP_PARTS - part) * IP_SEGMENT) < s.length()) return;
+        if (s.charAt(0) == '0') {
+            restoreHelper(result, s.substring(1), curr + "0.", part + 1);
+            return;
+        }
+        
+        for (int i = 1; i <= 3 && i <= s.length(); i++) {
+            String sub = s.substring(0, i);
+            int ip = Integer.parseInt(sub);
+            if (ip <= 0 || ip > 255) continue;
+            restoreHelper(result, s.substring(i), curr + sub + ".", part + 1);
         }
     }
 }
