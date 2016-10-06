@@ -40,3 +40,35 @@ public class Solution {
     }
 }
 {% endhighlight %}
+
+# 二刷
+
+注意，if 语句中条件过长应：
+
+1. 在与或连接符前短剧
+2. 采用8空格缩进，以便看清 body
+
+{% highlight java %}
+public class Solution {
+    public boolean isValid(String s) {
+        Stack<Character> stack = new Stack<>();
+        
+        for (int i = 0; i < s.length(); i++) {
+            char curr = s.charAt(i);
+            if (curr == '(' || curr == '[' || curr == '{') {
+                stack.push(curr);
+            } else if (stack.isEmpty()) {
+                return false;
+            } else if ((curr == ')' && stack.peek() == '(') 
+                    || (curr == ']' && stack.peek() == '[') 
+                    || (curr == '}' && stack.peek() == '{')) {
+                stack.pop();
+            } else {
+                return false;
+            }
+        }
+        
+        return stack.isEmpty();
+    }
+}
+{% endhighlight %}
