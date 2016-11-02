@@ -65,3 +65,50 @@ public class Solution {
     }
 }
 {% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    
+    List<Integer> permutations;
+    
+    public String getPermutation(int n, int k) {
+        permutations = new ArrayList<>();
+        permutations.add(1);
+        
+        for (int i = 1; i < n; i++) {
+            int pre = permutations.get(i - 1);
+            permutations.add(pre * i);
+        }
+        
+        
+        StringBuilder result = new StringBuilder();
+        List<Integer> candidates = new ArrayList<>();
+        for (int i = 1; i <= n; i++) {
+            candidates.add(i);
+        }
+        permute(result, candidates, n, k);
+        
+        return result.toString();
+    }
+    
+    private void permute(StringBuilder result, List<Integer> candidates, int n, int k) {
+        if (n == 1) {
+            result.append(candidates.get(0));
+            return;
+        }
+        
+        int step = permutations.get(n - 1);
+        int index = 0;
+        while (step < k) {
+            index++;
+            k -= step;
+        }
+        
+        result.append(candidates.get(index));
+        candidates.remove(index);
+        permute(result, candidates, n - 1, k);
+    }
+}
+{% endhighlight %}

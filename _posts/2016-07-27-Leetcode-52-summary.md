@@ -9,9 +9,9 @@ tags: [study]
 
 # 题目
 
-**输入**一个整型 n ，表示 n queens 问题中的皇后数量
+Follow up for N-Queens problem.
 
-**输出**所有可能的皇后摆放的数量。
+Now, instead outputting board configurations, return the total number of distinct solutions.
 
 # 我的算法
 
@@ -58,6 +58,49 @@ public class Solution {
                 nQueensHelper(row + 1);
             }
         }
+    }
+}
+{% endhighlight %}
+
+# 二刷
+
+{% highlight java %}
+public class Solution {
+    public int totalNQueens(int n) {
+        int[][] board = new int[n][n];
+        int result = helper(board, 0, n);
+        return result;
+    }
+    
+    private int helper(int[][] board, int row, int n) {
+        if (row == n) return 1;
+        int result = 0;
+        
+        for (int i = 0; i < n; i++) {
+            if (isValid(board, row, i)) {
+                board[row][i] = 1;
+                result += helper(board, row + 1, n);
+                board[row][i] = 0;
+            }
+        }
+        
+        return result;
+    }
+    
+    private boolean isValid(int[][] board, int row, int col) {
+        for (int i = 1; row - i >= 0 && col - i >= 0; i++) {
+            if (board[row - i][col - i] == 1) return false;
+        }
+        
+        for (int i = 1; row - i >= 0 && col + i < board[0].length; i++) {
+            if (board[row - i][col + i] == 1) return false;
+        }
+        
+        for (int i = 1; row - i >= 0; i++) {
+            if (board[row - i][col] == 1) return false;
+        }
+        
+        return true;
     }
 }
 {% endhighlight %}
